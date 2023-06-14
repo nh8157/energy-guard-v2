@@ -1,0 +1,10 @@
+﻿{
+    "profiles": {
+      "EnergyPerformance (Package)": {
+        "commandName": "MsixPackage"
+      },
+      "EnergyPerformance (Unpackaged)": {
+        "commandName": "Project"
+      }
+    }
+}

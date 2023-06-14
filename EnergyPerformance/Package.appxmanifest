@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
+  IgnorableNamespaces="uap rescap genTemplate">
+
+  <Identity
+    Name="DAB50940-BBDA-47AE-B460-2523C14D3E0F"
+    Publisher="CN=siamn"
+    Version="1.0.3.0" />
+
+  <Properties>
+    <DisplayName>EnergyGuard</DisplayName>
+    <PublisherDisplayName>siamn</PublisherDisplayName>
+    <Logo>Assets\StoreLogo.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="$targetentrypoint$">
+      <uap:VisualElements
+        DisplayName="ms-resource:AppDisplayName"
+        Description="ms-resource:AppDescription"
+        BackgroundColor="transparent"
+        Square150x150Logo="Assets\Square150x150Logo.png"
+        Square44x44Logo="Assets\Square44x44Logo.png">
+        <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" />
+        <uap:SplashScreen Image="Assets\SplashScreen.png" />
+      </uap:VisualElements>
+      <Extensions>
+		  <desktop:Extension Category="windows.toastNotificationActivation">
+			  <desktop:ToastNotificationActivation ToastActivatorCLSID="5AC157B8-A829-41F8-9776-0232A065AB45" />
+		  </desktop:Extension>
+          <com:Extension Category="windows.comServer">
+              <com:ComServer>
+                  <com:ExeServer Executable="EnergyPerformance.exe" Arguments="----AppNotificationActivated:" DisplayName="Toast activator">
+                      <com:Class Id="5AC157B8-A829-41F8-9776-0232A065AB45" DisplayName="Toast activator"/>
+                  </com:ExeServer>
+              </com:ComServer>
+          </com:Extension>
+        	<uap5:Extension
+	        Category="windows.startupTask">
+		        <uap5:StartupTask
+		        TaskId="EnergyGuard"
+		        Enabled="false"
+		        DisplayName="EnergyGuard" />
+	        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+	<!--comment out the line below disable request for admin priveleges at startup-->
+    <rescap:Capability Name="allowElevation" />
+  </Capabilities>
+  
+  <genTemplate:Metadata>
+    <genTemplate:Item Name="generator" Value="Template Studio"/>
+    <genTemplate:Item Name="wizardVersion" Version="v5.2.1" />
+    <genTemplate:Item Name="projectType" Value="NavView" />
+    <genTemplate:Item Name="framework" Value="MVVMToolkit" />
+    <genTemplate:Item Name="platform" Value="WinUI" />
+    <genTemplate:Item Name="appmodel" Value="Desktop" />
+  </genTemplate:Metadata>
+</Package>
