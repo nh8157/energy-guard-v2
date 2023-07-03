@@ -80,6 +80,7 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         // Round to the nearest even integer
         eCoresActive = (int)Math.Round(cores / 2, MidpointRounding.AwayFromZero) * 2;
         pCoresActive = 0;
+        // Can we control P-core E-core settings at the granularity of processes
         _cpuInfo.CpuController.MoveAllAppsToHybridCores(eCoresActive, pCoresActive);
     }
 
@@ -217,6 +218,8 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         var newMode = mode;
         var threshold = (double)activeCores / (double)totalCores;
         threshold *= 100;
+        // If CPU usage is above the percentage of threshold times the incrementmodethreshold
+        // then increase the mode by one
         if (currentCpuUsage > threshold * IncrementModeThreshold)
         {
             newMode += 1;
@@ -225,6 +228,8 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
                 newMode = currentMode + 1;
             }
         }
+        // If CPU usage is below the percentage of threshold times the decrementmodethreshold
+        // then decrease the mode by one
         else if (currentCpuUsage < DecrementModeThreshold * threshold)
         {
             newMode -= 1;
@@ -287,6 +292,8 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
             runningAverage = CpuUsage;
         }
         
+        // Where does the switching occur?
+        // What is this line for?
         await Task.CompletedTask;
     }
 }

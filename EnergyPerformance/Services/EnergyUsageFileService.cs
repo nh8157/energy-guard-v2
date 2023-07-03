@@ -47,8 +47,10 @@ public class EnergyUsageFileService
     {
         if (!_isInitialized)
         {
+            // Opens the file saving energy usage data, if any
+            // or creates a new file
             _energyUsage = await Task.Run(() => _fileService.Read<EnergyUsageData>(_applicationDataFolder, _energyUsageFile)) ?? new EnergyUsageData();
-
+            Console.WriteLine(_localApplicationData);
             _isInitialized = true;
         }
     }

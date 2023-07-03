@@ -122,6 +122,7 @@ public class EnergyUsageModel
     /// </summary>
     public async Task InitializeAsync()
     {
+        // Initialize energyFileService
         _energyUsage = await _energyFileService.ReadFileAsync();
         var lastMeasurement = _energyUsage.LastMeasurement;
         var current = DateTime.Now;

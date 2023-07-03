@@ -57,6 +57,7 @@ public partial class App : Application
     /// <summary>
     /// Initializes a new instance of the <see cref="App"/> class.
     /// Registration of classes with the Generic Host is performed here.
+    /// Start point of the application
     /// </summary>
     public App()
     {
@@ -75,6 +76,7 @@ public partial class App : Application
             // Services
             //services.AddSingleton<IHostedService, TaskService>();
 
+            // Why adding interface here?
             services.AddSingleton<IAppNotificationService, AppNotificationService>();
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();

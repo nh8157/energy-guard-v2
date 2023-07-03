@@ -137,6 +137,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         Power = power; // update the front end power value only with the value read from sensors
         var currentDateTime = DateTimeOffset.Now;
         // methods to update the daily and hourly power usage
+        
+        // TODO: record carbon emissions
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
 
