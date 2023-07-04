@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
@@ -19,12 +20,19 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     private readonly EnergyUsageModel _model;
 
     private readonly PowerInfo _powerInfo;
+    private readonly CarbonIntensityInfo _carbonIntensityInfo = new();
 
 
     public double Power
     {
         get => _powerInfo.Power;
         private set => _powerInfo.Power = value;
+    }
+
+    public double CarbonIntensity
+    {
+        get => _carbonIntensityInfo.CarbonIntensity;
+        private set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
     /// <summary>
@@ -137,11 +145,12 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         Power = power; // update the front end power value only with the value read from sensors
         var currentDateTime = DateTimeOffset.Now;
         // methods to update the daily and hourly power usage
-        
+
         // TODO: record carbon emissions
+        //Debug.WriteLine(CarbonIntensity);
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-
+        double hardwareCarbonEmission = CarbonIntensity * PowerToEnergy(Power);
         await Task.CompletedTask;
     }
 
@@ -191,6 +200,9 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.AccumulatedWattsHourly = power;
         }
     }
-
+    private double PowerToEnergy(double power)
+    {
+        return power / 1000;
+    }
 
 }
