@@ -8,12 +8,6 @@ namespace EnergyPerformance.Helpers;
 public class CarbonIntensityInfo
 {
     private double _carbonIntensity;
-    private string _location;
-    public string Location
-    {
-        get => _location;
-        set => _location = value;
-    }
     public double CarbonIntensity
     {
         get => _carbonIntensity;
@@ -21,6 +15,7 @@ public class CarbonIntensityInfo
     }
     public CarbonIntensityInfo()
     {
+        // Default carbon intensity is 100
         CarbonIntensity = 100;
     }
 }
