@@ -350,4 +350,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="SettingsPage_DescriptionLink.NavigateUri" xml:space="preserve">
     <value>https://github.com/guardsense/EG/blob/main/description.md</value>
   </data>
+  <data name="HomeGpuUsageProgressRingLabel.Text" xml:space="preserve">
+    <value>GPU Usage</value>
+  </data>
 </root>
