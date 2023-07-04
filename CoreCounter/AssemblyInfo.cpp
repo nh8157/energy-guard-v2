@@ -6,12 +6,12 @@ using namespace System::Runtime::CompilerServices;
 using namespace System::Runtime::InteropServices;
 using namespace System::Security::Permissions;
 
-[assembly:AssemblyTitleAttribute(L"Wrapper")];
+[assembly:AssemblyTitleAttribute(L"CoreCounter")];
 [assembly:AssemblyDescriptionAttribute(L"")];
 [assembly:AssemblyConfigurationAttribute(L"")];
 [assembly:AssemblyCompanyAttribute(L"")];
-[assembly:AssemblyProductAttribute(L"Wrapper")];
-[assembly:AssemblyCopyrightAttribute(L"Copyright (c)  2022")];
+[assembly:AssemblyProductAttribute(L"CoreCounter")];
+[assembly:AssemblyCopyrightAttribute(L"Copyright (c)  2023")];
 [assembly:AssemblyTrademarkAttribute(L"")];
 [assembly:AssemblyCultureAttribute(L"")];
 

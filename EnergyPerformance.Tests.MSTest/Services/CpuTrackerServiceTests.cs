@@ -1,5 +1,4 @@
-﻿using CLI;
-using EnergyPerformance.Core.Contracts.Services;
+﻿using EnergyPerformance.Core.Contracts.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EnergyPerformance.Services;
 using EnergyPerformance.Core.Services;

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22621.0</TargetFramework>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <RootNamespace>EnergyPerformance</RootNamespace>
     <ApplicationIcon>Assets/WindowIcon.ico</ApplicationIcon>
@@ -47,8 +47,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CoreCounter\CoreCounter.vcxproj" />
     <ProjectReference Include="..\EnergyPerformance.Core\EnergyPerformance.Core.csproj" />
-    <ProjectReference Include="..\Wrapper\Wrapper.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">
