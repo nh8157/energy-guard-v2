@@ -40,6 +40,8 @@
                 </NavigationViewItem>
                 <NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
                 </NavigationViewItem>
+                <NavigationViewItem Icon="Zoom" x:Uid="Shell_Debug" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.DebugViewModel">
+                </NavigationViewItem>
             </NavigationView.MenuItems>
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

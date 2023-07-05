@@ -129,6 +129,9 @@
   <data name="Shell_EnergyUsage.Content" xml:space="preserve">
     <value>Energy Usage</value>
   </data>
+  <data name="Shell_Debug.Content" xml:space="preserve">
+      <value>Debug Messages</value>
+  </data>
   <data name="Shell_Tips.Content" xml:space="preserve">
     <value>Tips</value>
   </data>
