@@ -67,6 +67,9 @@ public partial class App : Application
         UseContentRoot(AppContext.BaseDirectory).
         ConfigureServices((context, services) =>
         {
+            // Debug Model first
+            services.AddSingleton<DebugModel>();
+
             // Default Activation Handler
             services.AddTransient<ActivationHandler<LaunchActivatedEventArgs>, DefaultActivationHandler>();
 
@@ -107,6 +110,8 @@ public partial class App : Application
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
+            services.AddTransient<DebugViewModel>();
+            services.AddTransient<DebugPage>();
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
