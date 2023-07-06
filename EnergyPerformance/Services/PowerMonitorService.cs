@@ -18,10 +18,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     public List<ISensor> sensors;
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
-
     private readonly PowerInfo _powerInfo;
-    private readonly CarbonIntensityInfo _carbonIntensityInfo = new();
-
+    private readonly CarbonIntensityInfo _carbonIntensityInfo;
 
     public double Power
     {
@@ -63,11 +61,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// </summary>
     /// <param name="model"><see cref="EnergyUsageModel"/> to contain data for the accumulated power usage of the system</param>
     /// <param name="powerInfo"><see cref="PowerInfo"/> to contain live power data for the system, for the view.</param>
-    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo)
+    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, CarbonIntensityInfo carbonIntensityInfo)
     {
         _model = model;
         _powerInfo = powerInfo;
-
+        _carbonIntensityInfo = carbonIntensityInfo;
         // configure computer object to monitor hardware components
         computer = new Computer
         {
