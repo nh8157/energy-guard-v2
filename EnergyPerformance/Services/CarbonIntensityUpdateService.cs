@@ -55,37 +55,37 @@ class CarbonIntensityUpdateService : BackgroundService
 
     private async Task FetchLiveCarbonIntensity()
     {
-        using (HttpClient client = new HttpClient())
+        var client = new HttpClient();
+        try
         {
-            try
+            var url = String.Format(_ukApiUrl, PostCode);
+            HttpResponseMessage response = await client.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
             {
-                string url = String.Format(_ukApiUrl, PostCode);
-                HttpResponseMessage response = await client.GetAsync(url);
-                
-                if (response.IsSuccessStatusCode)
+                var responseBody = await response.Content.ReadAsStringAsync();
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody);
+                // Debug.WriteLine(responseBody);
+                JArray data = jsonResponse.data;
+
+                foreach (var d in data)
                 {
-                    string responseBody = await response.Content.ReadAsStringAsync();
-                    dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody);
-                    // Debug.WriteLine(responseBody);
-                    JArray data = jsonResponse.data;
-                    
-                    foreach (var d in data)
+                    JArray data_data = (JArray)d["data"];
+                    foreach (var dp in data_data)
                     {
-                        JArray data_data = (JArray)d["data"];
-                        foreach (var dp in data_data)
-                        {
-                            JToken intensity = dp["intensity"];
-                            CarbonIntensity = (double)intensity["forecast"];
-                        }
+                        JToken intensity = dp["intensity"];
+                        CarbonIntensity = (double)intensity["forecast"];
                     }
-                } else
-                {
-                    Debug.WriteLine("Request failed");
                 }
-            } catch (Exception e)
-            {
-                Debug.WriteLine("Cannot fetch data", e);
             }
+            else
+            {
+                Debug.WriteLine("Request failed");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine("Cannot fetch data", e);
         }
     }
 }

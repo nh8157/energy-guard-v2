@@ -9,7 +9,6 @@ using EnergyPerformance.Notifications;
 using EnergyPerformance.Services;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
-
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
@@ -62,6 +61,7 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
+        Trace.Listeners.Add(new ConsoleTraceListener());
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
@@ -96,6 +96,10 @@ public partial class App : Application
 
             services.AddSingleton<PowerInfo>(); // container for live Power usage data
             services.AddHostedService<PowerMonitorService>();
+
+            services.AddSingleton<LocationInfo>();
+            services.AddSingleton<CarbonIntensityInfo>();
+            services.AddHostedService<CarbonIntensityUpdateService>();
             // ---
 
             // Core Services
@@ -119,7 +123,7 @@ public partial class App : Application
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
         Build();
-        
+        Debug.WriteLine("Starting application");
         App.GetService<IAppNotificationService>().Initialize();
         MainWindow.Closed += async (sender, args) =>
         {
