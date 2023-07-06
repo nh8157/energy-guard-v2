@@ -20,7 +20,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
 
     private readonly PowerInfo _powerInfo;
 
-
+    private DebugModel Debug => App.GetService<DebugModel>();
+    
     public double Power
     {
         get => _powerInfo.Power;
@@ -89,8 +90,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
                 // read hardware sensors which report power values
                 if ((sensor.Name.Contains("Package") || sensor.Name.Contains("Power")) && sensor.SensorType.Equals(SensorType.Power))
                 {
-                    Debug.WriteLine("Hardware: {0}", hardware.Name);
-                    Debug.WriteLine("\t\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
+                    Debug.AddMessage($"Hardware: {hardware.Name}");
+                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
 
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     sensors.Add(sensor);
