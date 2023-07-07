@@ -13,7 +13,8 @@ namespace EnergyPerformance.Services;
 public class CpuTrackerService : BackgroundService, ICpuTrackerService
 {
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(1000));
-    private readonly PerformanceCounter performanceCounter;
+    private readonly PerformanceCounter totalPerformanceCounter;
+    private readonly Dictionary<int, PerformanceCounter> processesPerformanceCounter;
     private readonly ILocalSettingsService _settingsService;
     private readonly IAppNotificationService _notificationService;
     private int runningAverageCounter;
@@ -45,6 +46,12 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         get => _cpuInfo.CpuUsage;
         set => _cpuInfo.CpuUsage = value;
     }
+    
+    private Dictionary<int, double> ProcessesCpuUsage
+    {
+        get => _cpuInfo.ProcessesCpuUsage;
+        set => _cpuInfo.ProcessesCpuUsage = value;
+    }
 
 
     public CpuTrackerService(ILocalSettingsService settingsService, IAppNotificationService notificationService, CpuInfo cpuInfo)
@@ -55,7 +62,19 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         eCoresActive = 0; pCoresActive = 0;
         _cpuInfo = cpuInfo;
         Debug.AddMessage("CPU Supported: " + _cpuInfo.IsSupported);
-        performanceCounter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total");
+        totalPerformanceCounter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total");
+        
+        // Get all the processes running on the system
+        var processes = Process.GetProcesses();
+        processesPerformanceCounter = new Dictionary<int, PerformanceCounter>();
+        
+        // Create a performance counter for each process
+        foreach (var process in processes)
+        {
+            processesPerformanceCounter.Add(process.Id, new PerformanceCounter("Process", "% Processor Time", process.ProcessName));
+        }
+        
+        
         _totalCores = _cpuInfo.CpuController.TotalCoreCount();
         Debug.AddMessage("Total Cores: " + _totalCores);
         currentMode = 2;
@@ -265,7 +284,7 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
     /// <returns></returns>
     private async Task DoAsync()
     {
-        CpuUsage = Math.Round(Math.Min(performanceCounter.NextValue(), 100.0), CpuUsageDoublePrecision);
+        CpuUsage = Math.Round(Math.Min(totalPerformanceCounter.NextValue(), 100.0), CpuUsageDoublePrecision);
         
         if (!SupportedCpu || !_settingsService.AutoControlSetting)
         {

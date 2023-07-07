@@ -15,6 +15,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
 {
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(1000));
     public List<ISensor> sensors;
+    public List<ISensor> cpuSensors;
+    public List<ISensor> gpuSensors;
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
 
@@ -27,6 +29,10 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         get => _powerInfo.Power;
         private set => _powerInfo.Power = value;
     }
+    
+    // We want to also track the power usage of the CPU and GPU separately, so we can display them in the View.
+    public double CpuPower { get; private set; }
+    public double GpuPower { get; private set; }
 
     /// <summary>
     /// Visitor class used to update the hardware components of the system.
@@ -73,6 +79,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             IsStorageEnabled = true
         };
         sensors = new List<ISensor>();
+        cpuSensors = new List<ISensor>();
+        gpuSensors = new List<ISensor>();
     }
 
     /// <summary>
@@ -95,6 +103,26 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
 
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     sensors.Add(sensor);
+                }
+                
+                // read CPU sensors which report power values
+                if (sensor.Name.Contains("Package") && sensor.SensorType.Equals(SensorType.Power) && hardware.HardwareType.Equals(HardwareType.Cpu))
+                {
+                    Debug.AddMessage($"Hardware: {hardware.Name}");
+                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
+
+                    // Sensor objects which report power values are added to a list so that they can be referenced later.
+                    cpuSensors.Add(sensor);
+                }
+                
+                // read GPU sensors which report power values
+                if (sensor.Name.Contains("GPU Package") && sensor.SensorType.Equals(SensorType.Power))
+                {
+                    Debug.AddMessage($"Hardware: {hardware.Name}");
+                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
+
+                    // Sensor objects which report power values are added to a list so that they can be referenced later.
+                    gpuSensors.Add(sensor);
                 }
             }
         }
@@ -136,9 +164,26 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         }
 
         Power = power; // update the front end power value only with the value read from sensors
-        var currentDateTime = DateTimeOffset.Now;
-        // methods to update the daily and hourly power usage
+
+        // GPU power usage
+        double gpuPower = 0;
+        foreach (ISensor sensor in gpuSensors)
+        {
+            gpuPower += sensor.Value ?? 0;
+        }
         
+        GpuPower = gpuPower;
+        
+        // CPU power usage
+        double cpuPower = 0;
+        foreach (ISensor sensor in cpuSensors)
+        {
+            cpuPower += sensor.Value ?? 0;
+        }
+        CpuPower = cpuPower;
+        
+        // methods to update the daily and hourly power usage
+        var currentDateTime = DateTimeOffset.Now;
         // TODO: record carbon emissions
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
