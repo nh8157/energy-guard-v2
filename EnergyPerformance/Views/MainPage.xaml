@@ -76,9 +76,9 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Grid Margin="0 0 0 20">
+            <Grid Margin="0 0 0 5">
                 <!--{ThemeResource ControlAltFillColorTertiaryBrush}-->
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="200" Height="200" Value="{x:Bind ViewModel.BudgetUsedPercent, Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.BudgetUsedPercent, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.BudgetUsedPercent, Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.BudgetUsedPercent, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock  VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.BudgetUsedPercent, Converter={StaticResource BudgetStringConverter}, Mode=OneWay}" />
@@ -87,7 +87,7 @@
                     <TextBlock x:Uid="HomeBudgetProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
-            <Grid>
+            <Grid Margin="0 0 0 5">
                 <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
@@ -97,7 +97,7 @@
                     <TextBlock x:Uid="HomeCpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
-            <Grid>
+            <Grid Margin="0 0 0 5">
                 <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
