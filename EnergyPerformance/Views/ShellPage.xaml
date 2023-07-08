@@ -36,13 +36,19 @@
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}" TabFocusNavigation="Cycle">
             <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Home" x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MainViewModel">
+                <NavigationViewItem x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MainViewModel">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/electric-plug-icon.png"></BitmapIcon>
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <!---Add CO2 Icon - Placeholder Navigation Item for the time being-->
-                <NavigationViewItem Icon="World" x:Uid="Shell_CarbonUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
+                <NavigationViewItem Icon="World" x:Uid="Shell_CarbonUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.SettingsViewModel">
                 </NavigationViewItem>
                 <!---System Icon - Placeholder Navigation Item for the time being-->
-                <NavigationViewItem Icon="GoToStart" x:Uid="Shell_SystemUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
+                <NavigationViewItem x:Uid="Shell_SystemUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/screen-icon.png"></BitmapIcon>
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
                 </NavigationViewItem>
