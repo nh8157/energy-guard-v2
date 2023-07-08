@@ -41,14 +41,16 @@
                         <BitmapIcon UriSource="ms-appx:///Assets/electric-plug-icon.png"></BitmapIcon>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Icon="World" x:Uid="CarbonEmission" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.CarbonEmissionViewModel">
+                
+                <NavigationViewItem Icon="World" x:Uid="CarbonEmission" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.SettingsViewModel">
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Uid="PowerConsumption" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.CarbonEmissionViewModel">
+                <NavigationViewItem x:Uid="PowerConsumption" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
                     <NavigationViewItem.Icon>
                         <BitmapIcon UriSource="ms-appx:///Assets/screen-icon.png"></BitmapIcon>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
+                
                 <NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
                 </NavigationViewItem>
 

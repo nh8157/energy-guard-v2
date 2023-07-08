@@ -127,13 +127,13 @@
     <value>Power Consumption</value>
   </data>
   <data name="Shell_EnergyUsage.Content" xml:space="preserve">
-    <value>Energy Usage</value>
+    <value>Metrics Calendar</value>
   </data>
   <data name="CarbonEmission.Content" xml:space="preserve">
     <value>Carbon Emission</value>
   </data>
   <data name="PowerConsumption.Content" xml:space="preserve">
-    <value>System Report</value>
+    <value>System Monitor</value>
   </data>
   <data name="Shell_Tips.Content" xml:space="preserve">
     <value>Tips</value>
