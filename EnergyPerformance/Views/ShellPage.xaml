@@ -36,10 +36,25 @@
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}" TabFocusNavigation="Cycle">
             <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Home" x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MainViewModel">
+                <NavigationViewItem x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MainViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC4A;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                <NavigationViewItem x:Uid="CarbonEmission" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.CarbonEmissionViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC0A;"/>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="PowerConsumption" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.CarbonEmissionViewModel">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE770;"/>
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 <NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
                 </NavigationViewItem>
+
             </NavigationView.MenuItems>
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

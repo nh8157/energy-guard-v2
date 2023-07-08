@@ -26,6 +26,9 @@
     <DefaultLanguage>en-GB</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="Assets\flash.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
 
