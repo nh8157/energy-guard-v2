@@ -124,7 +124,7 @@
     <value>EnergyGuard</value>
   </data>
   <data name="Shell_Main.Content" xml:space="preserve">
-    <value>Home</value>
+    <value>Power Consumption</value>
   </data>
   <data name="Shell_EnergyUsage.Content" xml:space="preserve">
     <value>Energy Usage</value>
@@ -133,7 +133,7 @@
     <value>Carbon Emission</value>
   </data>
   <data name="PowerConsumption.Content" xml:space="preserve">
-    <value>Power Consumption</value>
+    <value>System Report</value>
   </data>
   <data name="Shell_Tips.Content" xml:space="preserve">
     <value>Tips</value>
