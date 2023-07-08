@@ -38,6 +38,12 @@
             <NavigationView.MenuItems>
                 <NavigationViewItem Icon="Home" x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MainViewModel">
                 </NavigationViewItem>
+                <!---Add CO2 Icon - Placeholder Navigation Item for the time being-->
+                <NavigationViewItem Icon="World" x:Uid="Shell_CarbonUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
+                </NavigationViewItem>
+                <!---System Icon - Placeholder Navigation Item for the time being-->
+                <NavigationViewItem Icon="GoToStart" x:Uid="Shell_SystemUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
+                </NavigationViewItem>
                 <NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
                 </NavigationViewItem>
             </NavigationView.MenuItems>
