@@ -18,10 +18,10 @@
     <GridView x:Name="ContentArea" HorizontalAlignment="Center" VerticalAlignment="Center" SelectionMode="None" >
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Vertical">
-                <TextBlock x:Uid="HomePowerUseTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
+                <TextBlock x:Uid="CarbonEmissionTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
                 <TextBlock Style="{StaticResource DisplayTextBlockStyle}">
                         <Run Text="{x:Bind ViewModel.Power,Mode=OneWay, Converter={StaticResource PowerUsageStringConverter}}"/>
-                        <Run x:Uid="PowerUnit"/>
+                        <Run x:Uid="EmissionsSymbol"/>
                 </TextBlock>
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="0 10">
@@ -29,16 +29,16 @@
                 <winUi:SettingsCard FontSize="20" x:Uid="HomeLastWeekCard" CornerRadius="15" Margin="0 10">
                     <StackPanel>
                         <TextBlock FontSize="20" Text="">
-                                    <Run x:Uid="CurrencySymbol"/>
-                                    <Run Text="{x:Bind ViewModel.CostPreviousWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run Text="{x:Bind ViewModel.EmissionsPreviousWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
                     </StackPanel>
                 </winUi:SettingsCard>
                 <winUi:SettingsCard FontSize="20" x:Uid="HomeThisWeekCard" CornerRadius="15" Margin="0 10">
                     <StackPanel>
                         <TextBlock FontSize="20" Text="">
-                                    <Run x:Uid="CurrencySymbol"/>
-                                    <Run Text="{x:Bind ViewModel.CostThisWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run Text="{x:Bind ViewModel.EmissionsThisWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
                     </StackPanel>
                 </winUi:SettingsCard>

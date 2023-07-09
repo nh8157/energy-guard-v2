@@ -41,6 +41,9 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     /// </summary>
     public float CostPreviousWeek => _model.GetCostForPreviousWeek();
 
+    public float EmissionsThisWeek = 0;
+    public float EmissionsPreviousWeek = 10;
+
 
     /// <summary>
     /// Gets the selected mode from the settings service.
