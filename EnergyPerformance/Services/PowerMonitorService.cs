@@ -19,18 +19,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
     private readonly PowerInfo _powerInfo;
-    private readonly CarbonIntensityInfo _carbonIntensityInfo;
 
     public double Power
     {
         get => _powerInfo.Power;
         private set => _powerInfo.Power = value;
-    }
-
-    public double CarbonIntensity
-    {
-        get => _carbonIntensityInfo.CarbonIntensity;
-        private set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
     /// <summary>
@@ -61,11 +54,10 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// </summary>
     /// <param name="model"><see cref="EnergyUsageModel"/> to contain data for the accumulated power usage of the system</param>
     /// <param name="powerInfo"><see cref="PowerInfo"/> to contain live power data for the system, for the view.</param>
-    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, CarbonIntensityInfo carbonIntensityInfo)
+    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo)
     {
         _model = model;
         _powerInfo = powerInfo;
-        _carbonIntensityInfo = carbonIntensityInfo;
         // configure computer object to monitor hardware components
         computer = new Computer
         {
@@ -148,7 +140,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         //Debug.WriteLine(CarbonIntensity);
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-        double hardwareCarbonEmission = CarbonIntensity * PowerToEnergy(Power);
         await Task.CompletedTask;
     }
 

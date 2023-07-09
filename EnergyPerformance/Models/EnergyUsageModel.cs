@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Core.Helpers;
+using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace EnergyPerformance.Models;
 
@@ -16,6 +18,7 @@ public class EnergyUsageModel
     // initialize default values for fallback in case there is no file or the file is corrupted
     private const double DefaultWeeklyBudget = 2.0;
     private const double DefaultCostPerKwh = 0.34;
+    private readonly CarbonIntensityInfo _carbonIntensityInfo;
 
     private EnergyUsageData _energyUsage;
 
@@ -29,9 +32,17 @@ public class EnergyUsageModel
         get; set;
     }
     
+    public double CarbonIntensity
+    {
+        get => _carbonIntensityInfo.CarbonIntensity;
+        private set => _carbonIntensityInfo.CarbonIntensity = value;
+    }
+
     /// <summary>
     /// The cost per kWh for the user. Returns data loaded from file or default value if file is not found or corrupted.
     /// </summary>
+
+    // We need a way to fetch energy cost live
     public double CostPerKwh
     {
         get
@@ -100,19 +111,37 @@ public class EnergyUsageModel
     }
 
     /// <summary>
+    /// The Accumulated Watts used per app for the current day.
+    /// </summary>
+    public Dictionary<string, double> AccumulatedWattsPerApp
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// The Accumulated Watts used per app for the current hour.
+    /// </summary>
+    public Dictionary<string, double> AccumulatedWattsPerAppHourly
+    {
+        get; set;
+    }
+
+    /// <summary>
     /// Constructor for the EnergyUsageModel, basic initialization is performed here.
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(EnergyUsageFileService fileService)
+    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;
         AccumulatedWatts = 0;
         AccumulatedWattsHourly = 0;
+        AccumulatedWattsPerApp = new Dictionary<string, double>();
+        AccumulatedWattsPerAppHourly = new Dictionary<string, double>();
         _energyFileService = fileService;
         _energyUsage = _energyFileService.EnergyUsage;
-
+        _carbonIntensityInfo = carbonIntensityInfo;
     }
 
 
@@ -279,6 +308,7 @@ public class EnergyUsageModel
 
     }
 
+
     /// <summary>
     /// Converts energy usage value from Ws to kWh.
     /// </summary>
@@ -307,7 +337,6 @@ public class EnergyUsageModel
 
     }
 
-
     /// <summary>
     /// Calculates the cost of energy used in the last hour.
     /// </summary>
@@ -317,6 +346,15 @@ public class EnergyUsageModel
 
     }
 
+    private double GetDailyCarbonEmission()
+    {
+        return GetEnergyUsed() * CarbonIntensity;
+    }
+
+    private double GetHourlyCarbonEmission()
+    {
+        return GetEnergyUsedHourly() * CarbonIntensity;
+    }
 
     /// <summary>
     /// Calculates a daily cost budget based on the weekly budget.
@@ -346,9 +384,11 @@ public class EnergyUsageModel
     /// </summary>
     public void Update()
     {
+        // TODO: Calculate the carbon emission of the entire desktop
         var current = DateTime.Now;
-        var lastMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(), (float)GetDailyCost());
-        var lastMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(), (float)GetHourlyCost());
+        var lastMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(), (float)GetDailyCost(), (float)GetDailyCarbonEmission());
+        var lastMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(), (float)GetHourlyCost(), (float)GetHourlyCarbonEmission());
+
         _energyUsage.LastMeasurement = lastMeasurement;
         
         // update daily logs

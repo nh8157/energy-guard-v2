@@ -28,10 +28,16 @@ public class EnergyUsageLog
         get; set;
     }
 
-    public EnergyUsageLog(DateTime date, float powerUsed, float cost)
+    public float CarbonEmission
+    {
+        get; set;
+    }
+
+    public EnergyUsageLog(DateTime date, float powerUsed, float cost, float carbonEmission = 0)
     {
         Date = date;
         PowerUsed = powerUsed;
         Cost = cost;
+        CarbonEmission = carbonEmission;
     }
 }
