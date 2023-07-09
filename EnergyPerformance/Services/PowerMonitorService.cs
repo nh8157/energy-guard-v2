@@ -1,8 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Diagnostics;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
+using EnergyPerformance.ViewModels;
+using EnergyPerformance.Views;
 using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
@@ -19,6 +22,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
     private readonly PowerInfo _powerInfo;
+    private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
 
     public double Power
@@ -197,6 +202,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.CurrentHour = currentDateTime;
             _model.AccumulatedWattsHourly = power;
         }
+
     }
     private double PowerToEnergy(double power)
     {
