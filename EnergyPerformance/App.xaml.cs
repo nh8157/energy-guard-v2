@@ -106,6 +106,8 @@ public partial class App : Application
             services.AddSingleton<EnergyUsageModel>();
 
             // Views and ViewModels
+            services.AddTransient<CarbonEmissionPage>();
+            services.AddTransient<CarbonEmissionViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
@@ -114,6 +116,7 @@ public partial class App : Application
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
+
             
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
