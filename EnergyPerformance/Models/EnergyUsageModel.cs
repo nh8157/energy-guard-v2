@@ -297,6 +297,12 @@ public class EnergyUsageModel
 
     }
 
+    public double GetEnergyUsed(string proc)
+    {
+        var energyUsed = ConvertWsToKwh(AccumulatedWattsPerApp.GetValueOrDefault(proc, 0));
+        return energyUsed;
+    }
+
     /// <summary>
     /// Calculates the energy used in the last hour.
     /// </summary>
@@ -306,6 +312,12 @@ public class EnergyUsageModel
         var energyUsed = ConvertWsToKwh(AccumulatedWattsHourly);
         return energyUsed;
 
+    }
+
+    private double GetEnergyUsedHourly(string proc)
+    {
+        var energyUsed = ConvertWsToKwh(AccumulatedWattsPerAppHourly.GetValueOrDefault(proc, 0));
+        return energyUsed;
     }
 
 
@@ -334,7 +346,11 @@ public class EnergyUsageModel
     private double GetDailyCost()
     {
         return GetEnergyUsed() * CostPerKwh;
+    }
 
+    private double GetDailyCost(string proc)
+    {
+        return GetEnergyUsed(proc) * CostPerKwh;
     }
 
     /// <summary>
@@ -343,7 +359,11 @@ public class EnergyUsageModel
     private double GetHourlyCost()
     {
         return GetEnergyUsedHourly() * CostPerKwh;
+    }
 
+    private double GetHourlyCost(string proc)
+    {
+        return GetEnergyUsedHourly(proc) * CostPerKwh;
     }
 
     private double GetDailyCarbonEmission()
@@ -351,9 +371,19 @@ public class EnergyUsageModel
         return GetEnergyUsed() * CarbonIntensity;
     }
 
+    private double GetDailyCarbonEmission(string proc)
+    {
+        return GetEnergyUsed(proc) * CarbonIntensity;
+    } 
+
     private double GetHourlyCarbonEmission()
     {
         return GetEnergyUsedHourly() * CarbonIntensity;
+    }
+
+    private double GetHourlyCarbonEmission(string proc)
+    {
+        return GetEnergyUsedHourly(proc) * CarbonIntensity;
     }
 
     /// <summary>
@@ -388,6 +418,15 @@ public class EnergyUsageModel
         var current = DateTime.Now;
         var lastMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(), (float)GetDailyCost(), (float)GetDailyCarbonEmission());
         var lastMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(), (float)GetHourlyCost(), (float)GetHourlyCarbonEmission());
+
+        foreach (var proc in AccumulatedWattsPerApp.Keys)
+        {
+            var appMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
+        }
+        foreach (var proc in AccumulatedWattsPerAppHourly.Keys)
+        {
+            var appMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(proc), (float)GetHourlyCost(proc), (float)GetHourlyCarbonEmission(proc));
+        }
 
         _energyUsage.LastMeasurement = lastMeasurement;
         
