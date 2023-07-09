@@ -29,6 +29,7 @@
     <Content Remove="Assets\flash.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Views\SystemMonitor.xaml" />
     <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
 
@@ -64,6 +65,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\SystemMonitor.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\TrayIconView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
