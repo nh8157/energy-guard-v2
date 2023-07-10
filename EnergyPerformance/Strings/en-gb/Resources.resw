@@ -359,4 +359,10 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="HomeGpuUsageProgressRingLabel.Text" xml:space="preserve">
     <value>GPU Usage</value>
   </data>
+  <data name="CarbonEmissionTitle.Text" xml:space="preserve">
+    <value>Currently emitting:</value>
+  </data>
+  <data name="EmissionsSymbol.Text" xml:space="preserve">
+    <value>gm(s)</value>
+  </data>
 </root>

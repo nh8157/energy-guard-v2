@@ -42,7 +42,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
                 
-                <NavigationViewItem Icon="World" x:Uid="CarbonEmission" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.SettingsViewModel">
+                <NavigationViewItem Icon="World" x:Uid="CarbonEmission" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.CarbonEmissionViewModel">
                 </NavigationViewItem>
 
                 <NavigationViewItem x:Uid="PowerConsumption" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.SystemMonitorViewModel">
