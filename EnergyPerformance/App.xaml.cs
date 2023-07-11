@@ -104,6 +104,8 @@ public partial class App : Application
             services.AddSingleton<LocationInfo>();
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
+            services.AddSingleton<ICarbonIntensityUpdateService,CarbonIntensityUpdateService>();
+
             // ---
 
 

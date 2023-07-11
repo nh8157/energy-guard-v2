@@ -14,10 +14,10 @@ using System.Globalization;
 using IPinfo;
 using IPinfo.Models;
 using System.Net;
-
+using EnergyPerformance.Contracts.Services;
 
 namespace EnergyPerformance.Services;
-class CarbonIntensityUpdateService : BackgroundService
+class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
 {
     private readonly string _ukApiUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(10));
@@ -48,7 +48,10 @@ class CarbonIntensityUpdateService : BackgroundService
         set => _locationInfo.PostCode = value;
     }
 
-    public LocationInfo LocationInfo => _locationInfo;
+    public LocationInfo LocationInfo { 
+        get => _locationInfo;
+        private set => _locationInfo = value;
+    }
 
     public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, IFileService fileService)
     {
@@ -96,7 +99,6 @@ class CarbonIntensityUpdateService : BackgroundService
             Debug.WriteLine("Other countries and regions are currently not supported");
         }
         Debug.WriteLine($"Current carbon intensity: {_carbonIntensityInfo.CarbonIntensity}");
-        App.GetService<DebugModel>().AddMessage($"Current carbon intensity: {_carbonIntensityInfo.CarbonIntensity}");
     }
 
     private async Task FetchLiveCarbonIntensity()
