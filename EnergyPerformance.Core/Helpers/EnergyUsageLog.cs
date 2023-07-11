@@ -40,4 +40,12 @@ public class EnergyUsageLog
         Cost = cost;
         CarbonEmission = carbonEmission;
     }
+
+    public EnergyUsageLog()
+    {
+        Date = DateTime.Now;
+        PowerUsed = 0;
+        Cost = 0;
+        CarbonEmission = 0;
+    }
 }
