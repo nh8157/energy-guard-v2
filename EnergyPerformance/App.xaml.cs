@@ -112,10 +112,13 @@ public partial class App : Application
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
+            services.AddTransient<SystemMonitorViewModel>();
+            services.AddTransient<SystemMonitorPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
+           
 
             
             // Configuration

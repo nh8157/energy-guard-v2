@@ -36,7 +36,7 @@ public partial class SystemMonitorViewModel : ObservableRecipient
     /// </summary>
     private void InitialiseEnergyUsageModel()
     {
-        var model = new PlotModel
+        Model = new PlotModel
         {
             PlotAreaBorderThickness = new OxyThickness(0),
             DefaultFont = "Segoe UI",
@@ -65,9 +65,9 @@ public partial class SystemMonitorViewModel : ObservableRecipient
             LabelPlacement = LabelPlacement.Inside,
             LabelFormatString = "{0:.00}%"
         };
-        model.Series.Add(barSeries);
+        Model.Series.Add(barSeries);
 
-        model.Axes.Add(new CategoryAxis
+        Model.Axes.Add(new CategoryAxis
         {
             Position = AxisPosition.Left,
             Key = "CakeAxis",
@@ -80,6 +80,7 @@ public partial class SystemMonitorViewModel : ObservableRecipient
                 "Carrot cake"
         }
         });
+        Model.InvalidatePlot(true); // call invalidate plot to update the graph
 
 
     }
