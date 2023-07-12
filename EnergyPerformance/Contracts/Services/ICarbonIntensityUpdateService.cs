@@ -13,7 +13,7 @@ public interface ICarbonIntensityUpdateService
     get; 
     }
 
-    public LocationInfo Location
+    public LocationInfo LocationInfo
     {
     get; 
     }
