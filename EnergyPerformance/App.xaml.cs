@@ -85,6 +85,7 @@ public partial class App : Application
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
 
+
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -103,7 +104,10 @@ public partial class App : Application
             services.AddSingleton<LocationInfo>();
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
+            services.AddSingleton<ICarbonIntensityUpdateService,CarbonIntensityUpdateService>();
+
             // ---
+
 
             // Core Services
             services.AddSingleton<IFileService, FileService>();

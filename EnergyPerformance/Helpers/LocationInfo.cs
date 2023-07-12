@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EnergyPerformance.Helpers;
-internal class LocationInfo
+public class LocationInfo
 {
     public string Country
     {
@@ -15,10 +15,15 @@ internal class LocationInfo
     {
         get; set;
     }
-    public LocationInfo(string country = "Great Britain", string postCode = "WC1E")
+    public LocationInfo(string country, string postCode)
     {
         // UCL's address is set as the default address
         Country = country;
         PostCode = postCode;
+    }
+    public LocationInfo()
+    {
+        Country = "Unknown";
+        PostCode = "Unknown";
     }
 }

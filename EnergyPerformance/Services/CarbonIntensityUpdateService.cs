@@ -5,14 +5,30 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
+using EnergyPerformance.Models;
+using EnergyPerformance.Core.Contracts.Services;
+using Windows.Devices.Geolocation;
+using Windows.Services.Maps;
+using System.Diagnostics.Metrics;
+using System.Globalization;
+using IPinfo;
+using IPinfo.Models;
+using System.Net;
+using EnergyPerformance.Contracts.Services;
 
 namespace EnergyPerformance.Services;
-class CarbonIntensityUpdateService : BackgroundService
+class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
 {
     private readonly string _ukApiUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(10));
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
-    private readonly LocationInfo _locationInfo;
+    private LocationInfo _locationInfo;
+    private readonly IFileService _fileService;
+    private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
+    private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private readonly string IPInfoToken;
+    private string ip;
+    private readonly IPinfoClient client;
 
     public double CarbonIntensity
     {
@@ -20,14 +36,33 @@ class CarbonIntensityUpdateService : BackgroundService
         set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
-    public string Country => _locationInfo.Country;
+    public string Country
+    {
+        get => _locationInfo.Country;
+        set => _locationInfo.Country = value;
+    }
 
-    public string PostCode => _locationInfo.PostCode;
+    public string PostCode
+    {
+        get => _locationInfo.PostCode;
+        set => _locationInfo.PostCode = value;
+    }
 
-    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo)
+    public LocationInfo LocationInfo { 
+        get => _locationInfo;
+        private set => _locationInfo = value;
+    }
+
+    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, IFileService fileService)
     {
         _carbonIntensityInfo = carbonIntensityInfo;
-        _locationInfo = locationInfo;
+        _locationInfo = new LocationInfo();
+        _fileService = fileService;
+        IPInfoToken = "45f7eb1ccaffe7";
+        client = new IPinfoClient.Builder()
+        .AccessToken(IPInfoToken)
+        .Build();
+        ip = string.Empty;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,11 +77,24 @@ class CarbonIntensityUpdateService : BackgroundService
     private async Task DoAsync()
     {
         Debug.WriteLine("Retrieving live carbon intensity");
-        // Only supports retrieving carbon intensity within the UK
-        if (Country == "Great Britain")
+        IPinfoClient client = new IPinfoClient.Builder()
+        .AccessToken(IPInfoToken)
+        .Build();
+        if(ip == null)
+        {
+            ip = await GetIPAddress();
+        }
+
+        if (_locationInfo.Country=="Unknown"|| _locationInfo.PostCode=="Unknown")
+        {
+            App.GetService<DebugModel>().AddMessage("Getting Location");
+            await GetLocation();
+        }
+        if (Country == "United Kingdom")
         {
             await FetchLiveCarbonIntensity();
-        } else
+        }
+        else
         {
             Debug.WriteLine("Other countries and regions are currently not supported");
         }
@@ -87,5 +135,31 @@ class CarbonIntensityUpdateService : BackgroundService
         {
             Debug.WriteLine("Cannot fetch data", e);
         }
+    }
+    public async Task GetLocation()
+    {
+        IPResponse ipResponse = await client.IPApi.GetDetailsAsync(ip);
+        string country = ipResponse.CountryName;
+        string postal = ipResponse.Postal;
+        App.GetService<DebugModel>().AddMessage("Location Updated");
+        Country = country;
+        PostCode = postal;
+    }
+
+    static async Task<string> GetIPAddress()
+    {
+        string apiUrl = "https://ipinfo.io/ip";
+
+        using (HttpClient client = new HttpClient())
+        {
+            HttpResponseMessage response = await client.GetAsync(apiUrl);
+            if (response.IsSuccessStatusCode)
+            {
+                string ipAddress = await response.Content.ReadAsStringAsync();
+
+                return ipAddress.Trim();
+            }
+        }
+        return string.Empty;
     }
 }
