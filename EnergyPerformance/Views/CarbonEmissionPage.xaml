@@ -88,7 +88,7 @@
                 </StackPanel>
             </Grid>
             <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="200" Height="200" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
@@ -98,7 +98,7 @@
                 </StackPanel>
             </Grid>
             <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="200" Height="200" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
