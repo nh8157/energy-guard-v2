@@ -10,8 +10,10 @@ public interface ICarbonIntensityUpdateService
 {
     public double CarbonIntensity
     {
-    get; }
-    public LocationInfo LocationInfo
+    get; 
+    }
+
+    public LocationInfo Location
     {
     get; 
     }

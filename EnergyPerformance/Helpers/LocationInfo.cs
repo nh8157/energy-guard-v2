@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace EnergyPerformance.Helpers;
-internal class LocationInfo
+public class LocationInfo
 {
     public string Country
     {
