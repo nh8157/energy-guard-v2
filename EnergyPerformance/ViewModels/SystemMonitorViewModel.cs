@@ -45,22 +45,25 @@ public partial class SystemMonitorViewModel : ObservableRecipient
         //generate a random percentage distribution between the 5
         //cake-types (see axis below)
         var rand = new Random();
-        double[] cakePopularity = new double[5];
-        for (int i = 0; i < 5; ++i)
+        double[] powerUsage = new double[5]
         {
-            cakePopularity[i] = rand.NextDouble();
-        }
-        var sum = cakePopularity.Sum();
+            5.00,
+            20.00,
+            40.00,
+            20.00,
+            15.00
+        };
+        var sum = powerUsage.Sum();
 
         var barSeries = new BarSeries
         {
             ItemsSource = new List<BarItem>(new[]
                 {
-                new BarItem{ Value = (cakePopularity[0] / sum * 100) },
-                new BarItem{ Value = (cakePopularity[1] / sum * 100) },
-                new BarItem{ Value = (cakePopularity[2] / sum * 100) },
-                new BarItem{ Value = (cakePopularity[3] / sum * 100) },
-                new BarItem{ Value = (cakePopularity[4] / sum * 100) }
+                new BarItem{ Value = (powerUsage[0] / sum * 100) },
+                new BarItem{ Value = (powerUsage[1] / sum * 100) },
+                new BarItem{ Value = (powerUsage[2] / sum * 100) },
+                new BarItem{ Value = (powerUsage[3] / sum * 100) },
+                new BarItem{ Value = (powerUsage[4] / sum * 100) }
         }),
             LabelPlacement = LabelPlacement.Inside,
             LabelFormatString = "{0:.00}%"
@@ -73,11 +76,11 @@ public partial class SystemMonitorViewModel : ObservableRecipient
             Key = "CakeAxis",
             ItemsSource = new[]
                 {
-                "Apple cake",
-                "Baumkuchen",
-                "Bundt Cake",
-                "Chocolate cake",
-                "Carrot cake"
+                "File Explorer",
+                "Steam",
+                "Chrome",
+                "Spotify",
+                "Word"
         }
         });
         Model.InvalidatePlot(true); // call invalidate plot to update the graph
