@@ -365,4 +365,13 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="EmissionsSymbol.Text" xml:space="preserve">
     <value>gm(s)</value>
   </data>
+  <data name="CPUCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>CPU Emissions</value>
+  </data>
+  <data name="GPUCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>GPU Emissions</value>
+  </data>
+  <data name="TotalCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>Total Emissions</value>
+  </data>
 </root>
