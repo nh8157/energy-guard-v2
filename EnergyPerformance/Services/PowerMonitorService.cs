@@ -140,6 +140,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         //Debug.WriteLine(CarbonIntensity);
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
+        Debug.WriteLine("");
         await Task.CompletedTask;
     }
 
@@ -159,6 +160,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         if (currentDateTime.DateTime.Date == _model.CurrentDay.DateTime.Date)
         {
             _model.AccumulatedWatts += power;
+            Debug.WriteLine($"Daily Watts: {_model.AccumulatedWatts}");
         }
         // set date to the new day, and reset acc. watts the power just measured
         else
@@ -178,9 +180,10 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             power = 0;
         }
         // accumulate watts if the same hour
-        if (currentDateTime.DateTime.Hour == _model.CurrentDay.DateTime.Hour)
+        if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
             _model.AccumulatedWattsHourly += power;
+            Debug.WriteLine($"Hourly Watts: {_model.AccumulatedWattsHourly}");
         }
         // set time to the current time, and reset acc. watts to the power just measured
         else
@@ -189,9 +192,4 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.AccumulatedWattsHourly = power;
         }
     }
-    private double PowerToEnergy(double power)
-    {
-        return power / 1000;
-    }
-
 }

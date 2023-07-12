@@ -386,33 +386,38 @@ public class EnergyUsageModel
     public void Update()
     {
         var current = DateTime.Now;
-        var lastMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(), (float)GetDailyCost(), (float)GetDailyCarbonEmission());
-        var lastMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(), (float)GetHourlyCost(), (float)GetHourlyCarbonEmission());
-        Debug.WriteLine($"Power: {0}", lastMeasurement.PowerUsed);
+        var energyUsedCurr = GetEnergyUsed();
+        var energyUsedHourlyCurr = GetEnergyUsedHourly();
 
         // Update daily log
         if (!(_energyUsage.Diaries.Count > 0) || _energyUsage.Diaries.Last().Date.Date < current.Date)
             _energyUsage.Diaries.Add(new EnergyUsageDiary());
 
         var lastDiary = _energyUsage.Diaries.Last();
-        lastDiary.DailyUsage = lastMeasurement;
+
+        var lastDailyUsage = lastDiary.DailyUsage;
+        var energyUsedPrev = lastDailyUsage.PowerUsed;
+        lastDailyUsage.CarbonEmission += (float)((energyUsedCurr - energyUsedPrev) * CarbonIntensity);
+        lastDailyUsage.Cost += (float)((energyUsedCurr - energyUsedPrev) * CostPerKwh);
+        lastDailyUsage.PowerUsed = (float)energyUsedCurr;
 
         // Update hourly log
         if (!(lastDiary.HourlyUsage.Count > 0) || lastDiary.HourlyUsage.Last().Date.Hour < current.Hour)
             lastDiary.HourlyUsage.Add(new EnergyUsageLog());
 
-        lastDiary.HourlyUsage[^1] = lastMeasurementHourly;
-
-        float energySum = 0;
-        foreach (var log in lastDiary.HourlyUsage)
-            energySum += log.PowerUsed;
-
-        Debug.WriteLine($"Sum of power: {0}", energySum);
+        var lastHourlyUsage = lastDiary.HourlyUsage.Last();
+        var energyUsedHourlyPrev = lastHourlyUsage.PowerUsed;
+        lastHourlyUsage.CarbonEmission += (float)((energyUsedHourlyCurr - energyUsedHourlyPrev) * CarbonIntensity);
+        lastHourlyUsage.Cost += (float)((energyUsedHourlyCurr - energyUsedHourlyPrev) * CostPerKwh);
+        lastHourlyUsage.PowerUsed = (float)energyUsedHourlyCurr;
         
         // Update per process usage
         foreach (var proc in AccumulatedWattsPerApp.Keys)
             lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
 
+        Debug.WriteLine($"Recorded daily usage: {lastDiary.DailyUsage.PowerUsed}");
+        Debug.WriteLine($"Recorded hourly usage: {lastDiary.HourlyUsage.Last().PowerUsed}");
+        Debug.WriteLine(lastDiary.DailyUsage.PowerUsed - lastDiary.HourlyUsage.Last().PowerUsed);
         Debug.WriteLine("Model updated.");
 
     }
