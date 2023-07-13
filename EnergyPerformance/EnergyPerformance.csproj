@@ -26,6 +26,8 @@
     <DefaultLanguage>en-GB</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="database.db" />
+    <None Remove="database.sqlite3" />
     <None Remove="Views\ProcessesPage.xaml" />
     <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
@@ -44,6 +46,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
     <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     <PackageReference Include="WinUIEx" Version="1.8.0" />
   </ItemGroup>

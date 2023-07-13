@@ -1,5 +1,7 @@
-﻿using System.Diagnostics;
+﻿using System.Data.SQLite;
+using System.Diagnostics;
 using System.Globalization;
+using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
@@ -19,6 +21,7 @@ public class EnergyUsageModel
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
 
     private EnergyUsageData _energyUsage;
+    private readonly IDatabaseService _databaseService;
 
 
     public DateTimeOffset CurrentDay
@@ -121,7 +124,7 @@ public class EnergyUsageModel
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo)
+    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, IDatabaseService databaseService)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;
@@ -131,6 +134,7 @@ public class EnergyUsageModel
         _energyFileService = fileService;
         _energyUsage = _energyFileService.EnergyUsage;
         _carbonIntensityInfo = carbonIntensityInfo;
+        _databaseService = databaseService;
     }
 
 
@@ -142,6 +146,7 @@ public class EnergyUsageModel
     {
         // Initialize energyFileService
         _energyUsage = await _energyFileService.ReadFileAsync();
+        await Task.Run(() => _databaseService.InitializeDB());
         var current = DateTime.Now;
         if (_energyUsage.Diaries.Count > 0 && _energyUsage.Diaries.Last().Date.Date == current.Date)
         {

@@ -15,6 +15,10 @@ using IPinfo;
 using IPinfo.Models;
 using System.Net;
 using EnergyPerformance.Contracts.Services;
+using System.Data.SQLite;
+using System.Data.Entity;
+using Microsoft.SqlServer.Server;
+using EnergyPerformance.Core.Helpers;
 
 namespace EnergyPerformance.Services;
 class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
@@ -77,17 +81,13 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     private async Task DoAsync()
     {
         Debug.WriteLine("Retrieving live carbon intensity");
-        IPinfoClient client = new IPinfoClient.Builder()
-        .AccessToken(IPInfoToken)
-        .Build();
-        if(ip == null)
+        if (ip == null)
         {
             ip = await GetIPAddress();
         }
 
         if (_locationInfo.Country=="Unknown"|| _locationInfo.PostCode=="Unknown")
         {
-            App.GetService<DebugModel>().AddMessage("Getting Location");
             await GetLocation();
         }
         if (Country == "United Kingdom")
@@ -162,4 +162,5 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         }
         return string.Empty;
     }
+
 }

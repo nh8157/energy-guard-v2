@@ -105,6 +105,7 @@ public partial class App : Application
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
             services.AddSingleton<ICarbonIntensityUpdateService,CarbonIntensityUpdateService>();
+            services.AddSingleton<IDatabaseService,DatabaseService>();
 
             // ---
 
