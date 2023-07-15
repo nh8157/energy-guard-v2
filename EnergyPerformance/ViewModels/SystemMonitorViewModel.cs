@@ -5,6 +5,8 @@ using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot;
+using CLI;
+using System.Diagnostics;
 
 namespace EnergyPerformance.ViewModels;
 public partial class SystemMonitorViewModel : ObservableRecipient
@@ -14,6 +16,8 @@ public partial class SystemMonitorViewModel : ObservableRecipient
 
     [ObservableProperty]
     public PlotModel model;
+
+    public PlotController controller;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EnergyUsageViewModel"/> class.
@@ -41,6 +45,9 @@ public partial class SystemMonitorViewModel : ObservableRecipient
             PlotAreaBorderThickness = new OxyThickness(0),
             DefaultFont = "Segoe UI",
         };
+
+        Console.WriteLine("123");
+        Debug.WriteLine("123");
 
         //generate a random percentage distribution between the 5
         //cake-types (see axis below)

@@ -62,6 +62,8 @@ public partial class MainViewModel : ObservableRecipient
         // set hardware info containers
         _powerInfo = powerInfo;
         _cpuInfo = cpu;
+
+        Console.WriteLine("12333");
         
         // set services
         _settingsService = settingsService;

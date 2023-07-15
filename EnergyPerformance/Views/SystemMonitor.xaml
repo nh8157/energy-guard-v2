@@ -20,7 +20,8 @@
             </labs:SettingsCard>-->
             <Grid Margin="0 20">
 
-                <oxy:PlotView Model="{x:Bind ViewModel.Model, Mode=OneWay}" Background="Transparent" MinHeight="600"/>
+                <oxy:PlotView Model="{x:Bind ViewModel.Model, Mode=OneWay}" Background="Transparent" MinHeight="600">
+                </oxy:PlotView>
 
             </Grid>
         </StackPanel>
