@@ -76,9 +76,9 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Grid Margin="0 0 0 5">
+            <Grid>
                 <!--{ThemeResource ControlAltFillColorTertiaryBrush}-->
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.BudgetUsedPercent, Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.BudgetUsedPercent, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.Power, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
@@ -87,8 +87,8 @@
                     <TextBlock x:Uid="TotalCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
-            <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+            <Grid>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
@@ -97,8 +97,8 @@
                     <TextBlock x:Uid="CPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
-            <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+            <Grid>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
