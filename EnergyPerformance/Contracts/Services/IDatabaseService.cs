@@ -4,16 +4,23 @@ using EnergyPerformance.Core.Helpers;
 namespace EnergyPerformance.Contracts.Services;
 public interface IDatabaseService
 {
-    public SQLiteConnection CreateConnection();
-
     public void InitializeDB();
-    public string InsertNewLog(EnergyUsageLog data, string type);
 
-    public EnergyUsageLog ReadFromLogByID(string id);
+    public Task<string> InsertDailyLog(EnergyUsageLog data);
 
-    public void InsertHourlyLog(int hour, EnergyUsageLog data);
+    public Task InsertHourlyLog(int hour, EnergyUsageLog data);
 
-    public List<EnergyUsageLog> ReadFromHourlyLogByDay(string date);
+    public Task InsertProgramLog(string programID, EnergyUsageLog data);
+
+    public Task InsertEnergyDiary(EnergyUsageDiary Diary);
+
+    public EnergyUsageLog RetrieveDailyLogByDate(string date);
+
+    public List<EnergyUsageLog> RetrieveHourlyLogByDate(string date);
+
+    public Dictionary<string, EnergyUsageLog> RetrieveProgramLogByDate(string date);
+
+    public EnergyUsageDiary RetrieveDiaryByDate(string date);
 
     public void RetrieveAllDiaries();
 }
