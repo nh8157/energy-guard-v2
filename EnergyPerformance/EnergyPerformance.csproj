@@ -26,6 +26,7 @@
     <DefaultLanguage>en-GB</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\ProcessesPage.xaml" />
     <Content Remove="Assets\flash.png" />
   </ItemGroup>
   <ItemGroup>

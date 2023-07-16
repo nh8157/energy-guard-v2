@@ -21,6 +21,7 @@ public class PageService : IPageService
         Configure<SettingsViewModel, SettingsPage>();
         Configure<SystemMonitorViewModel, SystemMonitorPage>();
         Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
+        Configure<DebugViewModel, DebugPage>();
     }
 
     public Type GetPageType(string key)

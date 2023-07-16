@@ -135,6 +135,9 @@
   <data name="PowerConsumption.Content" xml:space="preserve">
     <value>System Monitor</value>
   </data>
+  <data name="Shell_Debug.Content" xml:space="preserve">
+      <value>Debug Messages</value>
+  </data>
   <data name="Shell_Tips.Content" xml:space="preserve">
     <value>Tips</value>
   </data>
