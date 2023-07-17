@@ -106,7 +106,7 @@ public partial class App : Application
             services.AddHostedService<CarbonIntensityUpdateService>();
             services.AddSingleton<ICarbonIntensityUpdateService, CarbonIntensityUpdateService>();
             services.AddSingleton<ILocationService, LocationService>();
-            services.AddSingleton<IDatabaseService ,DatabaseService>();
+            services.AddSingleton<IDatabaseService, DatabaseService>();
 
             // ---
 
