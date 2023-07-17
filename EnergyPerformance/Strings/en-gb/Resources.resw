@@ -136,7 +136,7 @@
     <value>System Monitor</value>
   </data>
   <data name="Shell_Debug.Content" xml:space="preserve">
-      <value>Debug Messages</value>
+    <value>Debug Messages</value>
   </data>
   <data name="Shell_Tips.Content" xml:space="preserve">
     <value>Tips</value>
@@ -376,5 +376,11 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="TotalCarbonEmissionLabel.Text" xml:space="preserve">
     <value>Total Emissions</value>
+  </data>
+  <data name="PersonaCustomisation.Content" xml:space="preserve">
+    <value>Persona Customisation</value>
+  </data>
+  <data name="CustomisePersonaLabel.Text" xml:space="preserve">
+    <value>Customising Persona for:</value>
   </data>
 </root>

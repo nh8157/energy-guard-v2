@@ -53,6 +53,13 @@
                 
                 <NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
                 </NavigationViewItem>
+
+                <NavigationViewItem x:Uid="PersonaCustomisation" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.PersonaCustomisationViewModel">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/spanner-icon.png"></BitmapIcon>
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+                
                 <NavigationViewItem Icon="Zoom" x:Uid="Shell_Debug" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.DebugViewModel">
                 </NavigationViewItem>
             </NavigationView.MenuItems>

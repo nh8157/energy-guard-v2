@@ -26,6 +26,7 @@
     <DefaultLanguage>en-GB</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Views\PersonaCustomisationPage.xaml" />
     <None Remove="Views\ProcessesPage.xaml" />
     <Content Remove="Assets\flash.png" />
   </ItemGroup>
@@ -66,6 +67,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\PersonaCustomisationPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\SystemMonitor.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>

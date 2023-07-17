@@ -51,7 +51,6 @@ public partial class SystemMonitorViewModel : ObservableRecipient
 
         //generate a random percentage distribution between the 5
         //cake-types (see axis below)
-        var rand = new Random();
         double[] powerUsage = new double[5]
         {
             5.00,

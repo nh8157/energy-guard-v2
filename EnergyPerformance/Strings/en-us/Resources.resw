@@ -377,4 +377,10 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="TotalCarbonEmissionLabel.Text" xml:space="preserve">
     <value>Total Emissions</value>
   </data>
+  <data name="PersonaCustomisation.Content" xml:space="preserve">
+    <value>Persona Customization</value>
+  </data>
+  <data name="CustomisePersonaLabel.Text" xml:space="preserve">
+    <value>Customizing Persona for:</value>
+  </data>
 </root>

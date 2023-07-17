@@ -117,6 +117,8 @@ public partial class App : Application
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
+            services.AddTransient<PersonaCustomisationViewModel>();
+            services.AddTransient<PersonaCustomisationPage>();
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();
             services.AddTransient<MainViewModel>();
