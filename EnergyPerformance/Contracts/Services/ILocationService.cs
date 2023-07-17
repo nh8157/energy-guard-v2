@@ -6,11 +6,7 @@ using System.Threading.Tasks;
 using EnergyPerformance.Helpers;
 
 namespace EnergyPerformance.Contracts.Services;
-public interface ICarbonIntensityUpdateService
+public interface ILocationService
 {
-    public double CarbonIntensity
-    {
-        get;
-    }
-
+    public Task<LocationInfo> GetLocationInfo();
 }

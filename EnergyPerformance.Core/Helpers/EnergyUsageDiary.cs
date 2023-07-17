@@ -1,4 +1,6 @@
-﻿namespace EnergyPerformance.Core.Helpers;
+﻿using System.Linq;
+
+namespace EnergyPerformance.Core.Helpers;
 public class EnergyUsageDiary
 {
     public DateTime Date;
@@ -24,6 +26,22 @@ public class EnergyUsageDiary
     public Dictionary<string, EnergyUsageLog> PerProcUsage
     {
         get; set;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj is EnergyUsageDiary))
+        {
+            return false;
+        }
+        return this.Date == ((EnergyUsageDiary)obj).Date &&
+            this.DailyUsage.Equals(((EnergyUsageDiary)obj).DailyUsage) &&
+            this.HourlyUsage.SequenceEqual(((EnergyUsageDiary)obj).HourlyUsage) &&
+            this.PerProcUsage.SequenceEqual(((EnergyUsageDiary)obj).PerProcUsage);
     }
 
     public EnergyUsageDiary(DateTime date, EnergyUsageLog dailyLog, List<EnergyUsageLog> hourlyLog, Dictionary<string, EnergyUsageLog> perProcLog)

@@ -33,6 +33,22 @@ public class EnergyUsageLog
         get; set;
     }
 
+    public override bool Equals(object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj is EnergyUsageLog))
+        {
+            return false;
+        }
+        return this.Date == ((EnergyUsageLog)obj).Date &&
+            this.PowerUsed == ((EnergyUsageLog)obj).PowerUsed &&
+            this.Cost == ((EnergyUsageLog)obj).Cost &&
+            this.CarbonEmission == ((EnergyUsageLog)obj).CarbonEmission;
+    }
+
     public EnergyUsageLog(DateTime date, float powerUsed, float cost, float carbonEmission = 0)
     {
         Date = date;

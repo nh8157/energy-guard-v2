@@ -1,10 +1,9 @@
-﻿using System.Data.SQLite;
-using EnergyPerformance.Core.Helpers;
+﻿using EnergyPerformance.Core.Helpers;
 
 namespace EnergyPerformance.Contracts.Services;
 public interface IDatabaseService
 {
-    public void InitializeDB();
+    public Task InitializeDB();
 
     public Task<string> InsertDailyLog(EnergyUsageLog data);
 
@@ -14,6 +13,8 @@ public interface IDatabaseService
 
     public Task InsertEnergyDiary(EnergyUsageDiary Diary);
 
+    public Task SaveEnergyData(EnergyUsageData data);
+
     public EnergyUsageLog RetrieveDailyLogByDate(string date);
 
     public List<EnergyUsageLog> RetrieveHourlyLogByDate(string date);
@@ -22,5 +23,7 @@ public interface IDatabaseService
 
     public EnergyUsageDiary RetrieveDiaryByDate(string date);
 
-    public void RetrieveAllDiaries();
+    public List<EnergyUsageDiary> RetrieveAllDiaries();
+
+    public Task<EnergyUsageData> LoadUsageData();
 }

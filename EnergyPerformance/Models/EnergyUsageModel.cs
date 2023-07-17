@@ -32,7 +32,7 @@ public class EnergyUsageModel
     {
         get; set;
     }
-    
+
     public double CarbonIntensity
     {
         get => _carbonIntensityInfo.CarbonIntensity;
@@ -53,7 +53,8 @@ public class EnergyUsageModel
             if (!double.IsNaN(_energyUsage.CostPerKwh) && _energyUsage.CostPerKwh > 0)
             {
                 cost = _energyUsage.CostPerKwh;
-            } else
+            }
+            else
             {
                 _energyUsage.CostPerKwh = cost;
             }
@@ -80,7 +81,8 @@ public class EnergyUsageModel
             if (!double.IsNaN(_energyUsage.WeeklyBudget) && _energyUsage.WeeklyBudget > 0)
             {
                 budget = _energyUsage.WeeklyBudget;
-            } else
+            }
+            else
             {
                 _energyUsage.WeeklyBudget = budget;
             }
@@ -132,7 +134,7 @@ public class EnergyUsageModel
         AccumulatedWattsHourly = 0;
         AccumulatedWattsPerApp = new Dictionary<string, double>();
         _energyFileService = fileService;
-        _energyUsage = _energyFileService.EnergyUsage;
+        _energyUsage = new EnergyUsageData();
         _carbonIntensityInfo = carbonIntensityInfo;
         _databaseService = databaseService;
     }
@@ -145,8 +147,8 @@ public class EnergyUsageModel
     public async Task InitializeAsync()
     {
         // Initialize energyFileService
-        _energyUsage = await _energyFileService.ReadFileAsync();
-        await Task.Run(() => _databaseService.InitializeDB());
+        await _databaseService.InitializeDB();
+        _energyUsage = await _databaseService.LoadUsageData();
         var current = DateTime.Now;
         if (_energyUsage.Diaries.Count > 0 && _energyUsage.Diaries.Last().Date.Date == current.Date)
         {
@@ -171,7 +173,7 @@ public class EnergyUsageModel
     {
         Update(); // update the model before saving.
         Debug.WriteLine("Saving model.");
-        await _energyFileService.SaveFileAsync();
+        await _databaseService.SaveEnergyData(_energyUsage);
     }
 
     /// <summary>
@@ -218,7 +220,7 @@ public class EnergyUsageModel
         return cost;
     }
 
-    
+
     /// <summary>
     /// Checks if two dates are in the same week.
     /// </summary>
@@ -352,7 +354,7 @@ public class EnergyUsageModel
     private double GetDailyCarbonEmission(string proc)
     {
         return GetEnergyUsed(proc) * CarbonIntensity;
-    } 
+    }
 
     /// <summary>
     /// Calculates the hourly carbon emission of the machine
@@ -405,7 +407,6 @@ public class EnergyUsageModel
         // Update hourly log
         if (!(lastDiary.HourlyUsage.Count > 0) || lastDiary.HourlyUsage.Last().Date.Hour < current.Hour)
             lastDiary.HourlyUsage.Add(new EnergyUsageLog());
-
         lastDiary.HourlyUsage[^1] = lastMeasurementHourly;
 
         float energySum = 0;
@@ -413,7 +414,7 @@ public class EnergyUsageModel
             energySum += log.PowerUsed;
 
         Debug.WriteLine($"Sum of power: {0}", energySum);
-        
+
         // Update per process usage
         foreach (var proc in AccumulatedWattsPerApp.Keys)
             lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
