@@ -117,6 +117,7 @@ public partial class App : Application
 
             // Models
             services.AddSingleton<EnergyUsageModel>();
+            services.AddSingleton<PersonaModel>();
 
             // Views and ViewModels
             services.AddTransient<SettingsViewModel>();
