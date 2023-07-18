@@ -1,7 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.IO;
+using System.Diagnostics;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
+using EnergyPerformance.ViewModels;
+using EnergyPerformance.Views;
 using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
@@ -17,15 +21,17 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     public List<ISensor> sensors;
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
-
     private readonly PowerInfo _powerInfo;
-
+    private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
+    private readonly ICarbonIntensityUpdateService _carbonIntensityUpdateService;
 
     public double Power
     {
         get => _powerInfo.Power;
         private set => _powerInfo.Power = value;
     }
+
 
     /// <summary>
     /// Visitor class used to update the hardware components of the system.
@@ -55,11 +61,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// </summary>
     /// <param name="model"><see cref="EnergyUsageModel"/> to contain data for the accumulated power usage of the system</param>
     /// <param name="powerInfo"><see cref="PowerInfo"/> to contain live power data for the system, for the view.</param>
-    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo)
+    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, ICarbonIntensityUpdateService carbonIntensityUpdateService)
     {
         _model = model;
         _powerInfo = powerInfo;
-
+        _carbonIntensityUpdateService = carbonIntensityUpdateService;
         // configure computer object to monitor hardware components
         computer = new Computer
         {
@@ -137,11 +143,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         Power = power; // update the front end power value only with the value read from sensors
         var currentDateTime = DateTimeOffset.Now;
         // methods to update the daily and hourly power usage
-        
+
         // TODO: record carbon emissions
+        //Debug.WriteLine(CarbonIntensity);
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-
         await Task.CompletedTask;
     }
 
@@ -180,7 +186,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             power = 0;
         }
         // accumulate watts if the same hour
-        if (currentDateTime.DateTime.Hour == _model.CurrentDay.DateTime.Hour)
+        if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
             _model.AccumulatedWattsHourly += power;
         }
@@ -190,7 +196,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.CurrentHour = currentDateTime;
             _model.AccumulatedWattsHourly = power;
         }
-    }
 
+    }
+    private double PowerToEnergy(double power)
+    {
+        return power / 1000;
+    }
 
 }
