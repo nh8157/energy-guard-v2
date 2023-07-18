@@ -148,7 +148,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         //Debug.WriteLine(CarbonIntensity);
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-        double hardwareCarbonEmission = _carbonIntensityUpdateService.CarbonIntensity * PowerToEnergy(Power);
         await Task.CompletedTask;
     }
 
@@ -187,7 +186,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             power = 0;
         }
         // accumulate watts if the same hour
-        if (currentDateTime.DateTime.Hour == _model.CurrentDay.DateTime.Hour)
+        if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
             _model.AccumulatedWattsHourly += power;
         }

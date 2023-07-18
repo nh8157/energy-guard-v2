@@ -24,11 +24,11 @@ public class EnergyUsageData
     }
 
 
-    public EnergyUsageData(double costPerKwh, double weeklyBudget, EnergyUsageLog lastMeasurement, List<EnergyUsageLog> hourlyLogs, List<EnergyUsageLog> dailyLogs)
+    public EnergyUsageData(double costPerKwh, double weeklyBudget, List<EnergyUsageDiary> diaries)
     {
         CostPerKwh = costPerKwh;
         WeeklyBudget = weeklyBudget;
-        Diaries = new List<EnergyUsageDiary>();
+        Diaries = diaries;
     }
 
     public EnergyUsageData()
