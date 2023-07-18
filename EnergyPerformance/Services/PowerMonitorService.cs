@@ -187,7 +187,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             power = 0;
         }
         // accumulate watts if the same hour
-        if (currentDateTime.DateTime.Hour == _model.CurrentDay.DateTime.Hour)
+        if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
             _model.AccumulatedWattsHourly += power;
         }
