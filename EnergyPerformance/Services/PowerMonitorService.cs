@@ -148,7 +148,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         //Debug.WriteLine(CarbonIntensity);
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-        double hardwareCarbonEmission = _carbonIntensityUpdateService.CarbonIntensity * PowerToEnergy(Power);
         await Task.CompletedTask;
     }
 

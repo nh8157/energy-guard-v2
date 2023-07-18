@@ -24,7 +24,6 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
-
     public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, ILocationService locationService)
     {
         _carbonIntensityInfo = carbonIntensityInfo;

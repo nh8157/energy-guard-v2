@@ -409,12 +409,6 @@ public class EnergyUsageModel
             lastDiary.HourlyUsage.Add(new EnergyUsageLog());
         lastDiary.HourlyUsage[^1] = lastMeasurementHourly;
 
-        float energySum = 0;
-        foreach (var log in lastDiary.HourlyUsage)
-            energySum += log.PowerUsed;
-
-        Debug.WriteLine($"Sum of power: {0}", energySum);
-
         // Update per process usage
         foreach (var proc in AccumulatedWattsPerApp.Keys)
             lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
