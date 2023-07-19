@@ -1,4 +1,5 @@
 ﻿using EnergyPerformance.Helpers;
+using System.Diagnostics;
 
 namespace EnergyPerformance.Models;
 public class PersonaModel
@@ -6,7 +7,8 @@ public class PersonaModel
     /// <summary>
     /// This field stores all existing personas in a list
     /// </summary>
-    private List<PersonaEntry> _allPersonas;
+    private readonly List<PersonaEntry> _allPersonas;
+    private readonly CpuInfo _cpuInfo;
     private int _nextPersonaId = 0;
 
     /// <summary>
@@ -25,9 +27,10 @@ public class PersonaModel
         set; get;
     }
 
-    public PersonaModel()
+    public PersonaModel(CpuInfo cpuInfo)
     {
         _allPersonas = new List<PersonaEntry>();
+        _cpuInfo = cpuInfo;
         IsEnabled = false;
         PersonaEnabled = null;
         foreach (var persona in _allPersonas)
@@ -35,18 +38,47 @@ public class PersonaModel
                 _nextPersonaId = persona.Id + 1;
     }
 
-    public void CreatePersona(string path, float energyRating)
+    /// <summary>
+    /// This method will be executed in ActivationService, and will read persona data from persistent storage
+    /// </summary>
+    /// <returns></returns>
+    public async Task InitializeAsync()
+    {
+        Debug.WriteLine("Reading persona data");
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// This methods creates a new persona file based on the path and energy rating the user sets
+    /// It converts the energy rating into respective CPU and GPU settings based on the hardware spec
+    /// It assigns every persona a unique ID (this can be swapped with the unique ID returned by the database)
+    /// </summary>
+    /// <param name="path">The path to the executable of the program</param>
+    /// <param name="energyRating">The position of the slider defined by the user</param>
+    public async Task CreatePersona(string path, float energyRating)
     {
         _allPersonas.Add(new PersonaEntry(_nextPersonaId, path, ConvertRatingToCpuSetting(energyRating), ConvertRatingToGpuSetting(energyRating)));
         _nextPersonaId += 1;
+        await Task.CompletedTask;
     }
 
+    /// <summary>
+    /// This method reads all existing personas
+    /// And translates the raw CPU, GPU settings into the positioning of the slider
+    /// </summary>
+    /// <returns>A path name, energy rating pair for every application</returns>
     public List<(string, float)> ReadPersonaAndRating()
     {
         List<(string, float)> profiles = _allPersonas.Select(persona => (persona.Path, ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))).ToList();
         return profiles;
     }
 
+    /// <summary>
+    /// This method is invoked when the user updates the setting on the frontend
+    /// </summary>
+    /// <param name="personaId">The unique ID of the persona</param>
+    /// <param name="path">The path to the executable of the program</param>
+    /// <param name="energyRating">User-defined slider position</param>
     public void UpdatePersona(int personaId, string path, float energyRating)
     {
         _allPersonas.ForEach(persona =>
@@ -60,11 +92,22 @@ public class PersonaModel
         });
     }
 
-    public bool DeletePersona(int personaId)
+    /// <summary>
+    /// Removes the persona from the volatile and persistent memory
+    /// </summary>
+    /// <param name="personaId">The unique ID of the persona</param>
+    public async Task DeletePersona(int personaId)
     {
-        return _allPersonas.RemoveAll(persona => persona.Id == personaId) > 0 ? true : false;
+        var res = _allPersonas.RemoveAll(persona => persona.Id == personaId) > 0 ? true : false;
+        await Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Invoked when a program with a program that has a defined persona in EnergyGuard is launched
+    /// Applies the CPU/GPU settings that correspond to the process to the hardware
+    /// </summary>
+    /// <param name="personaId">The unique ID of the persona</param>
+    /// <returns>Whether the enabling was successful</returns>
     public bool EnablePersona(int personaId)
     {
         var index = _allPersonas.FindIndex(persona => persona.Id == personaId);
@@ -80,6 +123,12 @@ public class PersonaModel
         return false;
     }
 
+    /// <summary>
+    /// Invoked when the user exits the selected program
+    /// Disable the engaged persona setting
+    /// </summary>
+    /// <param name="personaId"></param>
+    /// <returns></returns>
     public bool DisablePersona(int personaId)
     {
         var index = _allPersonas.FindIndex(persona => persona.Id == personaId);
