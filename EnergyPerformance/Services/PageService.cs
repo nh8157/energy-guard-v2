@@ -20,6 +20,7 @@ public class PageService : IPageService
         Configure<EnergyUsageViewModel, EnergyUsagePage>();
         Configure<SettingsViewModel, SettingsPage>();
         Configure<SystemMonitorViewModel, SystemMonitorPage>();
+        Configure<TestMonitorViewModel, TestMonitorPage>();
         Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
         Configure<DebugViewModel, DebugPage>();
         Configure<PersonaCustomisationViewModel, PersonaCustomisationPage>();

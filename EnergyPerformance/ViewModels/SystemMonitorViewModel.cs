@@ -47,7 +47,7 @@ public partial class SystemMonitorViewModel : ObservableRecipient
         };
 
         Console.WriteLine("123");
-        Debug.WriteLine("123");
+        Debug.WriteLine("123444555");
 
         //generate a random percentage distribution between the 5
         //cake-types (see axis below)
