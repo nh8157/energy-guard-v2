@@ -1,7 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.IO;
+using System.Diagnostics;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
+using EnergyPerformance.ViewModels;
+using EnergyPerformance.Views;
 using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
@@ -19,11 +23,14 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     public List<ISensor> gpuSensors;
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
-
     private readonly PowerInfo _powerInfo;
 
     private DebugModel Debug => App.GetService<DebugModel>();
     
+    private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
+    private readonly ICarbonIntensityUpdateService _carbonIntensityUpdateService;
+
     public double Power
     {
         get => _powerInfo.Power;
@@ -33,6 +40,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     // We want to also track the power usage of the CPU and GPU separately, so we can display them in the View.
     public double CpuPower { get; private set; }
     public double GpuPower { get; private set; }
+
 
     /// <summary>
     /// Visitor class used to update the hardware components of the system.
@@ -62,11 +70,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// </summary>
     /// <param name="model"><see cref="EnergyUsageModel"/> to contain data for the accumulated power usage of the system</param>
     /// <param name="powerInfo"><see cref="PowerInfo"/> to contain live power data for the system, for the view.</param>
-    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo)
+    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, ICarbonIntensityUpdateService carbonIntensityUpdateService)
     {
         _model = model;
         _powerInfo = powerInfo;
-
+        _carbonIntensityUpdateService = carbonIntensityUpdateService;
         // configure computer object to monitor hardware components
         computer = new Computer
         {
@@ -184,10 +192,10 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         
         // methods to update the daily and hourly power usage
         var currentDateTime = DateTimeOffset.Now;
+
         // TODO: record carbon emissions
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-
         await Task.CompletedTask;
     }
 
@@ -226,7 +234,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             power = 0;
         }
         // accumulate watts if the same hour
-        if (currentDateTime.DateTime.Hour == _model.CurrentDay.DateTime.Hour)
+        if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
             _model.AccumulatedWattsHourly += power;
         }
@@ -236,7 +244,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.CurrentHour = currentDateTime;
             _model.AccumulatedWattsHourly = power;
         }
-    }
 
+    }
+    private double PowerToEnergy(double power)
+    {
+        return power / 1000;
+    }
 
 }
