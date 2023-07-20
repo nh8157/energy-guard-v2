@@ -383,4 +383,13 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="CustomisePersonaLabel.Text" xml:space="preserve">
     <value>Customising Persona for:</value>
   </data>
+  <data name="BalancedLabel.Text" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="EfficiencyLabel.Text" xml:space="preserve">
+    <value>Efficiency</value>
+  </data>
+  <data name="PerformanceLabel.Text" xml:space="preserve">
+    <value>Performance</value>
+  </data>
 </root>
