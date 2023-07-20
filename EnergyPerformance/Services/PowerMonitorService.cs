@@ -24,6 +24,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
     private readonly PowerInfo _powerInfo;
+    private readonly CpuInfo _cpuInfo;
+    private readonly GpuInfo _gpuInfo;
 
     private DebugModel Debug => App.GetService<DebugModel>();
     
@@ -41,40 +43,22 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     public double CpuPower { get; private set; }
     public double GpuPower { get; private set; }
 
-
-    /// <summary>
-    /// Visitor class used to update the hardware components of the system.
-    /// </summary>
-    /// <see href="https://github.com/LibreHardwareMonitor/LibreHardwareMonitor">Reference to LibreHardwareMonitor</see>
-    public class UpdateVisitor : IVisitor
-    {
-        public void VisitComputer(IComputer computer)
-        {
-            computer.Traverse(this);
-        }
-        public void VisitHardware(IHardware hardware)
-        {
-            hardware.Update();
-            foreach (IHardware subHardware in hardware.SubHardware) subHardware.Accept(this);
-        }
-        public void VisitSensor(ISensor sensor)
-        {
-        }
-        public void VisitParameter(IParameter parameter)
-        {
-        }
-    }
-
+    
     /// <summary>
     /// Constructor for the PowerMonitorService class.
     /// </summary>
     /// <param name="model"><see cref="EnergyUsageModel"/> to contain data for the accumulated power usage of the system</param>
     /// <param name="powerInfo"><see cref="PowerInfo"/> to contain live power data for the system, for the view.</param>
-    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, ICarbonIntensityUpdateService carbonIntensityUpdateService)
+    /// <param name="carbonIntensityUpdateService"><see cref="ICarbonIntensityUpdateService"/> to update the carbon intensity of the grid.</param>
+    /// <param name="cpuInfo"><see cref="CpuInfo"/> to contain live CPU data for the system, for the view.</param>
+    /// <param name="gpuInfo"><see cref="GpuInfo"/> to contain live GPU data for the system, for the view.</param>
+    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, ICarbonIntensityUpdateService carbonIntensityUpdateService, CpuInfo cpuInfo, GpuInfo gpuInfo)
     {
         _model = model;
         _powerInfo = powerInfo;
         _carbonIntensityUpdateService = carbonIntensityUpdateService;
+        _cpuInfo = cpuInfo;
+        _gpuInfo = gpuInfo;
         // configure computer object to monitor hardware components
         computer = new Computer
         {
@@ -194,8 +178,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         var currentDateTime = DateTimeOffset.Now;
 
         // TODO: record carbon emissions
-        UpdateDailyUsage(currentDateTime, Power);
-        UpdateHourlyUsage(currentDateTime, Power);
+        UpdateDailyUsage(currentDateTime);
+        UpdateHourlyUsage(currentDateTime);
         await Task.CompletedTask;
     }
 
@@ -205,44 +189,60 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// <param name="currentDateTime">DateTimeOffset object</param>
     /// <param name="power">Contains the current power value used to update the model</param>
     /// <returns></returns>
-    private void UpdateDailyUsage(DateTimeOffset currentDateTime, double power)
+    private void UpdateDailyUsage(DateTimeOffset currentDateTime)
     {
-        if (power < 0)
+        if (Power < 0)
         {
-            power = 0;
+            Power = 0;
+            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            {
+                _model.AccumulatedWattsPerApp[process] = 0;
+            }
         }
         // accumulate watts if same day
         if (currentDateTime.DateTime.Date == _model.CurrentDay.DateTime.Date)
         {
-            _model.AccumulatedWatts += power;
+            _model.AccumulatedWatts += Power;
+            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            {
+                var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
+                var gpuUsage = _gpuInfo.ProcessesGpuUsage.GetValueOrDefault(process);
+                _model.AccumulatedWattsPerApp[process] += cpuUsage * CpuPower + gpuUsage * GpuPower;
+            }
         }
         // set date to the new day, and reset acc. watts the power just measured
         else
         {
             _model.CurrentDay = currentDateTime;
-            _model.AccumulatedWatts = power;
+            _model.AccumulatedWatts = Power;
+            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            {
+                var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
+                var gpuUsage = _gpuInfo.ProcessesGpuUsage.GetValueOrDefault(process);
+                _model.AccumulatedWattsPerApp[process] = cpuUsage * CpuPower + gpuUsage * GpuPower;
+            }
         }
     }
 
     /// <summary>
     /// Method to update the hourly power usage in the model.
     /// </summary>
-    private void UpdateHourlyUsage(DateTimeOffset currentDateTime, double power)
+    private void UpdateHourlyUsage(DateTimeOffset currentDateTime)
     {
-        if (power < 0)
+        if (Power < 0)
         {
-            power = 0;
+            Power = 0;
         }
         // accumulate watts if the same hour
         if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
-            _model.AccumulatedWattsHourly += power;
+            _model.AccumulatedWattsHourly += Power;
         }
         // set time to the current time, and reset acc. watts to the power just measured
         else
         {
             _model.CurrentHour = currentDateTime;
-            _model.AccumulatedWattsHourly = power;
+            _model.AccumulatedWattsHourly = Power;
         }
 
     }

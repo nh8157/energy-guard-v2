@@ -30,10 +30,16 @@ public class CpuInfo
             CpuUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CpuUsage)));
         }
     }
+    
+    /// <summary>
+    /// The current CPU usage of each process running on the system.
+    /// </summary>
+    public Dictionary<string, double> ProcessesCpuUsage { get; set; }
 
     public CpuInfo()
     {
         CpuController = new Controller();
+        ProcessesCpuUsage = new Dictionary<string, double>();
         IsSupported = CheckProcessorIsSupported();
         CpuUsage = 0;
     }

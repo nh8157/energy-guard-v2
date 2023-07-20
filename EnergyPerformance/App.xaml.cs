@@ -97,6 +97,11 @@ public partial class App : Application
 
             services.AddSingleton<CpuInfo>(); // container for live CPU usage data
             services.AddHostedService<CpuTrackerService>();
+            
+            services.AddSingleton<GpuInfo>(); // container for live GPU usage data
+            services.AddHostedService<GpuTrackerService>();
+
+            services.AddHostedService<ProcessTrackerService>();
 
             services.AddSingleton<PowerInfo>(); // container for live Power usage data
             services.AddHostedService<PowerMonitorService>();
