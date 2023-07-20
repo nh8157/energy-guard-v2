@@ -362,6 +362,9 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="PowerConsumption.Content" xml:space="preserve">
     <value>System Monitor</value>
   </data>
+  <data name="HistoryEnergy.Content" xml:space="preserve">
+    <value>History Energy</value>
+  </data>
   <data name="CarbonEmissionTitle.Text" xml:space="preserve">
     <value>Currently emitting:</value>
   </data>

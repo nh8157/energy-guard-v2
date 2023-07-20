@@ -6,15 +6,30 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:vms="using:EnergyPerformance.ViewModels"
+    xmlns:helpers="using:EnergyPerformance.Helpers"
     mc:Ignorable="d">
+    <Page.Resources>
+    </Page.Resources>
     <Page.DataContext>
         <vms:TestMonitorViewModel/>
     </Page.DataContext>
     <Grid x:Name="ContentArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding GoToPage1Command}" Margin="0,0,20,0">This Week</Button>
+            <!--<Button Command="{Binding GoToPage2Command}">Page 2</Button>-->
+            <!--<Button Command="{Binding GoToPage3Command}">Page 3</Button>-->
+            <Button Command="{Binding SeeAllCommand}">This Month</Button>
+        </StackPanel>
         <lvc:CartesianChart
+            Grid.Row="1"
             Series="{Binding Series}"
             XAxes="{Binding XAxes}"
-            LegendPosition="Right">
+            ZoomMode="X"
+            Margin="0,0,0,20">
         </lvc:CartesianChart>
     </Grid>
 
