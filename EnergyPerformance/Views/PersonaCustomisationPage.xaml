@@ -22,7 +22,7 @@
             </StackPanel>
             
             <StackPanel Orientation="Vertical">
-                <Slider Width="600" Minimum="1" Maximum="3" Value="2" TickFrequency="1" TickPlacement="Outside"></Slider>
+                <Slider x:Name="PersonaSlider" Width="600" Minimum="1" Maximum="3" Value="2" TickFrequency="1" TickPlacement="Outside"></Slider>
                 
                 <StackPanel Orientation="Horizontal">
                     <TextBlock FontSize="20" Text="" Margin="0, 0, 185, 0">
