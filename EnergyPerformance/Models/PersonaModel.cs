@@ -2,6 +2,8 @@
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
 using System.Diagnostics;
+using System.Management;
+using System;
 
 namespace EnergyPerformance.Models;
 public class PersonaModel
@@ -14,6 +16,8 @@ public class PersonaModel
     /// </summary>
     private List<PersonaEntry> _allPersonas;
     private int _nextPersonaId = 0;
+
+    private ManagementEventWatcher watcher;
 
     /// <summary>
     /// This property indicates whether any persona is enabled right now
@@ -31,6 +35,8 @@ public class PersonaModel
         set; get;
     }
 
+    private DebugModel Debug => App.GetService<DebugModel>();
+
     public PersonaModel(CpuInfo cpuInfo, PersonaFileService personaFileService)
     {
         _personaFileService = personaFileService;
@@ -38,6 +44,7 @@ public class PersonaModel
         _cpuInfo = cpuInfo;
         IsEnabled = false;
         PersonaEnabled = null;
+        watcher = new ManagementEventWatcher();
         foreach (var persona in _allPersonas)
             if (persona.Id > _nextPersonaId)
                 _nextPersonaId = persona.Id + 1;
@@ -50,6 +57,7 @@ public class PersonaModel
     public async Task InitializeAsync()
     {
         _allPersonas = await _personaFileService.ReadFileAsync();
+        MonitorProcStart("Gees.exe");
     }
 
     /// <summary>
@@ -95,6 +103,24 @@ public class PersonaModel
             }
         });
         await _personaFileService.SaveFileAsync();
+    }
+
+    public void MonitorProcStart(string procName)
+    {
+        // WqlEventQuery query = new WqlEventQuery($"SELECT * FROM Win32_ProcessStartTrace WHERE ProcessName = '{procName}'");
+        WqlEventQuery query = new WqlEventQuery("__InstanceCreationEvent",
+            new TimeSpan(0,0,1),
+            "TargetInstance isa \"Win32_Process\"" +
+            $"  AND TargetInstance.Name = '{procName}'");
+
+        EventArrivedEventHandler value = (object sender, EventArrivedEventArgs e) => Debug.AddMessage($"{procName} started");
+
+        watcher.Query = query;
+        watcher.EventArrived += new EventArrivedEventHandler(value);
+        watcher.Start();
+
+        Debug.AddMessage($"Begin monitoring {procName}");
+
     }
 
     /// <summary>
