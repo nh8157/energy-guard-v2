@@ -114,6 +114,7 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<EnergyUsageFileService>();
+            services.AddSingleton<PersonaFileService>();
 
             // Models
             services.AddSingleton<EnergyUsageModel>();

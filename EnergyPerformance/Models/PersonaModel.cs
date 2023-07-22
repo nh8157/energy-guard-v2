@@ -1,14 +1,18 @@
-﻿using EnergyPerformance.Helpers;
+﻿using EnergyPerformance.Core.Contracts.Services;
+using EnergyPerformance.Helpers;
+using EnergyPerformance.Services;
 using System.Diagnostics;
 
 namespace EnergyPerformance.Models;
 public class PersonaModel
 {
+    private readonly PersonaFileService _personaFileService;
+    private readonly CpuInfo _cpuInfo;
+
     /// <summary>
     /// This field stores all existing personas in a list
     /// </summary>
-    private readonly List<PersonaEntry> _allPersonas;
-    private readonly CpuInfo _cpuInfo;
+    private List<PersonaEntry> _allPersonas;
     private int _nextPersonaId = 0;
 
     /// <summary>
@@ -27,8 +31,9 @@ public class PersonaModel
         set; get;
     }
 
-    public PersonaModel(CpuInfo cpuInfo)
+    public PersonaModel(CpuInfo cpuInfo, PersonaFileService personaFileService)
     {
+        _personaFileService = personaFileService;
         _allPersonas = new List<PersonaEntry>();
         _cpuInfo = cpuInfo;
         IsEnabled = false;
@@ -44,8 +49,7 @@ public class PersonaModel
     /// <returns></returns>
     public async Task InitializeAsync()
     {
-        Debug.WriteLine("Reading persona data");
-        await Task.CompletedTask;
+        _allPersonas = await _personaFileService.ReadFileAsync();
     }
 
     /// <summary>
@@ -58,8 +62,8 @@ public class PersonaModel
     public async Task CreatePersona(string path, float energyRating)
     {
         _allPersonas.Add(new PersonaEntry(_nextPersonaId, path, ConvertRatingToCpuSetting(energyRating), ConvertRatingToGpuSetting(energyRating)));
+        await _personaFileService.SaveFileAsync();
         _nextPersonaId += 1;
-        await Task.CompletedTask;
     }
 
     /// <summary>
@@ -79,7 +83,7 @@ public class PersonaModel
     /// <param name="personaId">The unique ID of the persona</param>
     /// <param name="path">The path to the executable of the program</param>
     /// <param name="energyRating">User-defined slider position</param>
-    public void UpdatePersona(int personaId, string path, float energyRating)
+    public async Task UpdatePersona(int personaId, string path, float energyRating)
     {
         _allPersonas.ForEach(persona =>
         {
@@ -90,6 +94,7 @@ public class PersonaModel
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
             }
         });
+        await _personaFileService.SaveFileAsync();
     }
 
     /// <summary>
@@ -99,7 +104,7 @@ public class PersonaModel
     public async Task DeletePersona(int personaId)
     {
         var res = _allPersonas.RemoveAll(persona => persona.Id == personaId) > 0 ? true : false;
-        await Task.CompletedTask;
+        await _personaFileService.SaveFileAsync();
     }
 
     /// <summary>
@@ -116,7 +121,7 @@ public class PersonaModel
             var persona = _allPersonas[index];
             // we need to research how to verify if a process is currently running
             // if it is not running, then the following lines should not be executed
-            EnableCpuSetting(persona.Path, persona.CpuSetting);
+            _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
             EnableGpuSetting(persona.GpuSetting);
             return true;
         }
@@ -135,7 +140,7 @@ public class PersonaModel
         if (IsEnabled && index != -1)
         {
             var persona = _allPersonas[index];
-            DisableCpuSetting(persona.Path, persona.CpuSetting);
+            _cpuInfo.DisableCpuSetting(persona.Path, persona.CpuSetting);
             DisableGpuSetting(persona.GpuSetting);
             return true;
         }
@@ -143,14 +148,6 @@ public class PersonaModel
     }
 
     // we might want to move these methods into their own classes
-    private void EnableCpuSetting(string path, int cpuSetting)
-    {
-    }
-
-    private void DisableCpuSetting(string path, int cpuSetting)
-    {
-    }
-
     private void EnableGpuSetting(int gpuSetting)
     {
     }
