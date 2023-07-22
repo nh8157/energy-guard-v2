@@ -23,7 +23,7 @@ public partial class TestMonitorViewModel : ObservableObject
     {
        
         var values = new List<float>();
-        //_model = App.GetService<EnergyUsageModel>();
+        _model = App.GetService<EnergyUsageModel>();
         var logs = _model.GetDailyEnergyUsageLogs();
         for (int i=0;i<=30;++i)
         {
