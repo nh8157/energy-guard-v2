@@ -9,10 +9,13 @@
     xmlns:helpers="using:EnergyPerformance.Helpers"
     mc:Ignorable="d">
     <Page.Resources>
+        <helpers:EnergyUsageLocalizedStringConverter x:Key="LocalizedStringConverter" />
     </Page.Resources>
+    
     <Page.DataContext>
         <vms:TestMonitorViewModel/>
     </Page.DataContext>
+
     <Grid x:Name="ContentArea">
         <Grid.RowDefinitions>
             <RowDefinition Height="50"/>
