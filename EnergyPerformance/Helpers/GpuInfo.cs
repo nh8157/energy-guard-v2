@@ -6,7 +6,7 @@ public class GpuInfo
 {
     private double _gpuUsage;
 
-    public event PropertyChangedEventHandler? CpuUsageChanged;
+    public event PropertyChangedEventHandler? GpuUsageChanged;
 
     public double GpuUsage
     {
@@ -14,7 +14,7 @@ public class GpuInfo
         set
         {
             _gpuUsage = value;
-            CpuUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpuUsage)));
+            GpuUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpuUsage)));
         }
     }
     
