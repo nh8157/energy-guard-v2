@@ -121,6 +121,8 @@ public partial class App : Application
             services.AddTransient<PersonaCustomisationPage>();
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();
+            services.AddTransient<MonitorDetailViewModel>();
+            services.AddTransient<MonitorDetailPage>();
             services.AddTransient<TestMonitorViewModel>();
             services.AddTransient<TestMonitorPage>();
             services.AddTransient<MainViewModel>();

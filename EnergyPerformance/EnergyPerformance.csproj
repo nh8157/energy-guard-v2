@@ -29,7 +29,8 @@
     <Content Remove="Assets\flash.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="Views\SystemMonitor.xaml" />
+    <None Remove="Views\SystemMonitorPage.xaml" />
+    <None Remove="Views\TestMonitorPage - 复制.xaml" />
     <None Remove="Views\TestMonitorPage.xaml" />
     <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
@@ -67,10 +68,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\TestMonitorPage - 复制.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\TestMonitorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Views\SystemMonitor.xaml">
+    <Page Update="Views\SystemMonitorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\TrayIconView.xaml">
