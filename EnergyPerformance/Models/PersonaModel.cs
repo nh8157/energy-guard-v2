@@ -71,9 +71,10 @@ public class PersonaModel
     /// And translates the raw CPU, GPU settings into the positioning of the slider
     /// </summary>
     /// <returns>A path name, energy rating pair for every application</returns>
-    public List<(string, float)> ReadPersonaAndRating()
+    public List<(int, string, float)> ReadPersonaAndRating()
     {
-        List<(string, float)> profiles = _allPersonas.Select(persona => (persona.Path, ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))).ToList();
+        List<(int, string, float)> profiles = _allPersonas.Select(persona => (persona.Id, Path.GetFileName(persona.Path), 
+            ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))).ToList();
         return profiles;
     }
 
@@ -123,6 +124,8 @@ public class PersonaModel
             // if it is not running, then the following lines should not be executed
             _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
             EnableGpuSetting(persona.GpuSetting);
+            PersonaEnabled = _allPersonas.FirstOrDefault(persona => persona.Id == personaId);
+            IsEnabled = true;
             return true;
         }
         return false;
@@ -142,6 +145,8 @@ public class PersonaModel
             var persona = _allPersonas[index];
             _cpuInfo.DisableCpuSetting(persona.Path, persona.CpuSetting);
             DisableGpuSetting(persona.GpuSetting);
+            IsEnabled = false;
+            PersonaEnabled = null;
             return true;
         }
         return false;
