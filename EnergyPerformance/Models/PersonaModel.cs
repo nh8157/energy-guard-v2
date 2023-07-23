@@ -43,12 +43,9 @@ public class PersonaModel
         _cpuInfo = cpuInfo;
         IsEnabled = false;
         PersonaEnabled = null;
-        foreach (var persona in _allPersonas)
-            if (persona.Id > _nextPersonaId)
-                _nextPersonaId = persona.Id + 1;
 
-        _processMonitorService.CreationEventHandler += OnProcCreation;
-        _processMonitorService.DeletionEventHandler += OnProcDeletion;
+        _processMonitorService.CreationEventHandler += CreationEventHandler;
+        _processMonitorService.DeletionEventHandler += DeletionEventHandler;
     }
 
     /// <summary>
@@ -58,26 +55,32 @@ public class PersonaModel
     public async Task InitializeAsync()
     {
         _allPersonas = await _personaFileService.ReadFileAsync();
+
         foreach (var persona in _allPersonas)
             _processMonitorService.AddWatcher(persona.Path);
 
-        _processMonitorService.AddWatcher("Gees.exe");
+        foreach (var persona in _allPersonas)
+            if (persona.Id >= _nextPersonaId)
+                _nextPersonaId = persona.Id + 1;
+
     }
 
-    public void OnProcCreation(object sender, EventArgs e) 
+    public void CreationEventHandler(object? sender, EventArgs e) 
     {
-        Debug.WriteLine("Handling creation event");
         var proc = _processMonitorService.CreatedProcess;
-        if (!IsEnabled && proc != null)
-        {
-            Debug.WriteLine(proc);
+        if (!IsEnabled && PersonaEnabled == null && proc != null)
             EnablePersona(proc);
-        }
+        else
+            Debug.WriteLine($"Persona already enabled");
     }
 
-    public void OnProcDeletion(object sender, EventArgs e)
+    public void DeletionEventHandler(object? sender, EventArgs e)
     {
-        Debug.WriteLine("Handling deletion event");
+        var proc = _processMonitorService.DeletedProcess;
+        if (IsEnabled && PersonaEnabled != null && proc != null)
+            DisablePersona(proc);
+        else
+            Debug.WriteLine($"No persona enabled");
     }
 
     /// <summary>
@@ -153,15 +156,22 @@ public class PersonaModel
     public bool EnablePersona(string personaName)
     {
         var index = _allPersonas.FindIndex(persona => persona.Path == personaName);
-        if (!IsEnabled && index != -1)
+        if (index != -1)
         {
+            Debug.WriteLine($"Enabling persona for {personaName}");
+
             var persona = _allPersonas[index];
             // we need to research how to verify if a process is currently running
             // if it is not running, then the following lines should not be executed
+            PersonaEnabled = persona;
+            IsEnabled = true;
+
             _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
             EnableGpuSetting(persona.GpuSetting);
+
             return true;
         }
+        Debug.WriteLine($"Cannot find persona for {personaName}");
         return false;
     }
 
@@ -173,14 +183,18 @@ public class PersonaModel
     /// <returns></returns>
     public bool DisablePersona(string personaName)
     {
-        var index = _allPersonas.FindIndex(persona => persona.Path == personaName);
-        if (IsEnabled && index != -1)
+        if (PersonaEnabled?.Path == personaName)
         {
-            var persona = _allPersonas[index];
-            _cpuInfo.DisableCpuSetting(persona.Path, persona.CpuSetting);
-            DisableGpuSetting(persona.GpuSetting);
+            Debug.WriteLine($"Disabling persona for {personaName}");
+
+            _cpuInfo.DisableCpuSetting(PersonaEnabled.Path, PersonaEnabled.CpuSetting);
+            DisableGpuSetting(PersonaEnabled.GpuSetting);
+
+            PersonaEnabled = null;
+            IsEnabled = false;
             return true;
         }
+        Debug.WriteLine($"Cannot find persona for {personaName}");
         return false;
     }
 

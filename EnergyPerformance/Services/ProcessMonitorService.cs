@@ -13,13 +13,16 @@ public class ProcessMonitorService
     private readonly Dictionary<string, ManagementEventWatcher> _creationWatcher;
     private readonly Dictionary<string, ManagementEventWatcher> _deletionWatcher;
 
+    /// <summary>
+    /// The fields that store the processes created/deleted
+    /// </summary>
     private readonly List<string> _createdProcesses;
     private readonly List<string> _deletedProcesses;
+
     /// <summary>
     /// This field is a query template that can be used for creation/deletion of event watcher
     /// </summary>
-    private const string _query = "TargetInstance isa \"Win32_Process\"" +
-                                  "   AND TargetInstance.Name = '{0}'";
+    private const string _query = "TargetInstance isa \"Win32_Process\" AND TargetInstance.Name = '{0}'";
 
     public event EventHandler? CreationEventHandler;
     public event EventHandler? DeletionEventHandler;
