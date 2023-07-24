@@ -20,11 +20,11 @@ public sealed partial class PersonaCustomisationPage : Page
         //PersonaSlider.LayoutUpdated += PersonaSlider_LayoutUpdated;
     }
 
-    private void PersonaSlider_LayoutUpdated(object? sender, object e)
-    {
-        if (VisualTreeHelper.GetOpenPopupsForXamlRoot(PersonaSlider.XamlRoot).LastOrDefault() is Popup popup)
-        {
-            popup.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-        }
-    }
+    //private void PersonaSlider_LayoutUpdated(object? sender, object e)
+    //{
+    //    if (VisualTreeHelper.GetOpenPopupsForXamlRoot(PersonaSlider.XamlRoot).LastOrDefault() is Popup popup)
+    //    {
+    //        popup.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+    //    }
+    //}
 }

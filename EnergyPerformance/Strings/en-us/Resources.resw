@@ -395,4 +395,10 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="PerformanceLabel.Text" xml:space="preserve">
     <value>Performance</value>
   </data>
+  <data name="ApplicationNameHeader.Text" xml:space="preserve">
+    <value>Application Name</value>
+  </data>
+  <data name="EnergyRatingHeader.Text" xml:space="preserve">
+    <value>Energy Rating</value>
+  </data>
 </root>
