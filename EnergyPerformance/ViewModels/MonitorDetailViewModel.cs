@@ -1,15 +1,26 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using EnergyPerformance.Contracts.ViewModels;
 using LiveChartsCore;
 using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
+using Microsoft.UI.Xaml.Navigation;
 using SkiaSharp;
 
 namespace EnergyPerformance.ViewModels;
 
-public partial class MonitorDetailViewModel : ObservableObject
+public partial class MonitorDetailViewModel : ObservableObject, INavigationAware
 {
+    private string _receivedParameter;
+
+    public string ReceivedParameter
+    {
+        get => _receivedParameter;
+        set => SetProperty(ref _receivedParameter, value);
+    }
+
     public ISeries[] Series
     {
         get; set;
@@ -57,4 +68,13 @@ public partial class MonitorDetailViewModel : ObservableObject
             TicksAtCenter = true
         }
     };
+
+    public void OnNavigatedFrom()
+    {
+    }
+    public void OnNavigatedTo(object parameter)
+    {
+        ReceivedParameter = parameter?.ToString() ?? "No parameter received"; // Set the ReceivedParameter property with the value passed from TestMonitorViewModel
+        Debug.WriteLine($"Received Parameter: {ReceivedParameter}");
+    }
 }

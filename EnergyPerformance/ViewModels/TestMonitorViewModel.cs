@@ -54,7 +54,6 @@ public partial class TestMonitorViewModel : ObservableObject
         };
 
         //XAxes = new[] { new Axis() };
-        Debug.WriteLine("123");
     }
 
     public ISeries[] Series
@@ -94,7 +93,8 @@ public partial class TestMonitorViewModel : ObservableObject
         if (point?.Visual is null) return;
         //point.Visual.Fill = new SolidColorPaint(SKColors.Red);
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
-        _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
+        DateTime param = new DateTime((long)point.SecondaryValue);
+        _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName, param);
         Debug.Write($"CLick on {point.SecondaryValue}");
     }
 
