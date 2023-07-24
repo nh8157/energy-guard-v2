@@ -146,8 +146,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
 
         // TODO: record carbon emissions
         //Debug.WriteLine(CarbonIntensity);
-        UpdateDailyUsage(currentDateTime, Power);
-        UpdateHourlyUsage(currentDateTime, Power);
+        UpdateUsage(currentDateTime, Power);
         await Task.CompletedTask;
     }
 
@@ -157,47 +156,37 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// <param name="currentDateTime">DateTimeOffset object</param>
     /// <param name="power">Contains the current power value used to update the model</param>
     /// <returns></returns>
-    private void UpdateDailyUsage(DateTimeOffset currentDateTime, double power)
+    private void UpdateUsage(DateTimeOffset currentDateTime, double power)
     {
         if (power < 0)
         {
             power = 0;
         }
         // accumulate watts if same day
-        if (currentDateTime.DateTime.Date == _model.CurrentDay.DateTime.Date)
+        _model.AccumulatedWatts += power;
+        _model.AccumulatedWattsHourly += power;
+        if (currentDateTime.DateTime.Minute == 59 && currentDateTime.DateTime.Second == 59)
         {
-            _model.AccumulatedWatts += power;
+            _model.Save();
         }
-        // set date to the new day, and reset acc. watts the power just measured
-        else
+        if (currentDateTime.DateTime.Minute == 0 && currentDateTime.DateTime.Second == 0)
         {
-            _model.CurrentDay = currentDateTime;
-            _model.AccumulatedWatts = power;
+            if (currentDateTime.DateTime.Hour == 0)
+            {
+                _model.AccumulatedWatts = power;
+                _model.AccumulatedWattsHourly = power;
+            }
+            else
+            {
+                _model.AccumulatedWattsHourly = power;
+            }
         }
     }
 
     /// <summary>
     /// Method to update the hourly power usage in the model.
     /// </summary>
-    private void UpdateHourlyUsage(DateTimeOffset currentDateTime, double power)
-    {
-        if (power < 0)
-        {
-            power = 0;
-        }
-        // accumulate watts if the same hour
-        if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
-        {
-            _model.AccumulatedWattsHourly += power;
-        }
-        // set time to the current time, and reset acc. watts to the power just measured
-        else
-        {
-            _model.CurrentHour = currentDateTime;
-            _model.AccumulatedWattsHourly = power;
-        }
 
-    }
     private double PowerToEnergy(double power)
     {
         return power / 1000;

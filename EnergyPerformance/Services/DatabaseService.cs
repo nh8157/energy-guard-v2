@@ -234,7 +234,7 @@ public class DatabaseService : IDatabaseService
             List<EnergyUsageLog> HourlyLogs = Diary.HourlyUsage;
             Dictionary<string, EnergyUsageLog> ProgramLogs = Diary.PerProcUsage;
             string dailyLogID = await InsertDailyLog(DailyLog);
-            
+
             foreach (EnergyUsageLog hourlylog in HourlyLogs)
             {
                 int hour = hourlylog.Date.Hour;
@@ -479,10 +479,11 @@ public class DatabaseService : IDatabaseService
             reader.Close();
             connection.Close();
             return (costPerKwh, weeklyBudget);
-        } catch (Exception ex)
+        }
+        catch (Exception ex)
         {
             App.GetService<DebugModel>().AddMessage(ex.ToString());
-            return (0,0);
+            return (0, 0);
         }
     }
 

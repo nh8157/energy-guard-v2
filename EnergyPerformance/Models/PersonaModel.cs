@@ -73,8 +73,12 @@ public class PersonaModel
     /// <returns>A path name, energy rating pair for every application</returns>
     public List<(int, string, float)> ReadPersonaAndRating()
     {
-        List<(int, string, float)> profiles = _allPersonas.Select(persona => (persona.Id, Path.GetFileName(persona.Path), 
-            ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))).ToList();
+        List<(int, string, float)> profiles = new List<(int, string, float)>();
+        if (_allPersonas != null)
+        {
+            profiles = _allPersonas.Select(persona => (persona.Id, Path.GetFileName(persona.Path),
+                ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))).ToList();
+        }
         return profiles;
     }
 

@@ -278,7 +278,7 @@ public class EnergyUsageModel
 
     }
 
-    public double GetEnergyUsed(string proc)
+    public double GetEnergyUsedProc(string proc)
     {
         var energyUsed = ConvertWsToKwh(AccumulatedWattsPerApp.GetValueOrDefault(proc, 0));
         return energyUsed;
@@ -326,9 +326,9 @@ public class EnergyUsageModel
     /// Calculates the daily cost of a process
     /// </summary>
     /// <param name="proc">Name of the process</param>
-    private double GetDailyCost(string proc)
+    private double GetDailyCostProc(string proc)
     {
-        return GetEnergyUsed(proc) * CostPerKwh;
+        return GetEnergyUsedProc(proc) * CostPerKwh;
     }
 
     /// <summary>
@@ -351,9 +351,9 @@ public class EnergyUsageModel
     /// Calculates the daily carbon emission of a process
     /// </summary>
     /// <param name="proc">Name of the process</param>
-    private double GetDailyCarbonEmission(string proc)
+    private double GetDailyCarbonEmissionProc(string proc)
     {
-        return GetEnergyUsed(proc) * CarbonIntensity;
+        return GetEnergyUsedProc(proc) * CarbonIntensity;
     }
 
     /// <summary>
@@ -411,7 +411,7 @@ public class EnergyUsageModel
 
         // Update per process usage
         foreach (var proc in AccumulatedWattsPerApp.Keys)
-            lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
+            lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsedProc(proc), (float)GetDailyCostProc(proc), (float)GetDailyCarbonEmissionProc(proc));
 
         Debug.WriteLine("Model updated.");
 
