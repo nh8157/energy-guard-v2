@@ -11,6 +11,7 @@ public class DatabaseService : IDatabaseService
 {
 
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private readonly string _localAppDataFolder;
     private readonly string _datasource;
     private EnergyUsageData _energyUsage;
     public EnergyUsageData EnergyUsag => _energyUsage;
@@ -19,7 +20,8 @@ public class DatabaseService : IDatabaseService
 
     public DatabaseService()
     {
-        _datasource = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData/database.db");
+        _localAppDataFolder = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData");
+        _datasource = Path.Combine(_localAppDataFolder, "database.db");
         _energyUsage = new EnergyUsageData();
     }
 
@@ -29,6 +31,9 @@ public class DatabaseService : IDatabaseService
         {
             try
             {
+                if (!Directory.Exists(_localAppDataFolder)){
+                    Directory.CreateDirectory(_localAppDataFolder);
+                }
                 SQLiteConnection.CreateFile(_datasource);
                 SQLiteConnection conn = CreateConnection();
                 SQLiteCommand sqlite_cmd;
