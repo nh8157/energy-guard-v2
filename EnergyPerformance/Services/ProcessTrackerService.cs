@@ -98,20 +98,23 @@ public class ProcessTrackerService : BackgroundService
     {
         try
         {
-            foreach (var (process, counter) in processCpuCounters)
+            await Task.Run(() =>
             {
-                cpuInfo.ProcessesCpuUsage[process.ProcessName] = Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
-            }
+                foreach (var (process, counter) in processCpuCounters)
+                {
+                    cpuInfo.ProcessesCpuUsage[process.ProcessName] =
+                        Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
+                }
 
-            foreach (var (process, counter) in processGpuCounters)
-            {
-                gpuInfo.ProcessesGpuUsage[process.ProcessName] = Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
-            }
+                foreach (var (process, counter) in processGpuCounters)
+                {
+                    gpuInfo.ProcessesGpuUsage[process.ProcessName] =
+                        Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
+                }
+            });
         } catch (Exception e)
         {
             Debug.WriteLine(e);
         }
-
-        await Task.CompletedTask;
     }
 }

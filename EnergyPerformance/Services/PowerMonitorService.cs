@@ -207,7 +207,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             {
                 var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
                 var gpuUsage = _gpuInfo.ProcessesGpuUsage.GetValueOrDefault(process);
-                _model.AccumulatedWattsPerApp[process] += cpuUsage/100 * CpuPower + gpuUsage/100 * GpuPower;
+                var accWatts = _model.AccumulatedWattsPerApp.GetValueOrDefault(process);
+                _model.AccumulatedWattsPerApp[process] = accWatts + cpuUsage/100 * CpuPower + gpuUsage/100 * GpuPower;
             }
         }
         // set date to the new day, and reset acc. watts the power just measured
