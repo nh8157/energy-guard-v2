@@ -1,32 +1,43 @@
+using EnergyPerformance.Contracts.Services;
+using EnergyPerformance.Helpers;
+using EnergyPerformance.Models;
+
 namespace EnergyPerformance.Services;
 
-
-public class EnergyRateService
+public class EnergyRateService: IEnergyRateService
 {
     private static readonly string countryCodesFileName = "country_codes";
     private static readonly string dnoRegionNumFileName = "dno_region_numbers";
     private static readonly string eurostatYear = "2022";
     private static readonly string voltage = "HV";
 
-    public static async Task<double> GetEnergyRate(HttpClient client, string countryName, string ukRegion="")
+    public async Task<double> GetEnergyRate(string countryName, string ukRegion="")
     {
-        if (countryName.ToLower().Equals("united kingdom"))
+        try
         {
-            if (string.IsNullOrEmpty(ukRegion))
+            HttpClient client = new HttpClient();
+            if (countryName.ToLower().Equals("united kingdom"))
             {
-                throw new ArgumentException("DNO must be provided for United Kingdom energy rate.");
+                if (string.IsNullOrEmpty(ukRegion))
+                {
+                    throw new ArgumentException("DNO must be provided for United Kingdom energy rate.");
+                }
+                int dno = GetDNO(ukRegion) ??
+                    throw new ArgumentException("Please provide a valid UK Region.");
+
+                var energyRateUK = await GetEnergyRateUK(client, dno);
+                return energyRateUK;
             }
-            int dno = GetDNO(ukRegion) ??
-                throw new ArgumentException("Please provide a valid UK Region.");
+            var countryCode = GetCountryCode(countryName) ??
+                throw new ArgumentException($"The country {countryName} is not supported.");
 
-            var energyRateUK = await GetEnergyRateUK(client, dno);
-            return energyRateUK;
+            var energyRateEurope = await GetEnergyRateEurope(client, countryCode);
+            return energyRateEurope;
+        } catch (Exception ex)
+        {
+            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            return 0;
         }
-        var countryCode = GetCountryCode(countryName) ??
-            throw new ArgumentException($"The country {countryName} is not supported.");
-
-        var energyRateEurope = await GetEnergyRateEurope(client, countryCode);
-        return energyRateEurope;
     }
 
     private static async Task<double> GetEnergyRateUK(HttpClient client, int dno)
