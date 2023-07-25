@@ -14,7 +14,7 @@ namespace EnergyPerformance.ViewModels;
 /// <summary>
 /// View model responsible for the main application view.
 /// </summary>
-public partial class MainViewModel : ObservableRecipient
+public partial class CarbonEmissionViewModel : ObservableRecipient
 {
 
     [ObservableProperty]
@@ -41,6 +41,9 @@ public partial class MainViewModel : ObservableRecipient
     /// </summary>
     public float CostPreviousWeek => _model.GetCostForPreviousWeek();
 
+    public float EmissionsThisWeek = 0;
+    public float EmissionsPreviousWeek = 10;
+
 
     /// <summary>
     /// Gets the selected mode from the settings service.
@@ -56,14 +59,12 @@ public partial class MainViewModel : ObservableRecipient
     /// Sets the hardware info containers, services and model.
     /// Attaches event handlers for the hardware info containers and services.
     /// </summary>
-    public MainViewModel(PowerInfo powerInfo, CpuInfo cpu
+    public CarbonEmissionViewModel(PowerInfo powerInfo, CpuInfo cpu
     , ILocalSettingsService settingsService, IAppNotificationService notificationService, EnergyUsageModel model)
     {
         // set hardware info containers
         _powerInfo = powerInfo;
         _cpuInfo = cpu;
-
-        Console.WriteLine("12333");
         
         // set services
         _settingsService = settingsService;

@@ -115,21 +115,34 @@ public partial class App : Application
             // Core Services
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<EnergyUsageFileService>();
+            services.AddSingleton<PersonaFileService>();
 
             // Models
             services.AddSingleton<EnergyUsageModel>();
+            services.AddSingleton<PersonaModel>();
 
             // Views and ViewModels
+            services.AddTransient<CarbonEmissionPage>();
+            services.AddTransient<CarbonEmissionViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<DebugViewModel>();
             services.AddTransient<DebugPage>();
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
+            services.AddTransient<PersonaCustomisationViewModel>();
+            services.AddTransient<PersonaCustomisationPage>();
+            services.AddTransient<SystemMonitorViewModel>();
+            services.AddTransient<SystemMonitorPage>();
+            services.AddTransient<TestMonitorViewModel>();
+            services.AddTransient<TestMonitorPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
+
+           
+
             
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
