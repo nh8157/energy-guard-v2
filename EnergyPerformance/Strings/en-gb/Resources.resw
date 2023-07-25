@@ -401,4 +401,19 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="EnergyRatingHeader.Text" xml:space="preserve">
     <value>Energy Rating</value>
   </data>
+  <data name="AddPersonaButton.Content" xml:space="preserve">
+    <value>Add Persona</value>
+  </data>
+  <data name="ApplyPersonaButton.Content" xml:space="preserve">
+    <value>Apply Persona</value>
+  </data>
+  <data name="AppSelection.PlaceholderText" xml:space="preserve">
+    <value>Select Application</value>
+  </data>
+  <data name="ClosePopup.Content" xml:space="preserve">
+    <value>Close Popup</value>
+  </data>
+  <data name="RestoreDefaultButton.Content" xml:space="preserve">
+    <value>Restore to Default</value>
+  </data>
 </root>

@@ -11,72 +11,77 @@
     <Page.Resources>
     </Page.Resources>
 
-    <ListView ItemsSource="{x:Bind ViewModel.ApplicationList}" Width="400" HorizontalAlignment="Left">
-        <ListView.HeaderTemplate>
-            <DataTemplate>
-                <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock>
-                        <Run x:Uid="ApplicationNameHeader"/>
-                    </TextBlock>
-                    <TextBlock Grid.Column="1">
-                        <Run x:Uid="EnergyRatingHeader"/>
-                    </TextBlock>
-                </Grid>
-            </DataTemplate>
-        </ListView.HeaderTemplate>
-        <ListView.ItemTemplate>
-            <DataTemplate x:Name="TableDataTemplate" x:DataType="viewmodels:ApplicationObject">
-                <Grid Height="48" AutomationProperties.Name="{x:Bind AppName}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
-                        <ColumnDefinition Width="200"/>
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName}"/>
-                    <Image Grid.Column="1" Source="{x:Bind EnergyRating}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
-                </Grid>
-            </DataTemplate>
-        </ListView.ItemTemplate>
-    </ListView>
-
-    <!--<GridView x:Name="ContentArea" SelectionMode="None">
+    <GridView x:Name="ContentArea" SelectionMode="None">
         <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Vertical" Margin="0, 10, 0, 10">
-                <TextBlock FontSize="20" Text="">
-                    <Run x:Uid="CustomisePersonaLabel"/>
-                </TextBlock>
-                <ComboBox x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.Applications}" PlaceholderText="Select Application" Margin="0, 10, 0, 20">
-                </ComboBox>
-            </StackPanel>
-            
-            <StackPanel Orientation="Vertical">
-                <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" TickFrequency="1" TickPlacement="Outside"></Slider>
-                
-                <StackPanel Orientation="Horizontal">
-                    <TextBlock FontSize="20" Text="" Margin="0, 0, 185, 0">
-                        <Run x:Uid="EfficiencyLabel"/>
-                    </TextBlock>
-                    <TextBlock FontSize="20" Text="" Margin="0, 0, 155, 0">
-                        <Run x:Uid="BalancedLabel"/>
-                    </TextBlock>
-                    <TextBlock FontSize="20" Text="">
-                        <Run x:Uid="PerformanceLabel"/>
-                    </TextBlock>
-                </StackPanel>
+            <ListView ItemsSource="{x:Bind ViewModel.ApplicationList}" Width="400" HorizontalAlignment="Left" SelectionChanged="ShowPopup">
+                <ListView.HeaderTemplate>
+                    <DataTemplate>
+                        <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock>
+                                <Run x:Uid="ApplicationNameHeader"/>
+                            </TextBlock>
+                            <TextBlock Grid.Column="1">
+                                <Run x:Uid="EnergyRatingHeader"/>
+                            </TextBlock>
+                        </Grid>
+                    </DataTemplate>
+                </ListView.HeaderTemplate>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:Name="TableDataTemplate" x:DataType="viewmodels:ApplicationObject">
+                            <Grid Height="48" AutomationProperties.Name="{x:Bind AppName}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="200"/>
+                                    <ColumnDefinition Width="200"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName}"/>
+                                <Image Grid.Column="1" Source="{x:Bind EnergyRating}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
-                <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
-                    <Button Width="150" Height="40" FontSize="15" Margin="300, 0, 20, 0">
-                        Restore to Default
-                    </Button>
-                    <Button Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0">
-                        Apply Persona
-                    </Button>
-                </StackPanel>
-                
-            </StackPanel>
+            <Button x:Uid="AddPersonaButton" Click="ShowPopup" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>
+            <Popup VerticalOffset="10" x:Name="PersonaPopup">
+                <Border BorderThickness="2">
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Vertical" Margin="0, 10, 0, 10">
+                            <TextBlock FontSize="20">
+                                <Run x:Uid="CustomisePersonaLabel"/>
+                            </TextBlock>
+                            <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.Applications}" Margin="0, 10, 0, 20"/>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Vertical">
+                            <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" TickFrequency="1" TickPlacement="Outside"/>
+
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontSize="20" Margin="0, 0, 185, 0">
+                                    <Run x:Uid="EfficiencyLabel"/>
+                                </TextBlock>
+                                <TextBlock FontSize="20" Margin="0, 0, 155, 0">
+                                    <Run x:Uid="BalancedLabel"/>
+                                </TextBlock>
+                                <TextBlock FontSize="20">
+                                    <Run x:Uid="PerformanceLabel"/>
+                                </TextBlock>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
+                                <Button x:Uid="RestoreDefaultButton" Width="150" Height="40" FontSize="15" Margin="120, 0, 20, 0"/>
+                                <Button x:Uid="ApplyPersonaButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 20, 0"/>
+                                <Button x:Uid="ClosePopup" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="HidePopup"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
+            </Popup>
+
         </StackPanel>
-    </GridView>-->
+    </GridView>
+
 </Page>
