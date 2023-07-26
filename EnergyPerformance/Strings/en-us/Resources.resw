@@ -410,9 +410,6 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="AppSelection.PlaceholderText" xml:space="preserve">
     <value>Select Application</value>
   </data>
-	<data name="ModelSelection.PlaceholderText" xml:space="preserve">
-    <value>Energy Usage</value>
-  </data>
   <data name="ClosePopup.Content" xml:space="preserve">
     <value>Close Popup</value>
   </data>
