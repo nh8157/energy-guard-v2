@@ -13,7 +13,7 @@
 
     <GridView x:Name="ContentArea" SelectionMode="None">
         <StackPanel Orientation="Vertical">
-            <ListView ItemsSource="{x:Bind ViewModel.ApplicationList}" Width="400" HorizontalAlignment="Left" SelectionChanged="ShowPopup">
+            <ListView ItemsSource="{x:Bind ViewModel.ApplicationList}" Width="400" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
                 <ListView.HeaderTemplate>
                     <DataTemplate>
                         <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">

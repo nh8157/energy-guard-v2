@@ -46,7 +46,7 @@ public class ApplicationObject
     string Reflection(int energyRating)
     {
         var append = MAX - energyRating + MIN;
-        var path = "ms-appx:///Assets/leaf" + append.ToString() + ".png";
+        var path = "ms-appx:///Assets/Leaf" + append.ToString() + ".png";
         return path;
     }
 }

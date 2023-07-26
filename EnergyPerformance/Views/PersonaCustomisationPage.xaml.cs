@@ -9,6 +9,7 @@ namespace EnergyPerformance.Views;
 
 public sealed partial class PersonaCustomisationPage : Page
 {
+    //public static DebugModel debugModel;
     public PersonaCustomisationViewModel ViewModel
     {
         get;
@@ -19,6 +20,8 @@ public sealed partial class PersonaCustomisationPage : Page
         ViewModel = App.GetService<PersonaCustomisationViewModel>();
         InitializeComponent();
         //PersonaSlider.LayoutUpdated += PersonaSlider_LayoutUpdated;
+
+        //debugModel = App.GetService<DebugModel>();
     }
 
     private void ShowPopup(object sender, RoutedEventArgs e)
@@ -31,11 +34,17 @@ public sealed partial class PersonaCustomisationPage : Page
         if (PersonaPopup.IsOpen) { PersonaPopup.IsOpen = false; }
     }
 
-        //private void PersonaSlider_LayoutUpdated(object? sender, object e)
-        //{
-        //    if (VisualTreeHelper.GetOpenPopupsForXamlRoot(PersonaSlider.XamlRoot).LastOrDefault() is Popup popup)
-        //    {
-        //        popup.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
-        //    }
-        //}
+    private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        ShowPopup(sender, e);
+        //debugModel.AddMessage(e.AddedItems[0]);
+    }
+
+    //private void PersonaSlider_LayoutUpdated(object? sender, object e)
+    //{
+    //    if (VisualTreeHelper.GetOpenPopupsForXamlRoot(PersonaSlider.XamlRoot).LastOrDefault() is Popup popup)
+    //    {
+    //        popup.Visibility = Microsoft.UI.Xaml.Visibility.Collapsed;
+    //    }
+    //}
 }
