@@ -87,10 +87,11 @@ public class EnergyRateService: IEnergyRateService
 
     private static string FindMatchFetchSecondColumn(string fileName, string str)
     {
-        string path = Path.Combine(Directory.GetCurrentDirectory(), fileName);
-        string matchEqvalent = "";
+        var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        var filePath = Path.Combine(basePath, fileName);
 
-        using var read = new StreamReader(path);
+        var matchEqvalent = "";
+        using var read = new StreamReader(filePath);
 
         while (!read.EndOfStream)
         {
