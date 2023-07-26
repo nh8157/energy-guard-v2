@@ -13,7 +13,7 @@
 
     <GridView x:Name="ContentArea" SelectionMode="None">
         <StackPanel Orientation="Vertical">
-            <ListView ItemsSource="{x:Bind ViewModel.ApplicationList}" Width="400" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
+            <ListView x:Name="PersonaList" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" Width="400" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
                 <ListView.HeaderTemplate>
                     <DataTemplate>
                         <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
@@ -37,9 +37,9 @@
                                     <ColumnDefinition Width="200"/>
                                     <ColumnDefinition Width="200"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName}"/>
-                                <Image Grid.Column="1" Source="{x:Bind EnergyRating}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
-                            </Grid>
+                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
+                            <Image Grid.Column="1" Source="{Binding EnergyRating}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
+                        </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
@@ -52,7 +52,7 @@
                             <TextBlock FontSize="20">
                                 <Run x:Uid="CustomisePersonaLabel"/>
                             </TextBlock>
-                            <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.Applications}" Margin="0, 10, 0, 20"/>
+                            <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.Applications, Mode=OneWay}" Margin="0, 10, 0, 20"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Vertical">
@@ -71,8 +71,8 @@
                             </StackPanel>
 
                             <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
-                                <Button x:Uid="RestoreDefaultButton" Width="150" Height="40" FontSize="15" Margin="120, 0, 20, 0"/>
-                                <Button x:Uid="ApplyPersonaButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 20, 0"/>
+                                <Button x:Uid="RestoreDefaultButton" Click="RestoreDefault" Width="150" Height="40" FontSize="15" Margin="120, 0, 20, 0"/>
+                                <Button x:Uid="ApplyPersonaButton" Click="ApplyPersona" Width="150" Height="40" FontSize="15" Margin="0, 0, 20, 0"/>
                                 <Button x:Uid="ClosePopup" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="HidePopup"/>
                             </StackPanel>
                         </StackPanel>

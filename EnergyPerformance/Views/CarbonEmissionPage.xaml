@@ -15,7 +15,7 @@
         <helpers:CostStringConverter x:Key="CostStringConverter" />
         <helpers:BudgetStringConverter x:Key="BudgetStringConverter" />
     </Page.Resources>
-    <GridView x:Name="ContentArea" HorizontalAlignment="Center" VerticalAlignment="Center" SelectionMode="None" >
+    <GridView x:Name="ContentArea" HorizontalAlignment="Center" VerticalAlignment="Center" SelectionMode="None" Height="Auto">
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Vertical">
                 <TextBlock x:Uid="CarbonEmissionTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>

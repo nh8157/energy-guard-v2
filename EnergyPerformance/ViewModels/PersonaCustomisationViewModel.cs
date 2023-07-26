@@ -1,52 +1,89 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Models;
+using Microsoft.UI.Xaml.CustomAttributes;
+using Windows.ApplicationModel.Activation;
+using Windows.Media.Core;
 
 namespace EnergyPerformance.ViewModels;
 
-public class PersonaCustomisationViewModel : ObservableRecipient
+public partial class PersonaCustomisationViewModel : ObservableRecipient, INotifyPropertyChanged
 {
+    [ObservableProperty]
+    private ObservableCollection<String> applications = new();
 
-    public readonly ObservableCollection<String> Applications = new();
-    public readonly ObservableCollection<ApplicationObject> ApplicationList = new();
+    [ObservableProperty]
+    private ObservableCollection<ApplicationObject> applicationList = new();
 
     public PersonaCustomisationViewModel()
     {
-        Applications.Add("Steam");
-        Applications.Add("Spotify");
-        Applications.Add("Word");
-        Applications.Add("Minecraft");
-        Applications.Add("Chrome");
+        applications.Add("Steam");
+        applications.Add("Spotify");
+        applications.Add("Word");
+        applications.Add("Minecraft");
+        applications.Add("Chrome");
 
-        ApplicationList.Add(new ApplicationObject("Steam", 3));
-        ApplicationList.Add(new ApplicationObject("Spotify", 1));
-        ApplicationList.Add(new ApplicationObject("Word", 1));
-        ApplicationList.Add(new ApplicationObject("Minecraft", 3));
-        ApplicationList.Add(new ApplicationObject("Chrome", 2));
+        applicationList.Add(new ApplicationObject("Steam", 3));
+        applicationList.Add(new ApplicationObject("Spotify", 1));
+        applicationList.Add(new ApplicationObject("Word", 1));
+        applicationList.Add(new ApplicationObject("Minecraft", 3));
+        applicationList.Add(new ApplicationObject("Chrome", 2));
     }
 }
 
-public class ApplicationObject
+public partial class ApplicationObject : ObservableRecipient, INotifyPropertyChanged
 {
-    public string AppName;
-    public string EnergyRating;
+    [ObservableProperty]
+    private string appName;
 
+    [ObservableProperty]
+    private int value;
 
-    private int MIN = 1;
-    private int MAX = 3;
+    [ObservableProperty]
+    private string energyRating;
 
-    public ApplicationObject(string appName, int energyRating)
+    private readonly int MIN = 1;
+    private readonly int MAX = 3;
+
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    public ApplicationObject(string _appName, int _energyRating)
     {
-        AppName = appName;
-        EnergyRating = Reflection(energyRating);
+        appName = _appName;
+        value = _energyRating;
+        energyRating = UpdateEnergyRating(_energyRating);
     }
 
-    string Reflection(int energyRating)
+    public string UpdateEnergyRating(int _value)
     {
-        var append = MAX - energyRating + MIN;
+        var append = MAX - _value + MIN;
         var path = "ms-appx:///Assets/Leaf" + append.ToString() + ".png";
         return path;
+    }
+
+    public string EnergyRatingPath
+    {
+        get => energyRating;
+
+        set
+        {
+            if (energyRating != value)
+            {
+                energyRating = value;
+                OnPropertyChanged();
+            }
+        }
+    }
+
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    {
+        if (PropertyChanged != null)
+        {
+            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
     }
 }
