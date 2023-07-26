@@ -124,22 +124,13 @@
     <value>EnergyGuard</value>
   </data>
   <data name="Shell_Main.Content" xml:space="preserve">
-    <value>Power Consumption</value>
+    <value>Home</value>
   </data>
   <data name="Shell_EnergyUsage.Content" xml:space="preserve">
-    <value>Metrics Calendar</value>
-  </data>
-  <data name="CarbonEmission.Content" xml:space="preserve">
-    <value>Carbon Emission</value>
-  </data>
-  <data name="PowerConsumption.Content" xml:space="preserve">
-    <value>System Monitor</value>
-  </data>
-  <data name="HistoryEnergy.Content" xml:space="preserve">
-    <value>History Energy</value>
+    <value>Energy Usage</value>
   </data>
   <data name="Shell_Debug.Content" xml:space="preserve">
-    <value>Debug Messages</value>
+      <value>Debug Messages</value>
   </data>
   <data name="Shell_Tips.Content" xml:space="preserve">
     <value>Tips</value>
@@ -333,7 +324,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
     <value>Set the cost per kWh from your electricity supplier</value>
   </data>
   <data name="SettingsPage_LicensesLink.Content" xml:space="preserve">
-    <value>Licences</value>
+    <value>Licenses</value>
   </data>
   <data name="SettingsPage_LicensesLink.NavigateUri" xml:space="preserve">
     <value>https://github.com/guardsense/EG/blob/main/licenses.txt</value>
@@ -361,62 +352,5 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="SettingsPage_DescriptionLink.NavigateUri" xml:space="preserve">
     <value>https://github.com/guardsense/EG/blob/main/description.md</value>
-  </data>
-  <data name="HomeGpuUsageProgressRingLabel.Text" xml:space="preserve">
-    <value>GPU Usage</value>
-  </data>
-  <data name="CarbonEmissionTitle.Text" xml:space="preserve">
-    <value>Currently emitting:</value>
-  </data>
-  <data name="EmissionsSymbol.Text" xml:space="preserve">
-    <value>gm(s)</value>
-  </data>
-  <data name="CPUCarbonEmissionLabel.Text" xml:space="preserve">
-    <value>CPU Emissions</value>
-  </data>
-  <data name="GPUCarbonEmissionLabel.Text" xml:space="preserve">
-    <value>GPU Emissions</value>
-  </data>
-  <data name="TotalCarbonEmissionLabel.Text" xml:space="preserve">
-    <value>Total Emissions</value>
-  </data>
-  <data name="PersonaCustomisation.Content" xml:space="preserve">
-    <value>Persona Customisation</value>
-  </data>
-  <data name="CustomisePersonaLabel.Text" xml:space="preserve">
-    <value>Customising Persona for:</value>
-  </data>
-  <data name="BalancedLabel.Text" xml:space="preserve">
-    <value>Balanced</value>
-  </data>
-  <data name="EfficiencyLabel.Text" xml:space="preserve">
-    <value>Efficiency</value>
-  </data>
-  <data name="PerformanceLabel.Text" xml:space="preserve">
-    <value>Performance</value>
-  </data>
-  <data name="ApplicationNameHeader.Text" xml:space="preserve">
-    <value>Application Name</value>
-  </data>
-  <data name="EnergyRatingHeader.Text" xml:space="preserve">
-    <value>Energy Rating</value>
-  </data>
-  <data name="AddPersonaButton.Content" xml:space="preserve">
-    <value>Add Persona</value>
-  </data>
-  <data name="ApplyPersonaButton.Content" xml:space="preserve">
-    <value>Apply Persona</value>
-  </data>
-  <data name="AppSelection.PlaceholderText" xml:space="preserve">
-    <value>Select Application</value>
-  </data>
-	<data name="ModelSelection.PlaceholderText" xml:space="preserve">
-    <value>Energy Usage</value>
-  </data>
-  <data name="ClosePopup.Content" xml:space="preserve">
-    <value>Close Popup</value>
-  </data>
-  <data name="RestoreDefaultButton.Content" xml:space="preserve">
-    <value>Restore to Default</value>
   </data>
 </root>
