@@ -28,7 +28,7 @@ public class EnergyUsageModel
     {
         get; set;
     }
-    
+
     /// <summary>
     /// The cost per kWh for the user. Returns data loaded from file or default value if file is not found or corrupted.
     /// </summary>
@@ -41,7 +41,8 @@ public class EnergyUsageModel
             if (!double.IsNaN(_energyUsage.CostPerKwh) && _energyUsage.CostPerKwh > 0)
             {
                 cost = _energyUsage.CostPerKwh;
-            } else
+            }
+            else
             {
                 _energyUsage.CostPerKwh = cost;
             }
@@ -68,7 +69,8 @@ public class EnergyUsageModel
             if (!double.IsNaN(_energyUsage.WeeklyBudget) && _energyUsage.WeeklyBudget > 0)
             {
                 budget = _energyUsage.WeeklyBudget;
-            } else
+            }
+            else
             {
                 _energyUsage.WeeklyBudget = budget;
             }
@@ -220,7 +222,7 @@ public class EnergyUsageModel
         return cost;
     }
 
-    
+
     /// <summary>
     /// Checks if two dates are in the same week.
     /// </summary>
@@ -251,32 +253,11 @@ public class EnergyUsageModel
 
     /// <summary>
     /// Returns the hourly energy usage logs from the model.
-    /// If the DateTime object is supplied, return hourly energy usage on that day
-    /// Otherwise, return all hourly energy usage logs
     /// </summary>
-    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date = null)
+    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs()
     {
-<<<<<<< HEAD
-        var hourlyLogs = new List<EnergyUsageLog>();
-
-        if (date != null)
-        {
-            foreach (var diary in _energyUsage.Diaries)
-                if (diary.Date == date)
-                    hourlyLogs = diary;
-        }
-        else
-        {
-            foreach (var diary in _energyUsage.Diaries)
-                foreach (var log in diary.HourlyUsage)
-                    hourlyLogs.Add(log);
-        }
-        return hourlyLogs;
-=======
         return _energyUsage.HourlyLogs;
->>>>>>> parent of 29ebae1 (Merge branch 'integration/system-monitor' into feature/ui-expansion)
     }
-
 
     /// <summary>
     /// Calculates the energy used in the last day.
@@ -371,7 +352,7 @@ public class EnergyUsageModel
         var lastMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(), (float)GetDailyCost());
         var lastMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(), (float)GetHourlyCost());
         _energyUsage.LastMeasurement = lastMeasurement;
-        
+
         // update daily logs
         if (!(_energyUsage.DailyLogs.Count > 0))
         {
