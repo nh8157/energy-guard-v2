@@ -1,4 +1,5 @@
-﻿using System.Data.SQLite;
+﻿using Linq;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Contracts.Services;
@@ -277,6 +278,22 @@ public class EnergyUsageModel
         return hourlyLogs;
     }
 
+    /// <summary>
+    /// Returns every app's energy log on that day
+    /// </summary>
+    public List<(string, EnergyUsageLog)> GetPerAppUsageLog(DateTime date = null) 
+    {
+        var appLogs = new List<(string, EnergyUsageLog)>;
+
+        if (date != null)
+        {
+            foreach (var diary in _energyUsage.Diaries)
+                if (diary.Date == date)
+                    return diary.PerProcUsage.Select(x => Tuple.Create(x.Key, x.Value)).ToList();
+        }
+
+        return appLogs;
+    }    
 
     /// <summary>
     /// Calculates the energy used in the last day.
