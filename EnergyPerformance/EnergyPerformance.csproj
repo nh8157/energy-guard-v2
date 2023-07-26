@@ -26,9 +26,12 @@
     <DefaultLanguage>en-GB</DefaultLanguage>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="database.db" />
-    <None Remove="database.sqlite3" />
-    <None Remove="Views\ProcessesPage.xaml" />
+    <Content Remove="Assets\flash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Views\SystemMonitorPage.xaml" />
+    <None Remove="Views\TestMonitorPage - 复制.xaml" />
+	  <None Remove="Views\TestMonitorPage.xaml" />
     <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
 
@@ -41,12 +44,11 @@
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageReference Include="H.NotifyIcon.WinUI" Version="2.0.75" />
     <PackageReference Include="H.OxyPlot.WinUI" Version="0.9.19" />
-    <PackageReference Include="IPinfo" Version="2.1.0" />
     <PackageReference Include="LibreHardwareMonitorLib" Version="0.9.1" />
+    <PackageReference Include="LiveChartsCore.SkiaSharpView.WinUI" Version="2.0.0-beta.800" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
-    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.4" />
+    <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.5" />
     <PackageReference Include="Microsoft.Xaml.Behaviors.WinUI.Managed" Version="2.0.9" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
     <PackageReference Include="System.Diagnostics.PerformanceCounter" Version="7.0.0" />
     <PackageReference Include="WinUIEx" Version="1.8.0" />
   </ItemGroup>
@@ -66,6 +68,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\TestMonitorPage - 复制.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+	 <Page Update="Views\TestMonitorPage.xaml">
+	   <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+    <Page Update="Views\SystemMonitorPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
     <Page Update="Views\TrayIconView.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>

@@ -124,7 +124,7 @@
     <value>EnergyGuard</value>
   </data>
   <data name="Shell_Main.Content" xml:space="preserve">
-    <value>Home</value>
+    <value>Power Consumption</value>
   </data>
   <data name="Shell_EnergyUsage.Content" xml:space="preserve">
     <value>Energy Usage</value>
@@ -136,7 +136,7 @@
     <value>Debug Messages</value>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
-    <value>Personalisation</value>
+    <value>Personalization</value>
   </data>
   <data name="Settings_Theme.Text" xml:space="preserve">
     <value>Theme</value>
@@ -154,7 +154,7 @@
     <value>About</value>
   </data>
   <data name="Settings_AboutDescription.Text" xml:space="preserve">
-    <value>EnergyGuard is a new energy-saving application, designed for Windows 11 and built in partnership with Intel and UCL. The app allows users to monitor their device's energy usage and utilises the hybrid architecture in Intel's latest processors to help users save power. Please note, this application requires administrator privileges to access power data from the hardware. For the app to provide accurate data, the launch on startup setting also needs to be enabled.
+    <value>EnergyGuard is a new energy-saving application, designed for Windows 11 and built in partnership with Intel and UCL. The app allows users to monitor their device's energy usage and utilizes the hybrid architecture in Intel's latest processors to help users save power. Please note, this application requires administrator privileges to access power data from the hardware. For the app to provide accurate data, the launch on startup setting also needs to be enabled.
 
 Energy monitoring is available to all users with Windows 11 and Windows 10 (Build 17763 or above) users.
 
@@ -324,7 +324,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
     <value>Set the cost per kWh from your electricity supplier</value>
   </data>
   <data name="SettingsPage_LicensesLink.Content" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Licences</value>
   </data>
   <data name="SettingsPage_LicensesLink.NavigateUri" xml:space="preserve">
     <value>https://github.com/guardsense/EG/blob/main/licenses.txt</value>
@@ -352,5 +352,71 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="SettingsPage_DescriptionLink.NavigateUri" xml:space="preserve">
     <value>https://github.com/guardsense/EG/blob/main/description.md</value>
+  </data>
+  <data name="HomeGpuUsageProgressRingLabel.Text" xml:space="preserve">
+    <value>GPU Usage</value>
+  </data>
+  <data name="CarbonEmission.Content" xml:space="preserve">
+    <value>Carbon Emission</value>
+  </data>
+  <data name="PowerConsumption.Content" xml:space="preserve">
+    <value>System Monitor</value>
+  </data>
+  <data name="HistoryEnergy.Content" xml:space="preserve">
+    <value>History Energy</value>
+  </data>
+  <data name="CarbonEmissionTitle.Text" xml:space="preserve">
+    <value>Currently emitting:</value>
+  </data>
+  <data name="EmissionsSymbol.Text" xml:space="preserve">
+    <value>gm(s)</value>
+  </data>
+  <data name="CPUCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>CPU Emissions</value>
+  </data>
+  <data name="GPUCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>GPU Emissions</value>
+  </data>
+  <data name="TotalCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>Total Emissions</value>
+  </data>
+  <data name="PersonaCustomisation.Content" xml:space="preserve">
+    <value>Persona Customization</value>
+  </data>
+  <data name="CustomisePersonaLabel.Text" xml:space="preserve">
+    <value>Customizing Persona for:</value>
+  </data>
+  <data name="BalancedLabel.Text" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="EfficiencyLabel.Text" xml:space="preserve">
+    <value>Efficiency</value>
+  </data>
+  <data name="PerformanceLabel.Text" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="ApplicationNameHeader.Text" xml:space="preserve">
+    <value>Application Name</value>
+  </data>
+  <data name="EnergyRatingHeader.Text" xml:space="preserve">
+    <value>Energy Rating</value>
+  </data>
+  <data name="AddPersonaButton.Content" xml:space="preserve">
+    <value>Add Persona</value>
+  </data>
+  <data name="ApplyPersonaButton.Content" xml:space="preserve">
+    <value>Apply Persona</value>
+  </data>
+  <data name="AppSelection.PlaceholderText" xml:space="preserve">
+    <value>Select Application</value>
+  </data>
+	<data name="ModelSelection.PlaceholderText" xml:space="preserve">
+    <value>Energy Usage</value>
+  </data>
+  <data name="ClosePopup.Content" xml:space="preserve">
+    <value>Close Popup</value>
+  </data>
+  <data name="RestoreDefaultButton.Content" xml:space="preserve">
+    <value>Restore to Default</value>
   </data>
 </root>
