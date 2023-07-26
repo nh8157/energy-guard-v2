@@ -255,17 +255,28 @@ public class EnergyUsageModel
 
     /// <summary>
     /// Returns the hourly energy usage logs from the model.
+    /// If the DateTime object is supplied, return hourly energy usage on that day
+    /// Otherwise, return all hourly energy usage logs
     /// </summary>
-    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs()
+    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date = null)
     {
         var hourlyLogs = new List<EnergyUsageLog>();
 
-        foreach (var diary in _energyUsage.Diaries)
-            foreach (var log in diary.HourlyUsage)
-                hourlyLogs.Add(log);
-
+        if (date != null)
+        {
+            foreach (var diary in _energyUsage.Diaries)
+                if (diary.Date == date)
+                    hourlyLogs = diary;
+        }
+        else
+        {
+            foreach (var diary in _energyUsage.Diaries)
+                foreach (var log in diary.HourlyUsage)
+                    hourlyLogs.Add(log);
+        }
         return hourlyLogs;
     }
+
 
     /// <summary>
     /// Calculates the energy used in the last day.
