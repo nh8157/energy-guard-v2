@@ -1,6 +1,4 @@
-﻿using Linq;
-using System.Data.SQLite;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
@@ -259,7 +257,7 @@ public class EnergyUsageModel
     /// If the DateTime object is supplied, return hourly energy usage on that day
     /// Otherwise, return all hourly energy usage logs
     /// </summary>
-    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date = null)
+    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime? date)
     {
         var hourlyLogs = new List<EnergyUsageLog>();
 
@@ -267,7 +265,7 @@ public class EnergyUsageModel
         {
             foreach (var diary in _energyUsage.Diaries)
                 if (diary.Date == date)
-                    hourlyLogs = diary;
+                    hourlyLogs = diary.HourlyUsage;
         }
         else
         {
@@ -281,15 +279,15 @@ public class EnergyUsageModel
     /// <summary>
     /// Returns every app's energy log on that day
     /// </summary>
-    public List<(string, EnergyUsageLog)> GetPerAppUsageLog(DateTime date = null) 
+    public List<(string, EnergyUsageLog)> GetPerAppUsageLog(DateTime? date) 
     {
-        var appLogs = new List<(string, EnergyUsageLog)>;
+        var appLogs = new List<(string, EnergyUsageLog)>();
 
         if (date != null)
         {
             foreach (var diary in _energyUsage.Diaries)
                 if (diary.Date == date)
-                    return diary.PerProcUsage.Select(x => Tuple.Create(x.Key, x.Value)).ToList();
+                    return diary.PerProcUsage.Select(x => (x.Key, x.Value)).ToList();
         }
 
         return appLogs;
