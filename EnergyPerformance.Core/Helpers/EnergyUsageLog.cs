@@ -28,10 +28,40 @@ public class EnergyUsageLog
         get; set;
     }
 
-    public EnergyUsageLog(DateTime date, float powerUsed, float cost)
+    public float CarbonEmission
+    {
+        get; set;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj is EnergyUsageLog))
+        {
+            return false;
+        }
+        return this.Date == ((EnergyUsageLog)obj).Date &&
+            this.PowerUsed == ((EnergyUsageLog)obj).PowerUsed &&
+            this.Cost == ((EnergyUsageLog)obj).Cost &&
+            this.CarbonEmission == ((EnergyUsageLog)obj).CarbonEmission;
+    }
+
+    public EnergyUsageLog(DateTime date, float powerUsed, float cost, float carbonEmission = 0)
     {
         Date = date;
         PowerUsed = powerUsed;
         Cost = cost;
+        CarbonEmission = carbonEmission;
+    }
+
+    public EnergyUsageLog()
+    {
+        Date = DateTime.Now;
+        PowerUsed = 0;
+        Cost = 0;
+        CarbonEmission = 0;
     }
 }
