@@ -31,7 +31,7 @@
   <ItemGroup>
     <None Remove="Views\SystemMonitorPage.xaml" />
     <None Remove="Views\TestMonitorPage - 复制.xaml" />
-    <None Remove="Views\TestMonitorPage.xaml" />
+	  <None Remove="Views\TestMonitorPage.xaml" />
     <None Remove="Views\TrayIconView.xaml" />
   </ItemGroup>
 
@@ -71,8 +71,8 @@
     <Page Update="Views\TestMonitorPage - 复制.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
-    <Page Update="Views\TestMonitorPage.xaml">
-      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	 <Page Update="Views\TestMonitorPage.xaml">
+	   <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\SystemMonitorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

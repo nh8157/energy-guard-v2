@@ -23,28 +23,43 @@ namespace EnergyPerformance.ViewModels;
 public partial class TestMonitorViewModel : ObservableObject
 {
     private readonly Random _random = new();
+    [ObservableProperty]
+    private string currentMode;
     private readonly EnergyUsageModel _model;
     private INavigationService _navigationService;
-
+    public readonly ObservableCollection<String> Applications = new();
+    private ColumnSeries<DateTimePoint> historySeries;
+    private ColumnSeries<DateTimePoint> costSeries;
 
     public TestMonitorViewModel()
     {
-
+        Applications.Add("Cost");
+        Applications.Add("Energy Usage");
+        Applications.Add("Carbon Emission");
+        currentMode = "Energy";
         var values = new ObservableCollection<DateTimePoint>();
+        var costs = new ObservableCollection<DateTimePoint>();
         _model = App.GetService<EnergyUsageModel>();
         _navigationService = App.GetService<INavigationService>();
         var logs = _model.GetDailyEnergyUsageLogs();
         foreach (var log in logs)
         {
             values.Add(new DateTimePoint(log.Date.Date, log.PowerUsed));
-
+            costs.Add(new DateTimePoint(log.Date.Date, log.Cost));
         }
-        var historySeries = new ColumnSeries<DateTimePoint>
+        historySeries = new ColumnSeries<DateTimePoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
             Name = "Watt",
             Values = values
+        };
+        costSeries = new ColumnSeries<DateTimePoint>
+        {
+            YToolTipLabelFormatter = (chartPoint) =>
+                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
+            Name = "Pound",
+            Values = costs
         };
         historySeries.ChartPointPointerDown += OnPointerDown;
 
@@ -58,7 +73,7 @@ public partial class TestMonitorViewModel : ObservableObject
 
     public ISeries[] Series
     {
-        get;
+        get; set;
     }
 
     public Axis[] XAxes
@@ -128,5 +143,17 @@ public partial class TestMonitorViewModel : ObservableObject
         var axis = XAxes[0];
         axis.MinLimit = null;
         axis.MaxLimit = null;
+    }
+
+    [RelayCommand]
+    public void Cost()
+    {
+        Debug.WriteLine("On CLick");
+        Series = new ISeries[]
+        {
+            costSeries
+        };
+        OnPropertyChanged(nameof(Series));
+
     }
 }

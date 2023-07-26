@@ -28,7 +28,7 @@ public class EnergyUsageModel
     {
         get; set;
     }
-    
+
     /// <summary>
     /// The cost per kWh for the user. Returns data loaded from file or default value if file is not found or corrupted.
     /// </summary>
@@ -41,7 +41,8 @@ public class EnergyUsageModel
             if (!double.IsNaN(_energyUsage.CostPerKwh) && _energyUsage.CostPerKwh > 0)
             {
                 cost = _energyUsage.CostPerKwh;
-            } else
+            }
+            else
             {
                 _energyUsage.CostPerKwh = cost;
             }
@@ -68,7 +69,8 @@ public class EnergyUsageModel
             if (!double.IsNaN(_energyUsage.WeeklyBudget) && _energyUsage.WeeklyBudget > 0)
             {
                 budget = _energyUsage.WeeklyBudget;
-            } else
+            }
+            else
             {
                 _energyUsage.WeeklyBudget = budget;
             }
@@ -220,7 +222,7 @@ public class EnergyUsageModel
         return cost;
     }
 
-    
+
     /// <summary>
     /// Checks if two dates are in the same week.
     /// </summary>
@@ -350,7 +352,7 @@ public class EnergyUsageModel
         var lastMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(), (float)GetDailyCost());
         var lastMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(), (float)GetHourlyCost());
         _energyUsage.LastMeasurement = lastMeasurement;
-        
+
         // update daily logs
         if (!(_energyUsage.DailyLogs.Count > 0))
         {
