@@ -76,7 +76,18 @@
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <ContentWithTargetPath Include="country_codes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>country_codes</TargetPath>
+    </ContentWithTargetPath>
+    <ContentWithTargetPath Include="dno_region_numbers">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>dno_region_numbers</TargetPath>
+    </ContentWithTargetPath>
+  </ItemGroup>
+
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
