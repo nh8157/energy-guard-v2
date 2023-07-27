@@ -1,3 +1,4 @@
+using System.Reflection;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
@@ -6,66 +7,65 @@ namespace EnergyPerformance.Services;
 
 public class EnergyRateService: IEnergyRateService
 {
-    private static readonly string countryCodesFileName = "country_codes";
-    private static readonly string dnoRegionNumFileName = "dno_region_numbers";
-    private static readonly string eurostatYear = "2022";
-    private static readonly string voltage = "HV";
+    private readonly string _countryCodesFileName = "country_codes";
+    private readonly string _dnoRegionNumFileName = "dno_region_numbers";
+    private readonly string _eurostatYear = "2022";
+    private readonly string _voltage = "HV";
+    private readonly IHttpClientFactory _httpClientFactory;
+
+    public EnergyRateService(IHttpClientFactory httpClientFactory)
+    {
+        _httpClientFactory = httpClientFactory;
+    }
 
     public async Task<double> GetEnergyRate(string countryName, string ukRegion="")
     {
-        try
+        if (countryName.ToLower().Equals("united kingdom"))
         {
-            HttpClient client = new HttpClient();
-            if (countryName.ToLower().Equals("united kingdom"))
+            if (string.IsNullOrEmpty(ukRegion))
             {
-                if (string.IsNullOrEmpty(ukRegion))
-                {
-                    throw new ArgumentException("DNO must be provided for United Kingdom energy rate.");
-                }
-                int dno = GetDNO(ukRegion) ??
-                    throw new ArgumentException("Please provide a valid UK Region.");
-
-                var energyRateUK = await GetEnergyRateUK(client, dno);
-                return energyRateUK;
+                throw new ArgumentException("DNO must be provided for United Kingdom energy rate.");
             }
-            var countryCode = GetCountryCode(countryName) ??
-                throw new ArgumentException($"The country {countryName} is not supported.");
+            var dno = GetDNO(ukRegion) ??
+                throw new ArgumentException("Please provide a valid UK Region.");
 
-            var energyRateEurope = await GetEnergyRateEurope(client, countryCode);
-            return energyRateEurope;
-        } catch (Exception ex)
-        {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
-            return 0;
+            var energyRateUK = await GetEnergyRateUK(dno);
+            return energyRateUK;
         }
+        var countryCode = GetCountryCode(countryName) ??
+            throw new ArgumentException($"The country {countryName} is not supported.");
+
+        var energyRateEurope = await GetEnergyRateEurope(countryCode);
+        return energyRateEurope;
     }
 
-    private static async Task<double> GetEnergyRateUK(HttpClient client, int dno)
+    private async Task<double> GetEnergyRateUK(int dno)
     {
-        string dateNow = DateTime.Now.ToString("dd-MM-yyyy");
-        var url = $"https://odegdcpnma.execute-api.eu-west-2.amazonaws.com/development/prices?dno={dno}&voltage={voltage}&start={dateNow}&end={dateNow}";
+        var dateNow = DateTime.Now.ToString("dd-MM-yyyy");
+        var uriQuery = $"?dno={dno}&voltage={_voltage}&start={dateNow}&end={dateNow}";
 
-        Uri energyCostsUri = new(url);
-        var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(client, energyCostsUri) ??
+        var httpClient = _httpClientFactory.CreateClient("EnergyCostsApi");
+
+        var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(httpClient, uriQuery) ??
             throw new Exception("EnergyCosts API is not available.");
 
         return energyCostsApi.GetEnergyRateUK() / 100;
     }
 
-    private static async Task<double> GetEnergyRateEurope(HttpClient client, string countryCode)
+    private async Task<double> GetEnergyRateEurope(string countryCode)
     {
-        var url = $"https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/TEN00117/?format=JSON&time={eurostatYear}";
+        var uriQuery = $"?format=JSON&time={_eurostatYear}";
+        var httpClient = _httpClientFactory.CreateClient("EurostatApi");
 
-        Uri eurostatUri = new(url);
-        var eurostatApi = await ApiProcessor<EurostatModel>.Load(client, eurostatUri) ??
+        var eurostatApi = await ApiProcessor<EurostatModel>.Load(httpClient, uriQuery) ??
             throw new Exception("Eurostat API is not available.");
 
         return eurostatApi.GetEnergyRate(countryCode);
     }
 
-    private static string? GetCountryCode(string country)
+    private string? GetCountryCode(string country)
     {
-        var countryCode = FindMatchFetchSecondColumn(countryCodesFileName, country);
+        var countryCode = FindMatchFetchSecondColumn(_countryCodesFileName, country);
 
         if (string.IsNullOrEmpty(countryCode))
         {
@@ -74,20 +74,21 @@ public class EnergyRateService: IEnergyRateService
         return countryCode.ToUpper();
     }
 
-    private static int? GetDNO(string region)
+    private int? GetDNO(string region)
     {
-        var dno = FindMatchFetchSecondColumn(dnoRegionNumFileName, region);
+        var dno = FindMatchFetchSecondColumn(_dnoRegionNumFileName, region);
 
         if (string.IsNullOrEmpty(dno))
         {
             return null;
         }
-        return Int32.Parse(dno);
+        return int.Parse(dno);
     }
 
     private static string FindMatchFetchSecondColumn(string fileName, string str)
     {
-        var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
+            throw new Exception($"Cannot find path to file {fileName}.");
         var filePath = Path.Combine(basePath, fileName);
 
         var matchEqvalent = "";
@@ -96,6 +97,10 @@ public class EnergyRateService: IEnergyRateService
         while (!read.EndOfStream)
         {
             var line = read.ReadLine();
+            if (line == null)
+            {
+                break;
+            }
             var values = line.Split(',');
 
             var column1 = values[0].ToLower();
