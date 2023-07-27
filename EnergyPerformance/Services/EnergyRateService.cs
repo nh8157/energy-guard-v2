@@ -1,7 +1,10 @@
+using System.Net;
 using System.Reflection;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
+using LiveChartsCore.Themes;
+using Windows.Foundation.Numerics;
 
 namespace EnergyPerformance.Services;
 
@@ -18,6 +21,11 @@ public class EnergyRateService: IEnergyRateService
         _httpClientFactory = httpClientFactory;
     }
 
+    /// <summary>
+    /// Returns the energy rate of a chosen country. 
+    /// The 'ukRegion' parameter is required exclusively 
+    /// when the given country is 'United Kingdom'.
+    /// </summary>
     public async Task<double> GetEnergyRate(string countryName, string ukRegion="")
     {
         if (countryName.ToLower().Equals("united kingdom"))
@@ -39,33 +47,45 @@ public class EnergyRateService: IEnergyRateService
         return energyRateEurope;
     }
 
+    /// <summary>
+    /// Retrieves the energy rate of the United Kingdom for a specific region, 
+    /// requiring the corresponding DNO (Distribution Network Operator) number. 
+    /// For further details about the DNO, please visit: 
+    /// https://electricitycosts.org.uk/api/
+    /// </summary>
+    /// 
     private async Task<double> GetEnergyRateUK(int dno)
     {
         var dateNow = DateTime.Now.ToString("dd-MM-yyyy");
         var uriQuery = $"?dno={dno}&voltage={_voltage}&start={dateNow}&end={dateNow}";
-
         var httpClient = _httpClientFactory.CreateClient("EnergyCostsApi");
-
         var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(httpClient, uriQuery) ??
-            throw new Exception("EnergyCosts API is not available.");
-
+        throw new Exception("EnergyCosts API is not available.");
         return energyCostsApi.GetEnergyRateUK() / 100;
     }
 
+    /// <summary>
+    /// Retrieves the energy rate for European countries, 
+    /// excluding the United Kingdom. To utilize this feature, 
+    /// you need to provide the two-letter country code of the specific country. 
+    /// For a list of country codes, please refer to: https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes."
+    /// </summary>
+    /// 
     private async Task<double> GetEnergyRateEurope(string countryCode)
     {
         var uriQuery = $"?format=JSON&time={_eurostatYear}";
         var httpClient = _httpClientFactory.CreateClient("EurostatApi");
-
         var eurostatApi = await ApiProcessor<EurostatModel>.Load(httpClient, uriQuery) ??
-            throw new Exception("Eurostat API is not available.");
-
+        throw new Exception("Eurostat API is not available.");
         return eurostatApi.GetEnergyRate(countryCode);
     }
 
+    /// <summary>
+    /// Retrieves the country code of a given country within Europe.
+    /// <summary>
     private string? GetCountryCode(string country)
     {
-        var countryCode = FindMatchFetchSecondColumn(_countryCodesFileName, country);
+        var countryCode = FindMatch(_countryCodesFileName, country);
 
         if (string.IsNullOrEmpty(countryCode))
         {
@@ -74,9 +94,12 @@ public class EnergyRateService: IEnergyRateService
         return countryCode.ToUpper();
     }
 
+    /// <summary>
+    /// Retrieves the DNO number of a given region within the United Kingdom.
+    /// <summary>
     private int? GetDNO(string region)
     {
-        var dno = FindMatchFetchSecondColumn(_dnoRegionNumFileName, region);
+        var dno = FindMatch(_dnoRegionNumFileName, region);
 
         if (string.IsNullOrEmpty(dno))
         {
@@ -85,7 +108,12 @@ public class EnergyRateService: IEnergyRateService
         return int.Parse(dno);
     }
 
-    private static string FindMatchFetchSecondColumn(string fileName, string str)
+    /// <summary>
+    /// Depending on the given file name, this matches 
+    /// countries with their respective country codes or matches 
+    /// United Kingdom regions with their DNO numbers.
+    /// <summary>
+    private static string FindMatch(string fileName, string str)
     {
         var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
             throw new Exception($"Cannot find path to file {fileName}.");
