@@ -99,6 +99,15 @@ public partial class App : Application
 
             services.AddSingleton<PowerInfo>(); // container for live Power usage data
             services.AddHostedService<PowerMonitorService>();
+
+            services.AddSingleton<LocationInfo>();
+            services.AddSingleton<CarbonIntensityInfo>();
+            services.AddHostedService<CarbonIntensityUpdateService>();
+            services.AddSingleton<ICarbonIntensityUpdateService, CarbonIntensityUpdateService>();
+            services.AddSingleton<ILocationService, LocationService>();
+            services.AddSingleton<IDatabaseService, DatabaseService>();
+            services.AddSingleton<IEnergyRateService, EnergyRateService>();
+
             // ---
 
             // Core Services
