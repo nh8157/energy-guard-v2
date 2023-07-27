@@ -5,14 +5,18 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
+using EnergyPerformance.Contracts.Services;
+
 
 namespace EnergyPerformance.Services;
-class CarbonIntensityUpdateService : BackgroundService
+class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
 {
     private readonly string _ukApiUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(10));
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
-    private readonly LocationInfo _locationInfo;
+    private LocationInfo _locationInfo;
+
+    private readonly ILocationService _locationService;
 
     public double CarbonIntensity
     {
@@ -20,14 +24,11 @@ class CarbonIntensityUpdateService : BackgroundService
         set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
-    public string Country => _locationInfo.Country;
-
-    public string PostCode => _locationInfo.PostCode;
-
-    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo)
+    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, ILocationService locationService)
     {
         _carbonIntensityInfo = carbonIntensityInfo;
-        _locationInfo = locationInfo;
+        _locationService = locationService;
+        _locationInfo = new LocationInfo();
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -42,11 +43,12 @@ class CarbonIntensityUpdateService : BackgroundService
     private async Task DoAsync()
     {
         Debug.WriteLine("Retrieving live carbon intensity");
-        // Only supports retrieving carbon intensity within the UK
-        if (Country == "Great Britain")
+        _locationInfo = await _locationService.GetLocationInfo();
+        if (_locationInfo.Country == "United Kingdom")
         {
             await FetchLiveCarbonIntensity();
-        } else
+        }
+        else
         {
             Debug.WriteLine("Other countries and regions are currently not supported");
         }
@@ -58,7 +60,7 @@ class CarbonIntensityUpdateService : BackgroundService
         var client = new HttpClient();
         try
         {
-            var url = String.Format(_ukApiUrl, PostCode);
+            var url = String.Format(_ukApiUrl, _locationInfo.PostCode);
             HttpResponseMessage response = await client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
@@ -88,4 +90,5 @@ class CarbonIntensityUpdateService : BackgroundService
             Debug.WriteLine("Cannot fetch data", e);
         }
     }
+
 }
