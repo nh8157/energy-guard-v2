@@ -1,0 +1,112 @@
+﻿<Page
+    x:Class="EnergyPerformance.Views.CarbonEmissionPage"
+    xmlns:viewmodel="using:EnergyPerformance.ViewModels"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:helpers="using:EnergyPerformance.Helpers"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winUi="using:CommunityToolkit.Labs.WinUI"
+    d:DataContext="{d:DesignInstance Type=viewmodel:CarbonEmissionViewModel}"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <helpers:PercentToColourConverter x:Key="PercentToColourConverter" />
+        <helpers:PowerUsageStringConverter x:Key="PowerUsageStringConverter" />
+        <helpers:CostStringConverter x:Key="CostStringConverter" />
+        <helpers:BudgetStringConverter x:Key="BudgetStringConverter" />
+    </Page.Resources>
+    <GridView x:Name="ContentArea" HorizontalAlignment="Center" VerticalAlignment="Center" SelectionMode="None" Height="Auto">
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Vertical">
+                <TextBlock x:Uid="CarbonEmissionTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
+                <TextBlock Style="{StaticResource DisplayTextBlockStyle}">
+                        <Run Text="{x:Bind ViewModel.Power,Mode=OneWay, Converter={StaticResource PowerUsageStringConverter}}"/>
+                        <Run x:Uid="EmissionsSymbol"/>
+                </TextBlock>
+            </StackPanel>
+            <StackPanel Orientation="Vertical" Margin="0 10">
+
+                <winUi:SettingsCard FontSize="20" x:Uid="HomeLastWeekCard" CornerRadius="15" Margin="0 10">
+                    <StackPanel>
+                        <TextBlock FontSize="20" Text="">
+                                    <Run Text="{x:Bind ViewModel.EmissionsPreviousWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run x:Uid="EmissionsSymbol"/>
+                        </TextBlock>
+                    </StackPanel>
+                </winUi:SettingsCard>
+                <winUi:SettingsCard FontSize="20" x:Uid="HomeThisWeekCard" CornerRadius="15" Margin="0 10">
+                    <StackPanel>
+                        <TextBlock FontSize="20" Text="">
+                                    <Run Text="{x:Bind ViewModel.EmissionsThisWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run x:Uid="EmissionsSymbol"/>
+                        </TextBlock>
+                    </StackPanel>
+                </winUi:SettingsCard>
+                <winUi:SettingsCard x:Uid="HomeProfileBar" FontSize="30" Height="200" CornerRadius="15" Margin="0 10 0 75">
+                    <StackPanel Orientation="Horizontal" Margin="30 30" HorizontalAlignment="Center">
+                        <AppBarButton x:Uid="HomeAutoAppBarButton" x:Name="Auto"  Icon="Refresh" Command="{x:Bind ViewModel.SelectAutoControlCommand}" 
+                                      Click="AppBarButton_Click" IsEnabled="{x:Bind ViewModel.AutoControl}" AutomationProperties.FullDescription="{x:Bind AutoTooltip.Content}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip x:Name="AutoTooltip" x:Uid="HomeAutoTooltip" Background="{StaticResource SystemControlBackgroundAltMediumLowBrush}" AutomationProperties.AccessibilityView="Raw"/>
+                            </ToolTipService.ToolTip>
+                        </AppBarButton>
+                        <AppBarButton x:Uid="HomeCasualAppBarButton" x:Name="Casual" Icon="SlideShow" Command="{x:Bind ViewModel.SelectCasualModeCommand}" 
+                                      Click="AppBarButton_Click" IsEnabled="{x:Bind ViewModel.AutoControl}" AutomationProperties.FullDescription="{x:Bind CasualTooltip.Content}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip x:Name="CasualTooltip" x:Uid="HomeCasualTooltip" Background="{StaticResource SystemControlBackgroundAltMediumLowBrush}" AutomationProperties.AccessibilityView="Raw"/>
+                            </ToolTipService.ToolTip>
+                        </AppBarButton>
+                        <AppBarButton x:Uid="HomeWorkAppBarButton" x:Name="Work" Icon="Mail" Command="{x:Bind ViewModel.SelectWorkModeCommand}" 
+                                      Click="AppBarButton_Click" IsEnabled="{x:Bind ViewModel.AutoControl}" AutomationProperties.FullDescription="{x:Bind WorkTooltip.Content}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip x:Name="WorkTooltip" x:Uid="HomeWorkTooltip" Background="{StaticResource SystemControlBackgroundAltMediumLowBrush}" AutomationProperties.AccessibilityView="Raw"/>
+                            </ToolTipService.ToolTip>
+                        </AppBarButton>
+                        <AppBarButton x:Uid="HomePerformanceAppBarButton" x:Name="Performance" Command="{x:Bind ViewModel.SelectPerformanceModeCommand}"
+                                      Click="AppBarButton_Click" IsEnabled="{x:Bind ViewModel.AutoControl}" AutomationProperties.FullDescription="{x:Bind PerformanceTooltip.Content}">
+                            <AppBarButton.Icon>
+                                <FontIcon Glyph="&#xEC4A;" />
+                            </AppBarButton.Icon>
+                            <ToolTipService.ToolTip>
+                                <ToolTip x:Name="PerformanceTooltip" x:Uid="HomePerformanceTooltip" Background="{StaticResource SystemControlBackgroundAltMediumLowBrush}" AutomationProperties.AccessibilityView="Raw"/>
+                            </ToolTipService.ToolTip>
+                        </AppBarButton>
+                    </StackPanel>
+                </winUi:SettingsCard>
+            </StackPanel>
+        </StackPanel>
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+            <Grid>
+                <!--{ThemeResource ControlAltFillColorTertiaryBrush}-->
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                            <Run Text="{x:Bind ViewModel.Power, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
+                            <Run x:Uid="EmissionsSymbol"/>
+                    </TextBlock>
+                    <TextBlock x:Uid="TotalCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+            <Grid>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                            <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
+                            <Run x:Uid="EmissionsSymbol"/>
+                    </TextBlock>
+                    <TextBlock x:Uid="CPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+            <Grid>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                            <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
+                            <Run x:Uid="EmissionsSymbol"/>
+                    </TextBlock>
+                    <TextBlock x:Uid="GPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </GridView>
+</Page>
