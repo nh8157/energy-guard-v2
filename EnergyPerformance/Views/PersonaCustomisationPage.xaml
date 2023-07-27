@@ -38,7 +38,7 @@
                                     <ColumnDefinition Width="200"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
-                            <Image Grid.Column="1" Source="{Binding EnergyRating}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
+                                <Image Grid.Column="1" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
                         </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>

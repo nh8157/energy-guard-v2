@@ -23,22 +23,27 @@ public sealed partial class PersonaCustomisationPage : Page
     public PersonaCustomisationPage()
     {
         ViewModel = App.GetService<PersonaCustomisationViewModel>();
-        DataContext = ViewModel;
         InitializeComponent();
         //PersonaSlider.LayoutUpdated += PersonaSlider_LayoutUpdated;
     }
 
+    // Function to Activate Popup
     private void ShowPopup(object sender, RoutedEventArgs e)
     {
         if (!PersonaPopup.IsOpen) { PersonaPopup.IsOpen = true; }
     }
 
+    // Function to Hide Popup
+    // Deselects any selections from the persona list
     private void HidePopup(object sender, RoutedEventArgs e)
     {
         PersonaList.DeselectAll();
         if (PersonaPopup.IsOpen) { PersonaPopup.IsOpen = false; }
     }
 
+    // Function called when the selection from persona list has changed
+    // Calls ShowPopup and alters the values depending on the selection from the list
+    // Safety check for whether the selection is a valid selection (This function is also called when the list is deselected)
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         ShowPopup(sender, e);
@@ -47,22 +52,26 @@ public sealed partial class PersonaCustomisationPage : Page
         AppSelection.SelectedIndex = selectedIndex;
         if (selectedIndex != -1)
         {
-            PersonaSlider.Value = ViewModel.ApplicationList[selectedIndex].Value;
+            PersonaSlider.Value = ViewModel.ApplicationList[selectedIndex].EnergyValue;
         }        
     }
 
+    // Function to set the persona slider value to the default setting (2, in this case)
     private void RestoreDefault(object sender, RoutedEventArgs e)
     {
         PersonaSlider.Value = DEFAULT;
     }
 
+    // Function to Apply Persona
+    // Grabs the selected index, and updates the energy value and energy rating to the new values
+    // Safety check for whether the selection is a valid selection
     private void ApplyPersona(object sender, RoutedEventArgs e)
     {
         var selectedIndex = AppSelection.SelectedIndex;
         if (selectedIndex != -1)
         {
             var item = ViewModel.ApplicationList[selectedIndex];
-            item.Value = (int)PersonaSlider.Value;
+            item.EnergyValue = (int)PersonaSlider.Value;
             item.EnergyRating = item.UpdateEnergyRating((int)PersonaSlider.Value);
         }
     }

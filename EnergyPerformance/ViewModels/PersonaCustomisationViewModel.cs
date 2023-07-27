@@ -11,7 +11,7 @@ using Windows.Media.Core;
 
 namespace EnergyPerformance.ViewModels;
 
-public partial class PersonaCustomisationViewModel : ObservableRecipient, INotifyPropertyChanged
+public partial class PersonaCustomisationViewModel : ObservableRecipient
 {
     [ObservableProperty]
     private ObservableCollection<String> applications = new();
@@ -35,26 +35,20 @@ public partial class PersonaCustomisationViewModel : ObservableRecipient, INotif
     }
 }
 
-public partial class ApplicationObject : ObservableRecipient, INotifyPropertyChanged
+// Class for Application Object - Inherits from INotifyPropertyChanged - Notifies the View that a change has occured
+public partial class ApplicationObject : INotifyPropertyChanged
 {
-    [ObservableProperty]
-    private string appName;
-
-    [ObservableProperty]
-    private int value;
-
-    [ObservableProperty]
+    public string appName;
+    private int energyValue;
     private string energyRating;
 
     private readonly int MIN = 1;
     private readonly int MAX = 3;
 
-    public event PropertyChangedEventHandler PropertyChanged;
-
     public ApplicationObject(string _appName, int _energyRating)
     {
         appName = _appName;
-        value = _energyRating;
+        energyValue = _energyRating;
         energyRating = UpdateEnergyRating(_energyRating);
     }
 
@@ -65,25 +59,37 @@ public partial class ApplicationObject : ObservableRecipient, INotifyPropertyCha
         return path;
     }
 
-    public string EnergyRatingPath
+    public string AppName
+    {
+        get => appName;
+        set => appName = value;
+    }
+
+    public int EnergyValue
+    {
+        get => energyValue;
+        set => energyValue = value;
+    }
+
+    // Getter and Setter for the EnergyRating property
+    // When a new value is set, raise the property indicating that the value has changed and the UI needs to update accordingly
+    public string EnergyRating
     {
         get => energyRating;
-
         set
         {
-            if (energyRating != value)
-            {
-                energyRating = value;
-                OnPropertyChanged();
-            }
+            energyRating = value;
+            OnPropertyUpdated("EnergyRating");
         }
     }
 
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
+    public event PropertyChangedEventHandler PropertyChanged;
+
+    private void OnPropertyUpdated(string propertyName)
     {
         if (PropertyChanged != null)
         {
-            PropertyChanged.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }
