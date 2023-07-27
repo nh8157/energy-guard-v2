@@ -15,7 +15,6 @@ namespace EnergyPerformance.Models;
 /// </summary>
 public class EnergyUsageModel
 {
-    private readonly EnergyUsageFileService _energyFileService;
     // initialize default values for fallback in case there is no file or the file is corrupted
     private const double DefaultWeeklyBudget = 2.0;
     private const double DefaultCostPerKwh = 0.34;
@@ -132,7 +131,6 @@ public class EnergyUsageModel
         AccumulatedWatts = 0;
         AccumulatedWattsHourly = 0;
         AccumulatedWattsPerApp = new Dictionary<string, double>();
-        _energyFileService = fileService;
         _energyUsage = new EnergyUsageData();
         _carbonIntensityInfo = carbonIntensityInfo;
         _databaseService = databaseService;
@@ -255,15 +253,29 @@ public class EnergyUsageModel
     /// <summary>
     /// Returns the hourly energy usage logs from the model.
     /// </summary>
-    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs()
+    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime? date)
     {
-        var hourlyLogs = new List<EnergyUsageLog>();
+        if (date != null)
+            foreach (var diary in _energyUsage.Diaries)
+                if (diary.Date == date)
+                    return diary.HourlyUsage;
 
-        foreach (var diary in _energyUsage.Diaries)
-            foreach (var log in diary.HourlyUsage)
-                hourlyLogs.Add(log);
+        return new List<EnergyUsageLog>();
+    }
 
-        return hourlyLogs;
+    /// <summary>
+    /// Returns all applications' energy log on a given day
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    public List<(string, EnergyUsageLog)> GetPerAppUsageLogs(DateTime? date)
+    {
+        if (date != null)
+            foreach (var diary in _energyUsage.Diaries)
+                if (diary.Date == date)
+                    return diary.PerProcUsage.Select(x => (x.Key, x.Value)).ToList();
+
+        return new List<(string, EnergyUsageLog)>();
     }
 
     /// <summary>
@@ -420,12 +432,6 @@ public class EnergyUsageModel
         // Update per process usage
         foreach (var proc in AccumulatedWattsPerApp.Keys)
             lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
-
-        Debug.WriteLine($"Recorded daily usage: {lastDiary.DailyUsage.PowerUsed}");
-        Debug.WriteLine($"Recorded hourly usage: {lastDiary.HourlyUsage.Last().PowerUsed}");
-        Debug.WriteLine(lastDiary.DailyUsage.PowerUsed - lastDiary.HourlyUsage.Last().PowerUsed);
-        Debug.WriteLine("Model updated.");
-
     }
 
 }

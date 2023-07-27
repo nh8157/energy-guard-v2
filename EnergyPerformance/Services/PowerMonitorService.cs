@@ -147,7 +147,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         // TODO: record carbon emissions
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-        Debug.WriteLine("");
         await Task.CompletedTask;
     }
 
@@ -167,7 +166,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         if (currentDateTime.DateTime.Date == _model.CurrentDay.DateTime.Date)
         {
             _model.AccumulatedWatts += power;
-            Debug.WriteLine($"Daily Watts: {_model.AccumulatedWatts}");
         }
         // set date to the new day, and reset acc. watts the power just measured
         else

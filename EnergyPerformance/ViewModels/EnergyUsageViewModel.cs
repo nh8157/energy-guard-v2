@@ -387,7 +387,7 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             MarkerStroke = OxyColors.AliceBlue,
             MarkerType = MarkerType.Circle,
         };
-        var logs = _model.GetHourlyEnergyUsageLogs();
+        var logs = _model.GetHourlyEnergyUsageLogs(null);
         foreach (var log in logs)
         {
             stemSeriesEnergyHourly.Points.Add(new DataPoint(DateTimeAxis.ToDouble(log.Date), log.PowerUsed));
