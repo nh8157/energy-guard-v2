@@ -11,7 +11,7 @@
     <Page.Resources>
     </Page.Resources>
 
-    <GridView x:Name="ContentArea" SelectionMode="None">
+    <GridView x:Name="ContentArea" SelectionMode="None" MinHeight="1200">
         <StackPanel Orientation="Vertical">
             <ListView x:Name="PersonaList" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" Width="400" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
                 <ListView.HeaderTemplate>
@@ -56,7 +56,7 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Vertical">
-                            <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" TickFrequency="1" TickPlacement="Outside"/>
+                            <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
 
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock FontSize="20" Margin="0, 0, 185, 0">

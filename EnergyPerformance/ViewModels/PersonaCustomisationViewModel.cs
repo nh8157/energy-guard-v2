@@ -27,11 +27,13 @@ public partial class PersonaCustomisationViewModel : ObservableRecipient
         applications.Add("Minecraft");
         applications.Add("Chrome");
 
-        applicationList.Add(new ApplicationObject("Steam", 3));
-        applicationList.Add(new ApplicationObject("Spotify", 1));
-        applicationList.Add(new ApplicationObject("Word", 1));
-        applicationList.Add(new ApplicationObject("Minecraft", 3));
-        applicationList.Add(new ApplicationObject("Chrome", 2));
+        // Value must range between 1.0f and 3.0f
+        // Any invalid values will result in no image being displayed
+        applicationList.Add(new ApplicationObject("Steam", 2.1f));
+        applicationList.Add(new ApplicationObject("Spotify", 1.2f));
+        applicationList.Add(new ApplicationObject("Word", 1.4f));
+        applicationList.Add(new ApplicationObject("Minecraft", 2.5f));
+        applicationList.Add(new ApplicationObject("Chrome", 1.8f));
     }
 }
 
@@ -39,17 +41,17 @@ public partial class PersonaCustomisationViewModel : ObservableRecipient
 public partial class ApplicationObject : INotifyPropertyChanged
 {
     public string appName;
-    private int energyValue;
+    private float energyValue;
     private string energyRating;
 
     private readonly int MIN = 1;
     private readonly int MAX = 3;
 
-    public ApplicationObject(string _appName, int _energyRating)
+    public ApplicationObject(string _appName, float _energyRating)
     {
         appName = _appName;
         energyValue = _energyRating;
-        energyRating = UpdateEnergyRating(_energyRating);
+        energyRating = UpdateEnergyRating((int)_energyRating);
     }
 
     public string UpdateEnergyRating(int _value)
@@ -65,7 +67,7 @@ public partial class ApplicationObject : INotifyPropertyChanged
         set => appName = value;
     }
 
-    public int EnergyValue
+    public float EnergyValue
     {
         get => energyValue;
         set => energyValue = value;

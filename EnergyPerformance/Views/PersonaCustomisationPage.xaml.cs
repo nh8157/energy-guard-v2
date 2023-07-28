@@ -13,7 +13,7 @@ namespace EnergyPerformance.Views;
 
 public sealed partial class PersonaCustomisationPage : Page
 {
-    const int DEFAULT = 2;
+    const float DEFAULT = 2.0f;
 
     public PersonaCustomisationViewModel ViewModel
     {
@@ -71,7 +71,7 @@ public sealed partial class PersonaCustomisationPage : Page
         if (selectedIndex != -1)
         {
             var item = ViewModel.ApplicationList[selectedIndex];
-            item.EnergyValue = (int)PersonaSlider.Value;
+            item.EnergyValue = (float)PersonaSlider.Value;
             item.EnergyRating = item.UpdateEnergyRating((int)PersonaSlider.Value);
         }
     }
