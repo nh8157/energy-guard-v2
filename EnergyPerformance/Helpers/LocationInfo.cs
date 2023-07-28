@@ -15,15 +15,23 @@ public class LocationInfo
     {
         get; set;
     }
-    public LocationInfo(string country, string postCode)
+
+    public string Region
+    {
+        get; set;
+    }
+
+    public LocationInfo(string country, string postCode, string region)
     {
         // UCL's address is set as the default address
         Country = country;
         PostCode = postCode;
+        Region = region;
     }
     public LocationInfo()
     {
         Country = "Unknown";
         PostCode = "Unknown";
+        Region = "Unknown";
     }
 }
