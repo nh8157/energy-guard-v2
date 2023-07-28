@@ -57,14 +57,22 @@ public class PersonaModel
         _allPersonas = await _personaFileService.ReadFileAsync();
 
         foreach (var persona in _allPersonas)
+        {
+            // Add watchers for an existing persona
             _processMonitorService.AddWatcher(persona.Path);
 
-        foreach (var persona in _allPersonas)
+            // Compute the next available ID for a persona
             if (persona.Id >= _nextPersonaId)
                 _nextPersonaId = persona.Id + 1;
+        }
 
     }
 
+    /// <summary>
+    /// This is a handler that would be invoked if an application of interest is launched
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     public void CreationEventHandler(object? sender, EventArgs e) 
     {
         var proc = _processMonitorService.CreatedProcess;
@@ -74,6 +82,11 @@ public class PersonaModel
             Debug.WriteLine($"Persona already enabled");
     }
 
+    /// <summary>
+    /// This is a handler that would be invoked if an application of interest is closed
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     public void DeletionEventHandler(object? sender, EventArgs e)
     {
         var proc = _processMonitorService.DeletedProcess;
@@ -166,6 +179,7 @@ public class PersonaModel
             PersonaEnabled = persona;
             IsEnabled = true;
 
+            // pass the settings to CPU and GPU
             _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
             EnableGpuSetting(persona.GpuSetting);
 
