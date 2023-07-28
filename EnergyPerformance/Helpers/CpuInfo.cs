@@ -63,5 +63,11 @@ public class CpuInfo
         return true;
     }
 
+    public void EnableCpuSetting(string path, int cpuSetting)
+    {
+    }
 
+    public void DisableCpuSetting(string path, int cpuSetting)
+    {
+    }
 }

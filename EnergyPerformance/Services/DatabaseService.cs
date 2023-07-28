@@ -2,31 +2,26 @@
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Transactions;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
 using EnergyPerformance.Models;
-using Microsoft.Extensions.Hosting;
-using Microsoft.VisualBasic;
 
 namespace EnergyPerformance.Services;
 public class DatabaseService : IDatabaseService
 {
 
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+    private readonly string _localAppDataFolder;
     private readonly string _datasource;
     private EnergyUsageData _energyUsage;
     public EnergyUsageData EnergyUsag => _energyUsage;
 
-    private bool _isInitialized;
+    private bool _isInitialized = false;
 
     public DatabaseService()
     {
-        _datasource = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData/database.db");
+        _localAppDataFolder = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData");
+        _datasource = Path.Combine(_localAppDataFolder, "database.db");
         _energyUsage = new EnergyUsageData();
     }
 
@@ -36,6 +31,10 @@ public class DatabaseService : IDatabaseService
         {
             try
             {
+                if (!Directory.Exists(_localAppDataFolder))
+                {
+                    Directory.CreateDirectory(_localAppDataFolder);
+                }
                 SQLiteConnection.CreateFile(_datasource);
                 SQLiteConnection conn = CreateConnection();
                 SQLiteCommand sqlite_cmd;
@@ -72,12 +71,8 @@ public class DatabaseService : IDatabaseService
         }
         if (await DatabaseIsActive())
         {
-            List<EnergyUsageDiary> diaries = await Task.Run(() => RetrieveAllDiaries());
-            double costPerKwh;
-            double weeklyBudget;
-            (costPerKwh, weeklyBudget) = await Task.Run(() => RetrieveLatestBudgetAndCostPerKwh());
-            _energyUsage = new EnergyUsageData(costPerKwh, weeklyBudget, diaries);
-            App.GetService<DebugModel>().AddMessage($"retrieved {diaries.Count().ToString()} diaries from databased");
+            _energyUsage = await ReadUsageDataFromDatabase();
+            App.GetService<DebugModel>().AddMessage($"retrieved {_energyUsage.Diaries.Count().ToString()} diaries from databased");
         }
         else
         {
@@ -240,26 +235,12 @@ public class DatabaseService : IDatabaseService
     {
         try
         {
-            SQLiteConnection conn = await CreateConnectionAsync();
-            SQLiteCommand command = conn.CreateCommand();
             string date = Diary.Date.ToString("yyyy/MM/dd");
-            if (await CheckIfDiaryExists(conn, date))
-            {
-                string deleteQuery = $"DELETE FROM energy_diary_log WHERE date = \"{date}\"";
-                SQLiteCommand deleteCommand = new SQLiteCommand(deleteQuery, conn);
-                await deleteCommand.ExecuteNonQueryAsync();
-            }
             EnergyUsageLog DailyLog = Diary.DailyUsage;
             List<EnergyUsageLog> HourlyLogs = Diary.HourlyUsage;
             Dictionary<string, EnergyUsageLog> ProgramLogs = Diary.PerProcUsage;
             string dailyLogID = await InsertDailyLog(DailyLog);
-            SQLiteCommand cmd = new SQLiteCommand("INSERT INTO energy_diary_log (date, exact_date_time, daily_log_id ) " +
-                    "VALUES (@date, @exact_date_time, @daily_log_id)", conn);
-            cmd.Parameters.AddWithValue("@date", date);
-            cmd.Parameters.AddWithValue("@exact_date_time", Diary.Date.ToString("yyyy/MM/dd HH:mm:ss"));
-            cmd.Parameters.AddWithValue("@daily_log_id", dailyLogID);
-            await cmd.ExecuteNonQueryAsync();
-            conn.Close();
+
             foreach (EnergyUsageLog hourlylog in HourlyLogs)
             {
                 int hour = hourlylog.Date.Hour;
@@ -269,6 +250,23 @@ public class DatabaseService : IDatabaseService
             {
                 await InsertProgramLog(programID, programLog);
             }
+            SQLiteConnection conn = await CreateConnectionAsync();
+            if (await CheckIfDiaryExists(conn, date))
+            {
+                string updateQuery = $"UPDATE energy_diary_log SET daily_log_id = \"{dailyLogID}\" WHERE date = \"{date}\"";
+                SQLiteCommand deleteCommand = new SQLiteCommand(updateQuery, conn);
+                await deleteCommand.ExecuteNonQueryAsync();
+            }
+            else
+            {
+                SQLiteCommand cmd = new SQLiteCommand("INSERT INTO energy_diary_log (date, exact_date_time, daily_log_id ) " +
+                    "VALUES (@date, @exact_date_time, @daily_log_id)", conn);
+                cmd.Parameters.AddWithValue("@date", date);
+                cmd.Parameters.AddWithValue("@exact_date_time", Diary.Date.ToString("yyyy/MM/dd HH:mm:ss"));
+                cmd.Parameters.AddWithValue("@daily_log_id", dailyLogID);
+                await cmd.ExecuteNonQueryAsync();
+            }
+            conn.Close();
         }
         catch (Exception ex)
         {
@@ -290,18 +288,17 @@ public class DatabaseService : IDatabaseService
     {
         try
         {
-            string currentDate = data.Diaries[^1].Date.ToString("yyyy/MM/dd");
-
+            EnergyUsageData currentUsageData = await ReadUsageDataFromDatabase();
             foreach (EnergyUsageDiary diary in data.Diaries)
             {
-                if (!(_energyUsage.Diaries.Contains(diary)))
+                if (!(currentUsageData.Diaries.Contains(diary)))
                 {
                     await InsertEnergyDiary(diary);
+                    string currentDate = diary.Date.ToString("yyyy/MM/dd");
+                    await UpdateBudgetAndCostPerKwh(currentDate, data.CostPerKwh, data.WeeklyBudget);
                 }
             }
-            await UpdateBudgetAndCostPerKwh(currentDate, data.CostPerKwh, data.WeeklyBudget);
             App.GetService<DebugModel>().AddMessage("Usage Data Saved To DB");
-            _energyUsage = DeepCopy(data);
         }
         catch (Exception ex)
         {
@@ -444,42 +441,35 @@ public class DatabaseService : IDatabaseService
     {
         try
         {
-            if (_isInitialized == false)
+            List<EnergyUsageDiary> diaries = new List<EnergyUsageDiary>();
+            SQLiteConnection conn = CreateConnection();
+            SQLiteCommand cmd = new SQLiteCommand("SELECT date, exact_date_time, daily_log_id FROM energy_diary_log", conn);
+            SQLiteDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                List<EnergyUsageDiary> diaries = new List<EnergyUsageDiary>();
-                SQLiteConnection conn = CreateConnection();
-                SQLiteCommand cmd = new SQLiteCommand("SELECT date, exact_date_time, daily_log_id FROM energy_diary_log", conn);
-                SQLiteDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    string date = reader.GetString(0);
-                    string exactDate = reader.GetString(1);
-                    DateTime exactDateTime = DateTime.ParseExact(exactDate, "yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
-                    string daily_log_id = reader.GetString(2);
-                    EnergyUsageLog dailyLog = ReadFromLogByID(daily_log_id);
-                    List<EnergyUsageLog> hourlyLogs = RetrieveHourlyLogByDate(date);
-                    Dictionary<string, EnergyUsageLog> programLogs = RetrieveProgramLogByDate(date);
-                    diaries.Add(new EnergyUsageDiary(exactDateTime, dailyLog, hourlyLogs, programLogs));
-                }
-                reader.Close();
-                conn.Close();
-                return diaries;
+                string date = reader.GetString(0);
+                string exactDate = reader.GetString(1);
+                DateTime exactDateTime = DateTime.ParseExact(exactDate, "yyyy/MM/dd HH:mm:ss", CultureInfo.InvariantCulture);
+                string daily_log_id = reader.GetString(2);
+                EnergyUsageLog dailyLog = ReadFromLogByID(daily_log_id);
+                List<EnergyUsageLog> hourlyLogs = RetrieveHourlyLogByDate(date);
+                Dictionary<string, EnergyUsageLog> programLogs = RetrieveProgramLogByDate(date);
+                diaries.Add(new EnergyUsageDiary(exactDateTime, dailyLog, hourlyLogs, programLogs));
             }
-            else
-            {
-                return _energyUsage.Diaries;
-            }
+            reader.Close();
+            conn.Close();
+            return diaries;
         }
         catch (Exception ex)
         {
             App.GetService<DebugModel>().AddMessage(ex.ToString());
-            return _energyUsage.Diaries;
+            return new List<EnergyUsageDiary>();
         }
     }
 
     public (double, double) RetrieveLatestBudgetAndCostPerKwh()
     {
-        if (_isInitialized == false)
+        try
         {
             SQLiteConnection connection = CreateConnection();
             string query = "SELECT cost_per_kwh, weekly_budget FROM energy_diary_log ORDER BY diary_log_id DESC LIMIT 1";
@@ -496,10 +486,21 @@ public class DatabaseService : IDatabaseService
             connection.Close();
             return (costPerKwh, weeklyBudget);
         }
-        else
+        catch (Exception ex)
         {
-            return (_energyUsage.CostPerKwh, _energyUsage.WeeklyBudget);
+            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            return (0, 0);
         }
+    }
+
+    private async Task<EnergyUsageData> ReadUsageDataFromDatabase()
+    {
+        List<EnergyUsageDiary> diaries = await Task.Run(() => RetrieveAllDiaries());
+        double costPerKwh;
+        double weeklyBudget;
+        (costPerKwh, weeklyBudget) = await Task.Run(() => RetrieveLatestBudgetAndCostPerKwh());
+        EnergyUsageData energyUsage = new EnergyUsageData(costPerKwh, weeklyBudget, diaries);
+        return energyUsage;
     }
 
     public async Task<EnergyUsageData> LoadUsageData()
@@ -508,7 +509,7 @@ public class DatabaseService : IDatabaseService
         {
             await InitializeDB();
         }
-        return DeepCopy(_energyUsage);
+        return _energyUsage;
     }
 
     private async Task<bool> DatabaseIsActive()
@@ -566,11 +567,4 @@ public class DatabaseService : IDatabaseService
         SQLiteCommand deleteCommand = new SQLiteCommand(deleteQuery, conn);
         await deleteCommand.ExecuteNonQueryAsync();
     }
-
-    private EnergyUsageData DeepCopy(EnergyUsageData data)
-    {
-        var jsonString = JsonSerializer.Serialize(data);
-        return JsonSerializer.Deserialize<EnergyUsageData>(jsonString);
-    }
-
 }
