@@ -14,7 +14,6 @@ namespace EnergyPerformance.Models;
 /// </summary>
 public class EnergyUsageModel
 {
-    private readonly EnergyUsageFileService _energyFileService;
     // initialize default values for fallback in case there is no file or the file is corrupted
     private double DefaultWeeklyBudget = 2.0;
     private double DefaultCostPerKwh = 0.34;
@@ -134,7 +133,6 @@ public class EnergyUsageModel
         AccumulatedWatts = 0;
         AccumulatedWattsHourly = 0;
         AccumulatedWattsPerApp = new Dictionary<string, double>();
-        _energyFileService = fileService;
         _energyUsage = new EnergyUsageData();
         _carbonIntensityInfo = carbonIntensityInfo;
         _energyRateInfo = energyRateInfo;
