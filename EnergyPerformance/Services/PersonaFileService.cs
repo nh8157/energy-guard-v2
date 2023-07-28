@@ -30,7 +30,9 @@ public class PersonaFileService
     {
         if (!_isInitialized)
         {
-            _personaData = await Task.Run(() => _fileService.Read<List<PersonaEntry>>(_applicationDataFolder, _personaFile));
+            var data = await Task.Run(() => _fileService.Read<List<PersonaEntry>>(_applicationDataFolder, _personaFile));
+            if (data != null)
+                _personaData = data;
             Debug.WriteLine("Reading personas from disk");
             _isInitialized = true;
         }
