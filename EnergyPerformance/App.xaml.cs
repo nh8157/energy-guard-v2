@@ -102,10 +102,14 @@ public partial class App : Application
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
+            services.AddSingleton<ILocationService, LocationService>();
+
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
-            services.AddSingleton<ICarbonIntensityUpdateService, CarbonIntensityUpdateService>();
-            services.AddSingleton<ILocationService, LocationService>();
+
+            services.AddSingleton<EnergyRateInfo>();
+            services.AddHostedService<EnergyRateService>();
+
             services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---
 
@@ -128,19 +132,6 @@ public partial class App : Application
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
-
-            // HttpClients
-            services.AddHttpClient<IEnergyRateService, EnergyRateService>("EnergyCostsApi", client =>
-            {
-                client.BaseAddress = new Uri("https://odegdcpnma.execute-api.eu-west-2.amazonaws.com/development/prices");
-            });
-            services.AddHttpClient<IEnergyRateService, EnergyRateService>("EurostatApi", client =>
-            {
-                client.BaseAddress = new Uri("https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/TEN00117/");
-            });
-
-            // EnergyRateService
-            services.AddTransient<IEnergyRateService, EnergyRateService>();
 
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));

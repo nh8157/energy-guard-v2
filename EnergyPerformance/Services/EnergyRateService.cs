@@ -1,54 +1,62 @@
-using System.Net;
+using System.Diagnostics;
 using System.Reflection;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
-using LiveChartsCore.Themes;
-using Windows.Foundation.Numerics;
+using Microsoft.Extensions.Hosting;
 
 namespace EnergyPerformance.Services;
 
-public class EnergyRateService: IEnergyRateService
+public class EnergyRateService: BackgroundService
 {
-    private readonly string _countryCodesFileName = "country_codes";
-    private readonly string _dnoRegionNumFileName = "dno_region_numbers";
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(1));
+    private readonly EnergyRateInfo _energyRateInfo;
+    private readonly LocationInfo _locationInfo;
+
+    private const string _ukUrl = "https://odegdcpnma.execute-api.eu-west-2.amazonaws.com/development/prices?dno={0}&voltage={1}&start={2}&end={3}";
+    private const string _euUrl = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/TEN00117/?format=JSON&time={0}";
+    private const string _countryCodesFileName = "country_codes";
+    private const string _dnoRegionNumFileName = "dno_region_numbers";
+
+    private readonly HttpClient _httpClient;
+
     private readonly string _eurostatYear = "2022";
     private readonly string _voltage = "HV";
-    private readonly IHttpClientFactory _httpClientFactory;
 
-    public EnergyRateService(IHttpClientFactory httpClientFactory)
+    public EnergyRateService(LocationInfo locationInfo, EnergyRateInfo energyRateInfo)
     {
-        _httpClientFactory = httpClientFactory;
+        _locationInfo = locationInfo;
+        _energyRateInfo = energyRateInfo;
+        _httpClient = new HttpClient();
     }
 
-    /// <summary>
-    /// Returns the energy rate of a chosen country. 
-    /// </summary>
-    /// <param name="country">
-    /// The name of the country.
-    /// </param>
-    /// <param name="ukRegion">
-    /// A region in the UK (e.g. London). The parameter is only required when the given country is United Kingdom.
-    /// </param>
-    public async Task<double> GetEnergyRateAsync(string country, string ukRegion="")
+    protected async override Task ExecuteAsync(CancellationToken token)
     {
+        do
+            await DoAsync();
+        while (await _periodicTimer.WaitForNextTickAsync(token) && !token.IsCancellationRequested);
+    }
+
+    public async Task DoAsync()
+    {
+        // we need to reimplement the way locationInfo updates
+        // as right now the field is static
+        // uncomment the following line once the service is reimplemented
+
+        // var country = _locationInfo.Country.ToLower();
+        var country = "China";
+        var countryCode = GetCountryCode(country);
+        double rate = 0;
+
         if (country.ToLower().Equals("united kingdom"))
-        {
-            if (string.IsNullOrEmpty(ukRegion))
-            {
-                throw new ArgumentException("DNO must be provided for United Kingdom energy rate.");
-            }
-            var dno = GetDNO(ukRegion) ??
-                throw new ArgumentException("Please provide a valid UK Region.");
+            rate = await GetEnergyRateUKAsync(12);
 
-            var energyRateUK = await GetEnergyRateUKAsync(dno);
-            return energyRateUK;
-        }
-        var countryCode = GetCountryCode(country) ??
-            throw new ArgumentException($"The country {country} is not supported.");
+        else if (countryCode is not null)
+            // country is in europe
+            rate = await GetEnergyRateEuropeAsync(countryCode);
 
-        var energyRateEurope = await GetEnergyRateEuropeAsync(countryCode);
-        return energyRateEurope;
+        _energyRateInfo.EnergyRate = rate;
+        Debug.WriteLine($"Fetching energy rate live for {country}: {rate}");
     }
 
     /// <summary>
@@ -63,10 +71,12 @@ public class EnergyRateService: IEnergyRateService
     private async Task<double> GetEnergyRateUKAsync(int dno)
     {
         var dateNow = DateTime.Now.ToString("dd-MM-yyyy");
-        var uriQuery = $"?dno={dno}&voltage={_voltage}&start={dateNow}&end={dateNow}";
-        var httpClient = _httpClientFactory.CreateClient("EnergyCostsApi");
-        var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(httpClient, uriQuery) ??
+        var url = String.Format(_ukUrl, dno, _voltage, dateNow, dateNow);
+
+        // fetching and deserializing the data from remote API
+        var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(_httpClient, url) ??
         throw new Exception("EnergyCosts API is not available.");
+
         return energyCostsApi.GetEnergyRateUK() / 100;
     }
 
@@ -82,9 +92,9 @@ public class EnergyRateService: IEnergyRateService
     /// </param>
     private async Task<double> GetEnergyRateEuropeAsync(string countryCode)
     {
-        var uriQuery = $"?format=JSON&time={_eurostatYear}";
-        var httpClient = _httpClientFactory.CreateClient("EurostatApi");
-        var eurostatApi = await ApiProcessor<EurostatModel>.Load(httpClient, uriQuery) ??
+        var url = String.Format(_euUrl, _eurostatYear);
+
+        var eurostatApi = await ApiProcessor<EurostatModel>.Load(_httpClient, url) ??
         throw new Exception("Eurostat API is not available.");
         return eurostatApi.GetEnergyRate(countryCode);
     }
@@ -134,7 +144,7 @@ public class EnergyRateService: IEnergyRateService
     /// <param name="str">
     /// The countries or UK regions to match.
     /// </param>
-    private static string FindMatch(string fileName, string str)
+    private string FindMatch(string fileName, string str)
     {
         var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
             throw new Exception($"Cannot find path to file {fileName}.");
