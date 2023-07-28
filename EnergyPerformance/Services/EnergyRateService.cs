@@ -26,7 +26,7 @@ public class EnergyRateService: IEnergyRateService
     /// The 'ukRegion' parameter is required exclusively 
     /// when the given country is 'United Kingdom'.
     /// </summary>
-    public async Task<double> GetEnergyRate(string countryName, string ukRegion="")
+    public async Task<double> GetEnergyRateAsync(string countryName, string ukRegion="")
     {
         if (countryName.ToLower().Equals("united kingdom"))
         {
@@ -37,13 +37,13 @@ public class EnergyRateService: IEnergyRateService
             var dno = GetDNO(ukRegion) ??
                 throw new ArgumentException("Please provide a valid UK Region.");
 
-            var energyRateUK = await GetEnergyRateUK(dno);
+            var energyRateUK = await GetEnergyRateUKAsync(dno);
             return energyRateUK;
         }
         var countryCode = GetCountryCode(countryName) ??
             throw new ArgumentException($"The country {countryName} is not supported.");
 
-        var energyRateEurope = await GetEnergyRateEurope(countryCode);
+        var energyRateEurope = await GetEnergyRateEuropeAsync(countryCode);
         return energyRateEurope;
     }
 
@@ -54,7 +54,7 @@ public class EnergyRateService: IEnergyRateService
     /// https://electricitycosts.org.uk/api/
     /// </summary>
     /// 
-    private async Task<double> GetEnergyRateUK(int dno)
+    private async Task<double> GetEnergyRateUKAsync(int dno)
     {
         var dateNow = DateTime.Now.ToString("dd-MM-yyyy");
         var uriQuery = $"?dno={dno}&voltage={_voltage}&start={dateNow}&end={dateNow}";
@@ -68,10 +68,11 @@ public class EnergyRateService: IEnergyRateService
     /// Retrieves the energy rate for European countries, 
     /// excluding the United Kingdom. To utilize this feature, 
     /// you need to provide the two-letter country code of the specific country. 
-    /// For a list of country codes, please refer to: https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes."
+    /// For a list of country codes, please refer to: 
+    /// https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes.
     /// </summary>
     /// 
-    private async Task<double> GetEnergyRateEurope(string countryCode)
+    private async Task<double> GetEnergyRateEuropeAsync(string countryCode)
     {
         var uriQuery = $"?format=JSON&time={_eurostatYear}";
         var httpClient = _httpClientFactory.CreateClient("EurostatApi");
