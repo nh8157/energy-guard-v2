@@ -23,12 +23,16 @@ public class EnergyRateService: IEnergyRateService
 
     /// <summary>
     /// Returns the energy rate of a chosen country. 
-    /// The 'ukRegion' parameter is required exclusively 
-    /// when the given country is 'United Kingdom'.
     /// </summary>
-    public async Task<double> GetEnergyRateAsync(string countryName, string ukRegion="")
+    /// <param name="country">
+    /// The name of the country.
+    /// </param>
+    /// <param name="ukRegion">
+    /// A region in the UK (e.g. London). The parameter is only required when the given country is United Kingdom.
+    /// </param>
+    public async Task<double> GetEnergyRateAsync(string country, string ukRegion="")
     {
-        if (countryName.ToLower().Equals("united kingdom"))
+        if (country.ToLower().Equals("united kingdom"))
         {
             if (string.IsNullOrEmpty(ukRegion))
             {
@@ -40,8 +44,8 @@ public class EnergyRateService: IEnergyRateService
             var energyRateUK = await GetEnergyRateUKAsync(dno);
             return energyRateUK;
         }
-        var countryCode = GetCountryCode(countryName) ??
-            throw new ArgumentException($"The country {countryName} is not supported.");
+        var countryCode = GetCountryCode(country) ??
+            throw new ArgumentException($"The country {country} is not supported.");
 
         var energyRateEurope = await GetEnergyRateEuropeAsync(countryCode);
         return energyRateEurope;
@@ -53,7 +57,9 @@ public class EnergyRateService: IEnergyRateService
     /// For further details about the DNO, please visit: 
     /// https://electricitycosts.org.uk/api/
     /// </summary>
-    /// 
+    /// <param name="dno">
+    /// Distribution Network Operator number.
+    /// </param>
     private async Task<double> GetEnergyRateUKAsync(int dno)
     {
         var dateNow = DateTime.Now.ToString("dd-MM-yyyy");
@@ -71,7 +77,9 @@ public class EnergyRateService: IEnergyRateService
     /// For a list of country codes, please refer to: 
     /// https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes.
     /// </summary>
-    /// 
+    /// <param name="countryCode">
+    /// Two-letter country code.
+    /// </param>
     private async Task<double> GetEnergyRateEuropeAsync(string countryCode)
     {
         var uriQuery = $"?format=JSON&time={_eurostatYear}";
@@ -84,6 +92,9 @@ public class EnergyRateService: IEnergyRateService
     /// <summary>
     /// Retrieves the country code of a given country within Europe.
     /// <summary>
+    /// <param name="country">
+    /// The name of the country.
+    /// </param>
     private string? GetCountryCode(string country)
     {
         var countryCode = FindMatch(_countryCodesFileName, country);
@@ -98,9 +109,12 @@ public class EnergyRateService: IEnergyRateService
     /// <summary>
     /// Retrieves the DNO number of a given region within the United Kingdom.
     /// <summary>
-    private int? GetDNO(string region)
+    /// <param name="ukRegion">
+    /// A region in the UK (e.g. London).
+    /// </param>
+    private int? GetDNO(string ukRegion)
     {
-        var dno = FindMatch(_dnoRegionNumFileName, region);
+        var dno = FindMatch(_dnoRegionNumFileName, ukRegion);
 
         if (string.IsNullOrEmpty(dno))
         {
@@ -114,6 +128,12 @@ public class EnergyRateService: IEnergyRateService
     /// countries with their respective country codes or matches 
     /// United Kingdom regions with their DNO numbers.
     /// <summary>
+    /// <param name="fileName">
+    /// The name of the file (country_code or dno_region_numbers).
+    /// </param>
+    /// <param name="str">
+    /// The countries or UK regions to match.
+    /// </param>
     private static string FindMatch(string fileName, string str)
     {
         var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ??
