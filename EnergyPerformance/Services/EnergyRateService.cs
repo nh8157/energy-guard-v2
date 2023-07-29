@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Reflection;
-using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
 using Microsoft.Extensions.Hosting;
@@ -39,16 +38,14 @@ public class EnergyRateService: BackgroundService
 
     public async Task DoAsync()
     {
-        // we need to reimplement the way locationInfo updates
-        // as right now the field is static
-        // uncomment the following line once the service is reimplemented
-
-        // var country = _locationInfo.Country.ToLower();
-        var country = "China";
+        var country = _locationInfo.Country.ToLower();
+        // get a postcode that's all lower case and has no white space
+        var postCode = _locationInfo.PostCode.Replace(" ", "");
         var countryCode = GetCountryCode(country);
         double rate = 0;
 
         if (country.ToLower().Equals("united kingdom"))
+            // TODO: get DNO from postCode using remote API
             rate = await GetEnergyRateUKAsync(12);
 
         else if (countryCode is not null)

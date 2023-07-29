@@ -15,7 +15,7 @@ namespace EnergyPerformance.Models;
 public class EnergyUsageModel
 {
     // initialize default values for fallback in case there is no file or the file is corrupted
-    private double DefaultWeeklyBudget = 2.0;
+    private readonly double DefaultWeeklyBudget = 2.0;
     private double DefaultCostPerKwh = 0.34;
 
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
