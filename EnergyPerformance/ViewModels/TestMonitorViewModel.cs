@@ -46,6 +46,7 @@ public partial class TestMonitorViewModel : ObservableObject
         var logs = _model.GetDailyEnergyUsageLogs();
         foreach (var log in logs)
         {
+            Debug.WriteLine(log.Date.ToString()+"4444");
             values.Add(new DateTimePoint(log.Date.Date, log.PowerUsed));
             costs.Add(new DateTimePoint(log.Date.Date, log.Cost));
         }

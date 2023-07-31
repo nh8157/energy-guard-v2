@@ -249,7 +249,11 @@ public class EnergyUsageModel
         var dailyLogs = new List<EnergyUsageLog>();
 
         foreach (var diary in _energyUsage.Diaries)
+        {
             dailyLogs.Add(diary.DailyUsage);
+            Debug.WriteLine(diary.DailyUsage.Date.ToString() + "3333");
+        }
+            
 
         return dailyLogs;
     }
@@ -257,12 +261,16 @@ public class EnergyUsageModel
     /// <summary>
     /// Returns the hourly energy usage logs from the model.
     /// </summary>
-    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime? date)
+    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date)
     {
+        Debug.WriteLine(date.Date.ToString()+"11111");
         if (date != null)
             foreach (var diary in _energyUsage.Diaries)
-                if (diary.Date == date)
+            {
+                if (diary.DailyUsage.Date.Date == date.Date)
                     return diary.HourlyUsage;
+            }
+                
 
         return new List<EnergyUsageLog>();
     }
