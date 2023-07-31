@@ -1,5 +1,7 @@
 using System.Diagnostics;
+using System.Net;
 using System.Reflection;
+using System.Security.Policy;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +16,7 @@ public class EnergyRateService: BackgroundService
 
     private const string _ukUrl = "https://odegdcpnma.execute-api.eu-west-2.amazonaws.com/development/prices?dno={0}&voltage={1}&start={2}&end={3}";
     private const string _euUrl = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/TEN00117/?format=JSON&time={0}";
+    private const string _dnoUrl = "https://www.energynetworks.org/operator-finder/operator-finder.php?postcode={0}";
     private const string _countryCodesFileName = "country_codes";
     private const string _dnoRegionNumFileName = "dno_region_numbers";
 
@@ -39,18 +42,24 @@ public class EnergyRateService: BackgroundService
     public async Task DoAsync()
     {
         var country = _locationInfo.Country.ToLower();
-        // get a postcode that's all lower case and has no white space
-        var postCode = _locationInfo.PostCode.Replace(" ", "");
         var countryCode = GetCountryCode(country);
+
+        // get a postcode that's all lower case and has no white space
+        var postcode = _locationInfo.PostCode.Replace(" ", "");
         double rate = 0;
 
         if (country.ToLower().Equals("united kingdom"))
-            // TODO: get DNO from postCode using remote API
-            rate = await GetEnergyRateUKAsync(12);
+        {
+            // get DNO from postcode using remote API
+            var dno = await GetDNOFromPostcode(postcode);
+            rate = await GetEnergyRateUKAsync(dno);
+        }
 
         else if (countryCode is not null)
+        {
             // country is in europe
             rate = await GetEnergyRateEuropeAsync(countryCode);
+        }
 
         _energyRateInfo.EnergyRate = rate;
         Debug.WriteLine($"Fetching energy rate live for {country}: {rate}");
@@ -68,7 +77,7 @@ public class EnergyRateService: BackgroundService
     private async Task<double> GetEnergyRateUKAsync(int dno)
     {
         var dateNow = DateTime.Now.ToString("dd-MM-yyyy");
-        var url = String.Format(_ukUrl, dno, _voltage, dateNow, dateNow);
+        var url = string.Format(_ukUrl, dno, _voltage, dateNow, dateNow);
 
         // fetching and deserializing the data from remote API
         var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(_httpClient, url) ??
@@ -89,7 +98,7 @@ public class EnergyRateService: BackgroundService
     /// </param>
     private async Task<double> GetEnergyRateEuropeAsync(string countryCode)
     {
-        var url = String.Format(_euUrl, _eurostatYear);
+        var url = string.Format(_euUrl, _eurostatYear);
 
         var eurostatApi = await ApiProcessor<EurostatModel>.Load(_httpClient, url) ??
         throw new Exception("Eurostat API is not available.");
@@ -116,18 +125,17 @@ public class EnergyRateService: BackgroundService
     /// <summary>
     /// Retrieves the DNO number of a given region within the United Kingdom.
     /// <summary>
-    /// <param name="ukRegion">
-    /// A region in the UK (e.g. London).
+    /// <param name="postcode">
+    /// A postcode in the UK.
     /// </param>
-    private int? GetDNO(string ukRegion)
+    private async Task<int> GetDNOFromPostcode(string postcode)
     {
-        var dno = FindMatch(_dnoRegionNumFileName, ukRegion);
+        var url = string.Format(_dnoUrl, postcode);
 
-        if (string.IsNullOrEmpty(dno))
-        {
-            return null;
-        }
-        return int.Parse(dno);
+        var energyNetworkApi = await ApiProcessor<EnergyNetworksModel>.Load(_httpClient, url) ??
+        throw new Exception("Energy Networks API is not available.");
+
+        return int.Parse(energyNetworkApi.DnoCode);
     }
 
     /// <summary>
