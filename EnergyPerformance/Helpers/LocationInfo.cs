@@ -1,29 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+
 
 namespace EnergyPerformance.Helpers;
-public class LocationInfo
+public class LocationInfo : INotifyPropertyChanged
 {
+    private string _country;
+    private string _postCode;
+    private string _region;
+    public event PropertyChangedEventHandler? PropertyChanged;
+
+    protected virtual void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
     public string Country
     {
-        get; set;
+        get => _country;
+        set
+        {
+            _country = value;
+            OnPropertyChanged(nameof(Country));
+        }
     }
     public string PostCode
     {
-        get; set;
+        get => _postCode;
+        set
+        {
+            _postCode = value;
+            OnPropertyChanged(nameof(PostCode));
+        }
     }
-    public LocationInfo(string country, string postCode)
+
+    public string Region
     {
-        // UCL's address is set as the default address
-        Country = country;
-        PostCode = postCode;
+        get => _region;
+        set
+        {
+            _region = value;
+            OnPropertyChanged(nameof(Region));
+        }
     }
+
+
+
     public LocationInfo()
     {
         Country = "Unknown";
         PostCode = "Unknown";
+        Region = "Unknown";
     }
 }

@@ -14,7 +14,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     private readonly string _ukApiUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(10));
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
-    private LocationInfo _locationInfo;
+    private readonly LocationInfo _locationInfo;
 
     private readonly ILocationService _locationService;
 
@@ -24,11 +24,11 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
-    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, ILocationService locationService)
+    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, ILocationService locationService, LocationInfo locationInfo)
     {
         _carbonIntensityInfo = carbonIntensityInfo;
         _locationService = locationService;
-        _locationInfo = new LocationInfo();
+        _locationInfo = locationInfo;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -43,7 +43,6 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     private async Task DoAsync()
     {
         Debug.WriteLine("Retrieving live carbon intensity");
-        _locationInfo = await _locationService.GetLocationInfo();
         if (_locationInfo.Country == "United Kingdom")
         {
             await FetchLiveCarbonIntensity();
