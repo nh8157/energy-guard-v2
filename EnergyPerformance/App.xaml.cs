@@ -15,6 +15,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Windows;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+
 namespace EnergyPerformance;
 
 /// <summary>
@@ -119,6 +122,7 @@ public partial class App : Application
             services.AddTransient<EnergyUsagePage>();
             services.AddTransient<PersonaCustomisationViewModel>();
             services.AddTransient<PersonaCustomisationPage>();
+            services.AddTransient<PersonaSliderPage>();
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();
             services.AddTransient<MonitorDetailViewModel>();
@@ -129,9 +133,6 @@ public partial class App : Application
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
-
-           
-
             
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
@@ -198,6 +199,6 @@ public partial class App : Application
 
         // call StartAsync() on IHostedServices registered to the Host
         await Host.StartAsync();
-
     }
+
 }

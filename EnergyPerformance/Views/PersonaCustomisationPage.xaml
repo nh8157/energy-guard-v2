@@ -11,7 +11,7 @@
     <Page.Resources>
     </Page.Resources>
 
-    <GridView x:Name="ContentArea" SelectionMode="None" MinHeight="1200">
+    <GridView x:Name="ContentArea" SelectionMode="None">
         <StackPanel Orientation="Vertical">
             <ListView x:Name="PersonaList" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" Width="400" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
                 <ListView.HeaderTemplate>
@@ -44,42 +44,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
 
-            <Button x:Uid="AddPersonaButton" Click="ShowPopup" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>
-            <Popup VerticalOffset="10" x:Name="PersonaPopup">
-                <Border BorderThickness="2">
-                    <StackPanel Orientation="Vertical">
-                        <StackPanel Orientation="Vertical" Margin="0, 10, 0, 10">
-                            <TextBlock FontSize="20">
-                                <Run x:Uid="CustomisePersonaLabel"/>
-                            </TextBlock>
-                            <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.Applications, Mode=OneWay}" Margin="0, 10, 0, 20"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Vertical">
-                            <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
-
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock FontSize="20" Margin="0, 0, 185, 0">
-                                    <Run x:Uid="EfficiencyLabel"/>
-                                </TextBlock>
-                                <TextBlock FontSize="20" Margin="0, 0, 155, 0">
-                                    <Run x:Uid="BalancedLabel"/>
-                                </TextBlock>
-                                <TextBlock FontSize="20">
-                                    <Run x:Uid="PerformanceLabel"/>
-                                </TextBlock>
-                            </StackPanel>
-
-                            <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
-                                <Button x:Uid="RestoreDefaultButton" Click="RestoreDefault" Width="150" Height="40" FontSize="15" Margin="120, 0, 20, 0"/>
-                                <Button x:Uid="ApplyPersonaButton" Click="ApplyPersona" Width="150" Height="40" FontSize="15" Margin="0, 0, 20, 0"/>
-                                <Button x:Uid="ClosePopup" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="HidePopup"/>
-                            </StackPanel>
-                        </StackPanel>
-
-                    </StackPanel>
-                </Border>
-            </Popup>
+            <Button x:Uid="AddPersonaButton" FontSize="15" Width="150" Height="40" Click="NavigateToSliderPage" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>
 
         </StackPanel>
     </GridView>

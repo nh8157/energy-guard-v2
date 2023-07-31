@@ -25,6 +25,7 @@ public class PageService : IPageService
         Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
         Configure<DebugViewModel, DebugPage>();
         Configure<PersonaCustomisationViewModel, PersonaCustomisationPage>();
+        //Configure<PersonaCustomisationViewModel, PersonaSliderPage>();
     }
 
     public Type GetPageType(string key)

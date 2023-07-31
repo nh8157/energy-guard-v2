@@ -14,26 +14,32 @@ namespace EnergyPerformance.ViewModels;
 public partial class PersonaCustomisationViewModel : ObservableRecipient
 {
     [ObservableProperty]
-    private ObservableCollection<String> applications = new();
+    private static ObservableCollection<String> applications = new();
 
     [ObservableProperty]
-    private ObservableCollection<ApplicationObject> applicationList = new();
+    private static ObservableCollection<ApplicationObject> applicationList = new();
+    private static bool do_once = true;
 
     public PersonaCustomisationViewModel()
     {
-        applications.Add("Steam");
-        applications.Add("Spotify");
-        applications.Add("Word");
-        applications.Add("Minecraft");
-        applications.Add("Chrome");
+        if (do_once)
+        {
+            applications.Add("Steam");
+            applications.Add("Spotify");
+            applications.Add("Word");
+            applications.Add("Minecraft");
+            applications.Add("Chrome");
 
-        // Value must range between 1.0f and 3.0f
-        // Any invalid values will result in no image being displayed
-        applicationList.Add(new ApplicationObject("Steam", 2.1f));
-        applicationList.Add(new ApplicationObject("Spotify", 1.2f));
-        applicationList.Add(new ApplicationObject("Word", 1.4f));
-        applicationList.Add(new ApplicationObject("Minecraft", 2.5f));
-        applicationList.Add(new ApplicationObject("Chrome", 1.8f));
+            // Value must range between 1.0f and 3.0f
+            // Any invalid values will result in no image being displayed
+            applicationList.Add(new ApplicationObject("Steam", 2.1f));
+            applicationList.Add(new ApplicationObject("Spotify", 1.2f));
+            applicationList.Add(new ApplicationObject("Word", 1.4f));
+            applicationList.Add(new ApplicationObject("Minecraft", 2.5f));
+            applicationList.Add(new ApplicationObject("Chrome", 1.8f));
+
+            do_once = false;
+        }
     }
 }
 
