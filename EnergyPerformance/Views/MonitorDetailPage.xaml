@@ -16,20 +16,22 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <!-- Adjust the height as needed -->
+            
             <RowDefinition Height="*"/>
-            <!-- Adjust the height as needed -->
+            
         </Grid.RowDefinitions>
 
         <lvc:CartesianChart Series="{Binding Series}" Grid.Row="1" MaxHeight="400" />
-        <!-- Adjust MaxHeight as needed -->
+        
 
         <lvc:CartesianChart
-            Series="{Binding SeriesHour}"
+            Series="{Binding SeriesHourly}"
             XAxes="{Binding XAxes}"
             LegendPosition="Right"
             Grid.Row="0"
              />
+        
+      
         <!-- Adjust Margin as needed -->
     </Grid>
 

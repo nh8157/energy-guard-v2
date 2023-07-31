@@ -24,7 +24,7 @@
             <Button Command="{Binding GoToPage1Command}" Margin="0,0,20,0">This Week</Button>
             <Button Command="{Binding SeeAllCommand}" Margin="0,0,20,0">All Data</Button>
             <Button Command="{Binding CostCommand}" Margin="0,0,20,0">Cost Model</Button>
-            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="40" Width="200" ItemsSource="{x:Bind ViewModel.Applications}" Margin="10, 0, 0, 0"/>
+            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="40" Width="200" ItemsSource="{x:Bind ViewModel.Applications}" SelectedItem="{x:Bind ViewModel.SelectedApplication, Mode=TwoWay}" Margin="10, 0, 0, 0"/>
         </StackPanel>
         <lvc:CartesianChart
             Grid.Row="1"

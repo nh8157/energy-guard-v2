@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Views;
 using EnergyPerformance.Services;
+using System.ComponentModel;
 
 namespace EnergyPerformance.ViewModels;
 public partial class TestMonitorViewModel : ObservableObject
@@ -30,6 +31,7 @@ public partial class TestMonitorViewModel : ObservableObject
     public readonly ObservableCollection<String> Applications = new();
     private ColumnSeries<DateTimePoint> historySeries;
     private ColumnSeries<DateTimePoint> costSeries;
+    private string selectedApplication;
 
     public TestMonitorViewModel()
     {
@@ -79,6 +81,7 @@ public partial class TestMonitorViewModel : ObservableObject
     public Axis[] XAxes
     {
         get; set;
+
     } =
 {
         new Axis
@@ -109,7 +112,8 @@ public partial class TestMonitorViewModel : ObservableObject
         //point.Visual.Fill = new SolidColorPaint(SKColors.Red);
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
-        _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName, param);
+        _model.SelectDate = param;
+        _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
         Debug.Write($"CLick on {point.SecondaryValue}");
     }
 
@@ -148,6 +152,7 @@ public partial class TestMonitorViewModel : ObservableObject
     [RelayCommand]
     public void Cost()
     {
+        Debug.WriteLine(SelectedApplication);
         Debug.WriteLine("On CLick");
         Series = new ISeries[]
         {
@@ -155,5 +160,21 @@ public partial class TestMonitorViewModel : ObservableObject
         };
         OnPropertyChanged(nameof(Series));
 
+    }
+
+    public string SelectedApplication
+    {
+        get
+        {
+            return selectedApplication;
+        }
+        set
+        {
+            if (selectedApplication != value)
+            {
+                selectedApplication = value;
+                OnPropertyChanged(nameof(SelectedApplication));
+            }
+        }
     }
 }

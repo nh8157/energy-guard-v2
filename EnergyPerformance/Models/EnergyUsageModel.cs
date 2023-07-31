@@ -22,6 +22,10 @@ public class EnergyUsageModel
 
     private EnergyUsageData _energyUsage;
     private readonly IDatabaseService _databaseService;
+    public DateTime SelectDate {
+        get; set;
+    }
+
 
 
     public DateTimeOffset CurrentDay

@@ -65,6 +65,8 @@
                 
                 <NavigationViewItem Icon="Zoom" x:Uid="Shell_Debug" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.DebugViewModel">
                 </NavigationViewItem>
+
+               
             </NavigationView.MenuItems>
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
