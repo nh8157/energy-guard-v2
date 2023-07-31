@@ -102,7 +102,6 @@ public partial class App : Application
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
-            services.AddSingleton<ILocationService, LocationService>();
             services.AddHostedService<LocationService>();
 
             services.AddSingleton<CarbonIntensityInfo>();

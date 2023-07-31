@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
-using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
 using Newtonsoft.Json;
 using Windows.Devices.Geolocation;
-using Windows.Media.Protection.PlayReady;
-using System.Diagnostics.Metrics;
 
 namespace EnergyPerformance.Services;
-public class LocationService : BackgroundService, ILocationService
+public class LocationService : BackgroundService
 {
-    private LocationInfo _locationInfo;
+    private readonly LocationInfo _locationInfo;
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(1));
-    private bool _isInitialzed;
+
     public string Country
     {
         get => _locationInfo.Country;
@@ -34,10 +29,9 @@ public class LocationService : BackgroundService, ILocationService
         private set => _locationInfo.Region = value;
     }
 
-
-    public LocationService()
+    public LocationService(LocationInfo locationInfo)
     {
-        _locationInfo = new LocationInfo();
+        _locationInfo = locationInfo;
     }
 
     protected async override Task ExecuteAsync(CancellationToken token)
@@ -59,39 +53,40 @@ public class LocationService : BackgroundService, ILocationService
             geolocator.DesiredAccuracyInMeters = 50;
             try
             {
+                // retrieve coordiates from Geoposition
                 Geoposition pos = await geolocator.GetGeopositionAsync();
-                double latitude = pos.Coordinate.Point.Position.Latitude;
-                double longitude = pos.Coordinate.Point.Position.Longitude;
-                using (HttpClient client = new HttpClient())
-                {
-                    var url = new Uri($"https://geocode.maps.co/reverse?lat={latitude}&lon={longitude}");
-                    var result = client.GetAsync(url).Result;
-                    var responseBody = result.Content.ReadAsStringAsync().Result;
-                    dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody);
-                    string country = jsonResponse["address"]["country"];
-                    Country = country;
-                    if (country.ToLower() == "united kingdom")
-                    {
-                        string postcode = jsonResponse["address"]["postcode"];
-                        PostCode = postcode.Split(" ")[0];
-                        string state = jsonResponse["address"]["state"];
-                        switch (state)
-                        {
-                            case "England":
-                                string district = jsonResponse["address"]["state_district"];
-                                Region = getEnglandRegion(district);
-                                break;
-                            case "Scotland":
-                                break;
-                            case "Wales":
-                                break;
-                            case "Ireland":
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                var latitude = pos.Coordinate.Point.Position.Latitude;
+                var longitude = pos.Coordinate.Point.Position.Longitude;
 
+                HttpClient client = new HttpClient();
+                var url = new Uri($"https://geocode.maps.co/reverse?lat={latitude}&lon={longitude}");
+                var result = client.GetAsync(url).Result;
+                var responseBody = result.Content.ReadAsStringAsync().Result;
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody);
+                Country = jsonResponse["address"]["country"];
+
+                Debug.WriteLine($"Country is {Country}");
+
+                if (Country.ToLower() == "united kingdom")
+                {
+                    string postcode = jsonResponse["address"]["postcode"];
+                    PostCode = postcode.Split(" ")[0];
+                    string state = jsonResponse["address"]["state"];
+                    switch (state)
+                    {
+                        case "England":
+                            string district = jsonResponse["address"]["state_district"];
+                            Region = getEnglandRegion(district);
+                            break;
+                        case "Scotland":
+                            break;
+                        case "Wales":
+                            break;
+                        case "Ireland":
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
             catch (Exception ex)
