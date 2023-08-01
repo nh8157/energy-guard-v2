@@ -22,8 +22,8 @@ public class EnergyRateService: BackgroundService
     private readonly string _eurostatYear = "2022";
     private readonly string _voltage = "HV";
 
-    public string Country => _locationInfo.Country;
-    public string Postcode => _locationInfo.Postcode;
+    private string Country => _locationInfo.Country;
+    private string Postcode => _locationInfo.Postcode;
 
     public EnergyRateService(LocationInfo locationInfo, EnergyRateInfo energyRateInfo)
     {
