@@ -29,6 +29,7 @@ public partial class MonitorDetailViewModel : ObservableObject
         ReceivedParameter = _model.SelectDate;
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<DateTimePoint>();
+        Debug.WriteLine(ReceivedParameter.ToString()+"xxxx");
         var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
         if(logs != null)
         {
@@ -36,9 +37,10 @@ public partial class MonitorDetailViewModel : ObservableObject
         }
         foreach (var log in logs)
         {
-            Debug.WriteLine(log.Date.Date + "---" + log.PowerUsed);
-            values.Add(new DateTimePoint(log.Date.Date, log.PowerUsed));
-            costs.Add(new DateTimePoint(log.Date.Date, log.Cost));
+            Debug.WriteLine("XXXXXXXXXXXXXXXXXX");
+            Debug.WriteLine(log.Date+ "---" + log.PowerUsed);
+            values.Add(new DateTimePoint(log.Date, log.PowerUsed));
+            costs.Add(new DateTimePoint(log.Date, log.Cost));
         }
         historySeries = new ColumnSeries<DateTimePoint>
         {
