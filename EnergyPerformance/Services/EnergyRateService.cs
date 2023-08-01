@@ -23,7 +23,7 @@ public class EnergyRateService: BackgroundService
     private readonly string _voltage = "HV";
 
     public string Country => _locationInfo.Country;
-    public string PostCode => _locationInfo.PostCode;
+    public string Postcode => _locationInfo.Postcode;
 
     public EnergyRateService(LocationInfo locationInfo, EnergyRateInfo energyRateInfo)
     {
@@ -35,15 +35,17 @@ public class EnergyRateService: BackgroundService
     protected async override Task ExecuteAsync(CancellationToken token)
     {
         do
+        {
             await DoAsync();
+        }
         while (await _periodicTimer.WaitForNextTickAsync(token) && !token.IsCancellationRequested);
     }
 
     public async Task DoAsync()
     {
         // get a postcode that's all lower case and has no white space
-        var postcode = PostCode.Replace(" ", "");
-        var country = Country.ToLower();
+        var postcode = Country.Replace(" ", "");
+        var country = Postcode.ToLower();
         var countryCode = GetCountryCode(country);
 
         double rate = 0;
