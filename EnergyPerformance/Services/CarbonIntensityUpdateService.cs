@@ -22,6 +22,9 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
+    public string Country => _locationInfo.Country;
+    public string PostCode => _locationInfo.PostCode;
+
     public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo)
     {
         _carbonIntensityInfo = carbonIntensityInfo;
@@ -31,16 +34,14 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         do
-        {
             await DoAsync();
-        }
         while (await _periodicTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested);
     }
 
     private async Task DoAsync()
     {
-        Debug.WriteLine($"Retrieving live carbon intensity for {_locationInfo.Country}");
-        if (_locationInfo.Country == "United Kingdom")
+        Debug.WriteLine($"Retrieving live carbon intensity for {Country}");
+        if (Country == "United Kingdom")
         {
             await FetchLiveCarbonIntensity();
         }
@@ -48,7 +49,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         {
             Debug.WriteLine("Other countries and regions are currently not supported");
         }
-        Debug.WriteLine($"Current carbon intensity: {_carbonIntensityInfo.CarbonIntensity}");
+        Debug.WriteLine($"Current carbon intensity: {CarbonIntensity}");
     }
 
     private async Task FetchLiveCarbonIntensity()
@@ -56,23 +57,30 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         var client = new HttpClient();
         try
         {
-            var url = String.Format(_ukApiUrl, _locationInfo.PostCode);
+            var url = String.Format(_ukApiUrl, PostCode);
             HttpResponseMessage response = await client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody);
-                // Debug.WriteLine(responseBody);
-                JArray data = jsonResponse.data;
+                dynamic? jsonResponse = JsonConvert.DeserializeObject(responseBody)??
+                    throw new InvalidOperationException("Cannot deserialize object");
+                JArray data = jsonResponse.data??
+                    throw new InvalidDataException("'data' field does not exist in jsonResponse");
 
-                foreach (var d in data)
+                foreach (var regionData in data)
                 {
-                    JArray data_data = (JArray)d["data"];
-                    foreach (var dp in data_data)
+                    var detailedData = (JArray?)regionData["data"]??
+                        throw new InvalidOperationException("'data' field does not exist");
+
+                    foreach (var entry in detailedData)
                     {
-                        JToken intensity = dp["intensity"];
-                        CarbonIntensity = (double)intensity["forecast"];
+                        JToken carbonInfo = entry["intensity"]??
+                            throw new InvalidOperationException("'intensity' field does not exist");
+                        var carbonIntensity = (double?)carbonInfo["forecast"];
+
+                        if (carbonIntensity != null)
+                            CarbonIntensity = (double)carbonIntensity;
                     }
                 }
             }

@@ -62,10 +62,10 @@ public class LocationService : BackgroundService
                 var url = new Uri($"https://geocode.maps.co/reverse?lat={latitude}&lon={longitude}");
                 var result = client.GetAsync(url).Result;
                 var responseBody = result.Content.ReadAsStringAsync().Result;
-                dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody);
-                Country = jsonResponse["address"]["country"];
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody)??
+                    throw new InvalidOperationException("Cannot deserialize json object");
 
-                Debug.WriteLine($"Country is {Country}");
+                Country = jsonResponse["address"]["country"];
 
                 if (Country.ToLower() == "united kingdom")
                 {
