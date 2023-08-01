@@ -1,7 +1,5 @@
 using System.Diagnostics;
-using System.Net;
 using System.Reflection;
-using System.Security.Policy;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
 using Microsoft.Extensions.Hosting;
@@ -18,7 +16,6 @@ public class EnergyRateService: BackgroundService
     private const string _euUrl = "https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/TEN00117/?format=JSON&time={0}";
     private const string _dnoUrl = "https://www.energynetworks.org/operator-finder/operator-finder.php?postcode={0}";
     private const string _countryCodesFileName = "country_codes";
-    private const string _dnoRegionNumFileName = "dno_region_numbers";
 
     private readonly HttpClient _httpClient;
 
