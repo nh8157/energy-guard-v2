@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -13,6 +14,7 @@ using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml.Navigation;
+using Newtonsoft.Json.Linq;
 using SkiaSharp;
 
 namespace EnergyPerformance.ViewModels;
@@ -23,20 +25,22 @@ public partial class MonitorDetailViewModel : ObservableObject
     private DateTime _receivedParameter;
     private ColumnSeries<DateTimePoint> historySeries;
     private ColumnSeries<DateTimePoint> costSeries;
+    private ColumnSeries<TimeSpanPoint> hourlySeries;
 
     public MonitorDetailViewModel()
     {
         ReceivedParameter = _model.SelectDate;
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<DateTimePoint>();
-        Debug.WriteLine(ReceivedParameter.ToString()+"xxxx");
-        var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
-        if(logs != null)
+        var hourly = new ObservableCollection<TimeSpanPoint>();
+        for (int i = 0; i <= 23; ++i)
         {
-            Debug.WriteLine(logs.Count);
+            hourly.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
         }
+        var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
         foreach (var log in logs)
         {
+            hourly[log.Date.Hour].Value += log.PowerUsed;
             Debug.WriteLine("XXXXXXXXXXXXXXXXXX");
             Debug.WriteLine(log.Date+ "---" + log.PowerUsed);
             values.Add(new DateTimePoint(log.Date, log.PowerUsed));
@@ -45,26 +49,33 @@ public partial class MonitorDetailViewModel : ObservableObject
         historySeries = new ColumnSeries<DateTimePoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):HH}H - {chartPoint.PrimaryValue}",
             Name = "Watt",
             Values = values
         };
         costSeries = new ColumnSeries<DateTimePoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):HH}: {chartPoint.PrimaryValue.ToString("F2")}",
             Name = "Pound",
             Values = costs
         };
+        
+        hourlySeries = new ColumnSeries<TimeSpanPoint>
+        {
+            YToolTipLabelFormatter = (chartPoint) =>
+                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue}",
+            Name = "Watt",
+            Values = hourly
+        };
         SeriesHourly = new ISeries[]
         {
-            historySeries
+            hourlySeries
         };
-        XAxes = new[] { new Axis() };
+        GotoPage();
     }
-    
 
-    
+
     public DateTime ReceivedParameter
     {
         get => _receivedParameter;
@@ -101,15 +112,61 @@ public partial class MonitorDetailViewModel : ObservableObject
     public Axis[] XAxes
     {
         get; set;
+
+    } =
+ {
+        new Axis
+        {
+            Labeler = value => TimeSpan.FromTicks((long)value).ToString("HH"),
+            //LabelsRotation = 80,
+
+            // when using a date time type, let the library know your unit 
+            UnitWidth = TimeSpan.FromHours(1).Ticks, 
+
+            // if the difference between our points is in hours then we would:
+            // UnitWidth = TimeSpan.FromHours(1).Ticks,
+
+            // since all the months and years have a different number of days
+            // we can use the average, it would not cause any visible error in the user interface
+            // Months: TimeSpan.FromDays(30.4375).Ticks
+            // Years: TimeSpan.FromDays(365.25).Ticks
+
+            // The MinStep property forces the separator to be greater than 1 day.
+            MinStep = TimeSpan.FromHours(1).Ticks,
+        }
+    };
+
+    public Axis[] XXAxes
+    {
+        get; set;
+
+    } =
+ {
+        new Axis
+        {
+            Labeler = value =>TimeSpan.FromTicks((long)value).ToString("hh")+"H",
+            //LabelsRotation = 80, 
+
+            // when using a date time type, let the library know your unit 
+            UnitWidth = TimeSpan.FromHours(1).Ticks, 
+
+            // if the difference between our points is in hours then we would:
+            // UnitWidth = TimeSpan.FromHours(1).Ticks,
+
+            // since all the months and years have a different number of days
+            // we can use the average, it would not cause any visible error in the user interface
+            // Months: TimeSpan.FromDays(30.4375).Ticks
+            // Years: TimeSpan.FromDays(365.25).Ticks
+
+            // The MinStep property forces the separator to be greater than 1 day.
+            MinStep = TimeSpan.FromHours(1).Ticks,
+        }
+    };
+
+    public void GotoPage()
+    {
+        var axis = XAxes[0];
+        axis.MinLimit = ReceivedParameter.Ticks;
+        axis.MaxLimit = new DateTime(ReceivedParameter.Year, ReceivedParameter.Month, ReceivedParameter.Day, 23, 59, 59).Ticks;
     }
-
-    //public void OnNavigatedFrom()
-    //{
-    //}
-    //public void OnNavigatedTo(object parameter)
-    //{
-    //    ReceivedParameter = parameter?.ToString() ?? "No parameter received"; // Set the ReceivedParameter property with the value passed from TestMonitorViewModel
-    //    Debug.WriteLine($"Received Parameter: {ReceivedParameter}");
-    //}
-
 }

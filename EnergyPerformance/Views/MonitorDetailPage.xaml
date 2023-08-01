@@ -26,7 +26,7 @@
 
         <lvc:CartesianChart
             Series="{Binding SeriesHourly}"
-            XAxes="{Binding XAxes}"
+            XAxes="{Binding XXAxes}"
             LegendPosition="Right"
             Grid.Row="0"
              />
