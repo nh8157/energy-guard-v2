@@ -38,9 +38,9 @@ public partial class MonitorDetailViewModel : ObservableObject
         foreach (var log in logs)
         {
             Debug.WriteLine("XXXXXXXXXXXXXXXXXX");
-            Debug.WriteLine(log.Date.Date + "---" + log.PowerUsed);
-            values.Add(new DateTimePoint(log.Date.Date, log.PowerUsed));
-            costs.Add(new DateTimePoint(log.Date.Date, log.Cost));
+            Debug.WriteLine(log.Date+ "---" + log.PowerUsed);
+            values.Add(new DateTimePoint(log.Date, log.PowerUsed));
+            costs.Add(new DateTimePoint(log.Date, log.Cost));
         }
         historySeries = new ColumnSeries<DateTimePoint>
         {
