@@ -14,7 +14,7 @@ namespace EnergyPerformance.ViewModels;
 public partial class PersonaCustomisationViewModel : ObservableRecipient
 {
     [ObservableProperty]
-    private static ObservableCollection<String> applications = new();
+    private static ObservableCollection<string> applications = new();
 
     [ObservableProperty]
     private static ObservableCollection<ApplicationObject> applicationList = new();
@@ -32,11 +32,11 @@ public partial class PersonaCustomisationViewModel : ObservableRecipient
 
             // Value must range between 1.0f and 3.0f
             // Any invalid values will result in no image being displayed
-            applicationList.Add(new ApplicationObject("Steam", 2.1f));
-            applicationList.Add(new ApplicationObject("Spotify", 1.2f));
-            applicationList.Add(new ApplicationObject("Word", 1.4f));
-            applicationList.Add(new ApplicationObject("Minecraft", 2.5f));
-            applicationList.Add(new ApplicationObject("Chrome", 1.8f));
+            applicationList.Add(new ApplicationObject("Steam", 1.2f));
+            applicationList.Add(new ApplicationObject("Spotify", 3.0f));
+            applicationList.Add(new ApplicationObject("Word", 2.6f));
+            applicationList.Add(new ApplicationObject("Minecraft", 1.0f));
+            applicationList.Add(new ApplicationObject("Chrome", 2.2f));
 
             do_once = false;
         }
@@ -50,9 +50,6 @@ public partial class ApplicationObject : INotifyPropertyChanged
     private float energyValue;
     private string energyRating;
 
-    private readonly int MIN = 1;
-    private readonly int MAX = 3;
-
     public ApplicationObject(string _appName, float _energyRating)
     {
         appName = _appName;
@@ -60,10 +57,11 @@ public partial class ApplicationObject : INotifyPropertyChanged
         energyRating = UpdateEnergyRating((int)_energyRating);
     }
 
-    public string UpdateEnergyRating(int _value)
+    // UpdateEnergyRating - Takes the truncated value of the energy rating
+    // Allocates the image path accordignly
+    public string UpdateEnergyRating(int value)
     {
-        var append = MAX - _value + MIN;
-        var path = "ms-appx:///Assets/Leaf" + append.ToString() + ".png";
+        var path = "ms-appx:///Assets/Leaf" + value.ToString() + ".png";
         return path;
     }
 

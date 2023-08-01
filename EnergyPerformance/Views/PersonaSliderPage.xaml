@@ -26,14 +26,14 @@
                         <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
 
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock FontSize="20" Margin="0, 0, 185, 0">
-                                <Run x:Uid="EfficiencyLabel"/>
-                            </TextBlock>
                             <TextBlock FontSize="20" Margin="0, 0, 155, 0">
+                                <Run x:Uid="PerformanceLabel"/>
+                            </TextBlock>
+                            <TextBlock FontSize="20" Margin="0, 0, 185, 0">
                                 <Run x:Uid="BalancedLabel"/>
                             </TextBlock>
                             <TextBlock FontSize="20">
-                                <Run x:Uid="PerformanceLabel"/>
+                                <Run x:Uid="EfficiencyLabel"/>
                             </TextBlock>
                         </StackPanel>
 
