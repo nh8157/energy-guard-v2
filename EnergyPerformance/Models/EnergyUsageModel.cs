@@ -251,7 +251,6 @@ public class EnergyUsageModel
         foreach (var diary in _energyUsage.Diaries)
         {
             dailyLogs.Add(diary.DailyUsage);
-            Debug.WriteLine(diary.DailyUsage.Date.ToString() + "3333");
         }
             
 
@@ -263,7 +262,7 @@ public class EnergyUsageModel
     /// </summary>
     public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date)
     {
-        Debug.WriteLine(date.Date.ToString()+"11111");
+
         if (date != null)
             foreach (var diary in _energyUsage.Diaries)
             {

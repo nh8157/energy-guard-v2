@@ -7,6 +7,7 @@
     xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
     xmlns:vms="using:EnergyPerformance.ViewModels"
     xmlns:helpers="using:EnergyPerformance.Helpers"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d">
     <Page.Resources>
     </Page.Resources>
@@ -20,17 +21,41 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal">
-            <Button Command="{Binding GoToPage1Command}" Margin="0,0,20,0">This Week</Button>
-            <Button Command="{Binding SeeAllCommand}" Margin="0,0,20,0">All Data</Button>
-            <Button Command="{Binding CostCommand}" Margin="0,0,20,0">Cost Model</Button>
-            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="40" Width="200" ItemsSource="{x:Bind ViewModel.Applications}" SelectedItem="{x:Bind ViewModel.SelectedApplication, Mode=TwoWay}" Margin="10, 0, 0, 0"/>
-        </StackPanel>
+        <!--<StackPanel Orientation="Horizontal">
+            <Button Command="{Binding LastWeekCommand}" Margin="0,0,20,0">Last Week</Button>
+            <Button Command="{Binding NextWeekCommand}" Margin="0,0,20,0">Next Week</Button>
+            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="40" Width="200" ItemsSource="{x:Bind ViewModel.Applications}"
+                      SelectedItem="{x:Bind ViewModel.SelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Margin="10, 0, 0, 0"/>
+        </StackPanel>-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <!-- Left column for ComboBox -->
+                <ColumnDefinition Width="*"/>
+                <!-- Middle column for spacing -->
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <!-- Right column for Buttons -->
+            </Grid.ColumnDefinitions>
+            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Grid.Column="0" Height="35" Width="150" ItemsSource="{x:Bind ViewModel.Applications}"
+                  SelectedItem="{x:Bind ViewModel.SelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Margin="0, 5, 0, 0"/>
+            <!-- Middle column can be used for spacing if necessary -->
+            <Button Command="{Binding LastWeekCommand}" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0">
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;" FontSize="18" VerticalAlignment="Center"/>
+                <!-- 左箭头 -->
+            </Button>
+       
+            <Button Command="{Binding NextWeekCommand}" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,0,0" >
+                <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76C;" FontSize="18" VerticalAlignment="Center" />
+                <!-- 右箭头 -->
+            </Button>
+        </Grid>
         <lvc:CartesianChart
+            x:Name="LvcChart"
             Grid.Row="1"
             Series="{Binding Series}"
             XAxes="{Binding XAxes}"
-            ZoomMode="X"
+            ZoomMode="None"
             Margin="0,0,0,20">
         </lvc:CartesianChart>
     </Grid>

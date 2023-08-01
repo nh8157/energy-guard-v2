@@ -24,21 +24,20 @@ namespace EnergyPerformance.ViewModels;
 public partial class TestMonitorViewModel : ObservableObject
 {
     private readonly Random _random = new();
-    [ObservableProperty]
-    private string currentMode;
     private readonly EnergyUsageModel _model;
     private INavigationService _navigationService;
     public readonly ObservableCollection<String> Applications = new();
     private ColumnSeries<DateTimePoint> historySeries;
     private ColumnSeries<DateTimePoint> costSeries;
     private string selectedApplication;
+    private DateTime lastDate = DateTime.Today;
+    private DateTime currentStartDate = DateTime.Today.AddDays(-6);
 
     public TestMonitorViewModel()
     {
-        Applications.Add("Cost");
         Applications.Add("Energy Usage");
+        Applications.Add("Cost");
         Applications.Add("Carbon Emission");
-        currentMode = "Energy";
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<DateTimePoint>();
         _model = App.GetService<EnergyUsageModel>();
@@ -46,7 +45,10 @@ public partial class TestMonitorViewModel : ObservableObject
         var logs = _model.GetDailyEnergyUsageLogs();
         foreach (var log in logs)
         {
-            Debug.WriteLine(log.Date.ToString()+"4444");
+            if (lastDate.CompareTo(log.Date) > 0 && log.PowerUsed>0)
+            {
+                lastDate = log.Date;
+            }
             values.Add(new DateTimePoint(log.Date.Date, log.PowerUsed));
             costs.Add(new DateTimePoint(log.Date.Date, log.Cost));
         }
@@ -55,14 +57,16 @@ public partial class TestMonitorViewModel : ObservableObject
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
             Name = "Watt",
-            Values = values
+            Values = values,
+            Fill = new SolidColorPaint(new SKColor(51, 181, 255))
         };
         costSeries = new ColumnSeries<DateTimePoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
             Name = "Pound",
-            Values = costs
+            Values = costs,
+            Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
         historySeries.ChartPointPointerDown += OnPointerDown;
 
@@ -71,10 +75,20 @@ public partial class TestMonitorViewModel : ObservableObject
             historySeries
         };
 
+        CostSeries = new ISeries[]
+       {
+            costSeries
+       };
+        GoToPage1();
         //XAxes = new[] { new Axis() };
     }
 
     public ISeries[] Series
+    {
+        get; set;
+    }
+
+    public ISeries[] CostSeries
     {
         get; set;
     }
@@ -102,7 +116,7 @@ public partial class TestMonitorViewModel : ObservableObject
             // Years: TimeSpan.FromDays(365.25).Ticks
 
             // The MinStep property forces the separator to be greater than 1 day.
-            MinStep = TimeSpan.FromDays(1).Ticks
+            MinStep = TimeSpan.FromDays(1).Ticks,
         }
     };
 
@@ -118,8 +132,6 @@ public partial class TestMonitorViewModel : ObservableObject
         Debug.Write($"CLick on {point.SecondaryValue}");
     }
 
-
-    [RelayCommand]
     public void GoToPage1()
     {
         // Get the current date
@@ -139,29 +151,59 @@ public partial class TestMonitorViewModel : ObservableObject
         var axis = XAxes[0];
         axis.MinLimit = startTicks;
         axis.MaxLimit = endTicks;
-    }
-
-
-    [RelayCommand]
-    public void SeeAll()
-    {
-        var axis = XAxes[0];
-        axis.MinLimit = null;
-        axis.MaxLimit = null;
+        Debug.WriteLine(lastDate.ToString() + "xibxobxobo");
     }
 
     [RelayCommand]
-    public void Cost()
+    public void LastWeek()
     {
-        Debug.WriteLine(SelectedApplication);
-        Debug.WriteLine("On CLick");
-        Series = new ISeries[]
+        // Calculate the start date for the last seven days
+        DateTime startDate = currentStartDate.AddDays(-7); // Subtract 6 days to get the start date
+
+        // Calculate the end date (today)
+        DateTime endDate = currentStartDate.AddDays(-1);
+
+        if(endDate.CompareTo(lastDate) < 0)
         {
-            costSeries
-        };
-        OnPropertyChanged(nameof(Series));
+            return;
+        }
 
+        // Get the ticks for the start and end dates
+        long startTicks = startDate.Ticks;
+        long endTicks = endDate.Ticks;
+        currentStartDate = startDate;
+
+        // Update the X-axis limits to display data for the last seven days
+        var axis = XAxes[0];
+        axis.MinLimit = startTicks;
+        axis.MaxLimit = endTicks;
     }
+
+
+    [RelayCommand]
+    public void NextWeek()
+    {
+        DateTime startDate = currentStartDate.AddDays(7); // Subtract 6 days to get the start date
+
+        // Calculate the end date (today)
+        DateTime endDate = currentStartDate.AddDays(13);
+
+        if (endDate.CompareTo(DateTime.Today) > 0)
+        {
+            return;
+        }
+
+        // Get the ticks for the start and end dates
+        long startTicks = startDate.Ticks;
+        long endTicks = endDate.Ticks;
+        currentStartDate = startDate;
+
+        // Update the X-axis limits to display data for the last seven days
+        var axis = XAxes[0];
+        axis.MinLimit = startTicks;
+        axis.MaxLimit = endTicks;
+    }
+
 
     public string SelectedApplication
     {
