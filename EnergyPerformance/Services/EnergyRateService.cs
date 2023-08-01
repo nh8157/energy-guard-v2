@@ -22,6 +22,9 @@ public class EnergyRateService: BackgroundService
     private readonly string _eurostatYear = "2022";
     private readonly string _voltage = "HV";
 
+    public string Country => _locationInfo.Country;
+    public string PostCode => _locationInfo.PostCode;
+
     public EnergyRateService(LocationInfo locationInfo, EnergyRateInfo energyRateInfo)
     {
         _locationInfo = locationInfo;
@@ -38,14 +41,14 @@ public class EnergyRateService: BackgroundService
 
     public async Task DoAsync()
     {
-        var country = _locationInfo.Country.ToLower();
+        // get a postcode that's all lower case and has no white space
+        var postcode = PostCode.Replace(" ", "");
+        var country = Country.ToLower();
         var countryCode = GetCountryCode(country);
 
-        // get a postcode that's all lower case and has no white space
-        var postcode = _locationInfo.PostCode.Replace(" ", "");
         double rate = 0;
 
-        if (country.ToLower().Equals("united kingdom"))
+        if (country.Equals("united kingdom"))
         {
             // get DNO from postcode using remote API
             var dno = await GetDNOFromPostcode(postcode);
