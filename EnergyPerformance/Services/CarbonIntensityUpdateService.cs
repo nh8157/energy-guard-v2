@@ -63,7 +63,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
             if (response.IsSuccessStatusCode)
             {
                 var responseBody = await response.Content.ReadAsStringAsync();
-                dynamic? jsonResponse = JsonConvert.DeserializeObject(responseBody)??
+                dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody)??
                     throw new InvalidOperationException("Cannot deserialize object");
                 JArray data = jsonResponse.data??
                     throw new InvalidDataException("'data' field does not exist in jsonResponse");
