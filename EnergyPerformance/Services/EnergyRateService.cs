@@ -44,8 +44,8 @@ public class EnergyRateService: BackgroundService
     public async Task DoAsync()
     {
         // get a postcode that's all lower case and has no white space
-        var postcode = Country.Replace(" ", "");
-        var country = Postcode.ToLower();
+        var postcode = Postcode.Replace(" ", "");
+        var country = Country.ToLower();
         var countryCode = GetCountryCode(country);
 
         double rate = 0;
