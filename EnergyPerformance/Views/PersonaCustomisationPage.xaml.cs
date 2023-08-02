@@ -19,6 +19,8 @@ namespace EnergyPerformance.Views;
 
 public sealed partial class PersonaCustomisationPage : Page
 {
+
+    public static DebugModel debug;
     public PersonaCustomisationViewModel ViewModel
     {
         get;
@@ -28,6 +30,8 @@ public sealed partial class PersonaCustomisationPage : Page
     {
         ViewModel = App.GetService<PersonaCustomisationViewModel>();
         InitializeComponent();
+
+        debug = App.GetService<DebugModel>();
     }
 
     // Function that is called when item in list view is selected
@@ -54,8 +58,11 @@ public sealed partial class PersonaCustomisationPage : Page
     [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, PreserveSig = true, SetLastError = false)]
     public static extern IntPtr GetActiveWindow();
 
+    // Function to pick a file from the file system
     private async void TestFilePicker(object sender, RoutedEventArgs e)
     {
+        // Open file explorer at the suggested start location
+        // With respective filters for file types (in this case .exe)
         FileOpenPicker open = new FileOpenPicker();
         open.SuggestedStartLocation = PickerLocationId.ComputerFolder;
         open.FileTypeFilter.Add(".exe");
@@ -67,6 +74,19 @@ public sealed partial class PersonaCustomisationPage : Page
             initializeWithWindowWrapper.Initialize(hwnd);
         }
 
+        // Opens prompt which allows for selection of file type
         StorageFile file = await open.PickSingleFileAsync();
+
+        if (file != null)
+        {
+            debug.AddMessage(file.Name);
+            debug.AddMessage(file.Path);
+            // StorageFile can be added to the future access list, wherein it can be then retrieved from with the help of a token
+        }
+        else
+        {
+            // Logic for no file chosen
+        }
+
     }
 }
