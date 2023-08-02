@@ -66,28 +66,7 @@ public class LocationService : BackgroundService
                     throw new InvalidOperationException("Cannot deserialize json object");
 
                 Country = jsonResponse["address"]["country"];
-
-                if (Country.ToLower() == "united kingdom")
-                {
-                    string postcode = jsonResponse["address"]["postcode"];
-                    PostCode = postcode.Split(" ")[0];
-                    string state = jsonResponse["address"]["state"];
-                    switch (state)
-                    {
-                        case "England":
-                            string district = jsonResponse["address"]["state_district"];
-                            Region = getEnglandRegion(district);
-                            break;
-                        case "Scotland":
-                            break;
-                        case "Wales":
-                            break;
-                        case "Ireland":
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                PostCode = jsonResponse["address"]["postcode"];
             }
             catch (Exception ex)
             {
@@ -100,32 +79,5 @@ public class LocationService : BackgroundService
             // request access permission
         }
         await Task.CompletedTask;
-    }
-
-    private string getEnglandRegion(string district)
-    {
-        switch (district)
-        {
-            case "Greater London":
-                return "London";
-            case "West Midlands":
-                return "Midlands";
-            case "East Midlands":
-                return "East Midlands";
-            case "North East England":
-                return "North East";
-            case "North West England":
-                return "North West";
-            case "Yorkshire and the Humber":
-                return "Yorkshire";
-            case "East of England":
-                return "Eastern England";
-            case "South East England":
-                return "South East";
-            case "South West England":
-                return "South Western";
-            default:
-                return "Unknown";
-        }
     }
 }

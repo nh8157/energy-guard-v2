@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Contracts.Services;
-
+using EnergyPerformance.Models;
 
 namespace EnergyPerformance.Services;
 class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
@@ -41,6 +41,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     private async Task DoAsync()
     {
         Debug.WriteLine($"Retrieving live carbon intensity for {Country}");
+
         if (Country == "United Kingdom")
         {
             await FetchLiveCarbonIntensity();
@@ -57,7 +58,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         var client = new HttpClient();
         try
         {
-            var url = String.Format(_ukApiUrl, PostCode);
+            var url = String.Format(_ukApiUrl, PostCode.Split(" ")[0]);
             HttpResponseMessage response = await client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)
