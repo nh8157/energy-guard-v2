@@ -24,18 +24,23 @@ public partial class MonitorDetailViewModel : ObservableObject
     private readonly EnergyUsageModel _model = App.GetService<EnergyUsageModel>();
     private DateTime _receivedParameter;
     private ColumnSeries<DateTimePoint> historySeries;
-    private ColumnSeries<DateTimePoint> costSeries;
+    private ColumnSeries<TimeSpanPoint> costSeries;
     private ColumnSeries<TimeSpanPoint> hourlySeries;
-
+    public readonly ObservableCollection<String> DetailApplications = new();
+    private string detailSelectedApplication;
     public MonitorDetailViewModel()
     {
+        DetailApplications.Add("Energy Usage");
+        DetailApplications.Add("Cost");
+        DetailApplications.Add("Carbon Emission");
         ReceivedParameter = _model.SelectDate;
         var values = new ObservableCollection<DateTimePoint>();
-        var costs = new ObservableCollection<DateTimePoint>();
+        var costs = new ObservableCollection<TimeSpanPoint>();
         var hourly = new ObservableCollection<TimeSpanPoint>();
         for (int i = 0; i <= 23; ++i)
         {
             hourly.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
+            costs.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
         }
         var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
         foreach (var log in logs)
@@ -44,7 +49,7 @@ public partial class MonitorDetailViewModel : ObservableObject
             Debug.WriteLine("XXXXXXXXXXXXXXXXXX");
             Debug.WriteLine(log.Date+ "---" + log.PowerUsed);
             values.Add(new DateTimePoint(log.Date, log.PowerUsed));
-            costs.Add(new DateTimePoint(log.Date, log.Cost));
+            costs[log.Date.Hour].Value += log.Cost;
         }
         historySeries = new ColumnSeries<DateTimePoint>
         {
@@ -53,12 +58,13 @@ public partial class MonitorDetailViewModel : ObservableObject
             Name = "Watt",
             Values = values
         };
-        costSeries = new ColumnSeries<DateTimePoint>
+        costSeries = new ColumnSeries<TimeSpanPoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):HH}: {chartPoint.PrimaryValue.ToString("F2")}",
+                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue}",
             Name = "Pound",
-            Values = costs
+            Values = costs,
+            Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
         
         hourlySeries = new ColumnSeries<TimeSpanPoint>
@@ -66,12 +72,18 @@ public partial class MonitorDetailViewModel : ObservableObject
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue}",
             Name = "Watt",
-            Values = hourly
+            Values = hourly,
+            Fill = new SolidColorPaint(new SKColor(51, 181, 255))
         };
         SeriesHourly = new ISeries[]
         {
             hourlySeries
         };
+        SeriesCostHourly = new ISeries[]
+        {
+            costSeries
+        };
+
         GotoPage();
     }
 
@@ -105,6 +117,11 @@ public partial class MonitorDetailViewModel : ObservableObject
     };
 
     public ISeries[] SeriesHourly
+    {
+        get; set;
+    }
+
+    public ISeries[] SeriesCostHourly
     {
         get; set;
     }
@@ -144,7 +161,7 @@ public partial class MonitorDetailViewModel : ObservableObject
  {
         new Axis
         {
-            Labeler = value =>TimeSpan.FromTicks((long)value).ToString("hh")+"H",
+            Labeler = value =>TimeSpan.FromTicks((long)value).ToString("hh"),
             //LabelsRotation = 80, 
 
             // when using a date time type, let the library know your unit 
@@ -168,5 +185,21 @@ public partial class MonitorDetailViewModel : ObservableObject
         var axis = XAxes[0];
         axis.MinLimit = ReceivedParameter.Ticks;
         axis.MaxLimit = new DateTime(ReceivedParameter.Year, ReceivedParameter.Month, ReceivedParameter.Day, 23, 59, 59).Ticks;
+    }
+
+    public string DetailSelectedApplication
+    {
+        get
+        {
+            return detailSelectedApplication;
+        }
+        set
+        {
+            if (detailSelectedApplication != value)
+            {
+                detailSelectedApplication = value;
+                OnPropertyChanged(nameof(detailSelectedApplication));
+            }
+        }
     }
 }
