@@ -9,11 +9,15 @@ using EnergyPerformance.Notifications;
 using EnergyPerformance.Services;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Windows;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+
 namespace EnergyPerformance;
 
 /// <summary>
@@ -61,7 +65,6 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        Trace.Listeners.Add(new ConsoleTraceListener());
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
@@ -84,7 +87,6 @@ public partial class App : Application
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
-
 
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
@@ -113,7 +115,6 @@ public partial class App : Application
             services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---
 
-
             // Core Services
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<EnergyUsageFileService>();
@@ -124,12 +125,23 @@ public partial class App : Application
             services.AddSingleton<PersonaModel>();
 
             // Views and ViewModels
+            services.AddTransient<CarbonEmissionPage>();
+            services.AddTransient<CarbonEmissionViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<DebugViewModel>();
             services.AddTransient<DebugPage>();
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
+            services.AddTransient<PersonaCustomisationViewModel>();
+            services.AddTransient<PersonaCustomisationPage>();
+            services.AddTransient<PersonaSliderPage>();
+            services.AddTransient<SystemMonitorViewModel>();
+            services.AddTransient<SystemMonitorPage>();
+            services.AddTransient<MonitorDetailViewModel>();
+            services.AddTransient<MonitorDetailPage>();
+            services.AddTransient<TestMonitorViewModel>();
+            services.AddTransient<TestMonitorPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
@@ -139,7 +151,7 @@ public partial class App : Application
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
         Build();
-        Debug.WriteLine("Starting application");
+        
         App.GetService<IAppNotificationService>().Initialize();
         MainWindow.Closed += async (sender, args) =>
         {
@@ -200,6 +212,6 @@ public partial class App : Application
 
         // call StartAsync() on IHostedServices registered to the Host
         await Host.StartAsync();
-
     }
+
 }

@@ -19,7 +19,13 @@ public class PageService : IPageService
         Configure<MainViewModel, MainPage>();
         Configure<EnergyUsageViewModel, EnergyUsagePage>();
         Configure<SettingsViewModel, SettingsPage>();
+        Configure<SystemMonitorViewModel, SystemMonitorPage>();
+        Configure<MonitorDetailViewModel, MonitorDetailPage>();
+        Configure<TestMonitorViewModel, TestMonitorPage>();
+        Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
         Configure<DebugViewModel, DebugPage>();
+        Configure<PersonaCustomisationViewModel, PersonaCustomisationPage>();
+        //Configure<PersonaCustomisationViewModel, PersonaSliderPage>();
     }
 
     public Type GetPageType(string key)

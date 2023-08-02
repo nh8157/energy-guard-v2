@@ -1,10 +1,8 @@
-﻿using System.Data.SQLite;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
-using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
+using Newtonsoft.Json;
 
 namespace EnergyPerformance.Models;
 
@@ -22,7 +20,6 @@ public class EnergyUsageModel
     private readonly EnergyRateInfo _energyRateInfo;
 
     private EnergyUsageData _energyUsage;
-    private readonly IDatabaseService _databaseService;
 
     public bool IsLiveCost
     {
@@ -113,14 +110,6 @@ public class EnergyUsageModel
     }
 
     /// <summary>
-    /// The Accumulated Watts used per app for the current day.
-    /// </summary>
-    public Dictionary<string, double> AccumulatedWattsPerApp
-    {
-        get; set;
-    }
-
-    /// <summary>
     /// Constructor for the EnergyUsageModel, basic initialization is performed here.
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
@@ -147,17 +136,16 @@ public class EnergyUsageModel
     public async Task InitializeAsync()
     {
         // Initialize energyFileService
-        await _databaseService.InitializeDB();
-        _energyUsage = await _databaseService.LoadUsageData();
+        _energyUsage = await _energyFileService.ReadFileAsync();
+        var lastMeasurement = _energyUsage.LastMeasurement;
         var current = DateTime.Now;
-        if (_energyUsage.Diaries.Count > 0 && _energyUsage.Diaries.Last().Date.Date == current.Date)
+        if (_energyUsage.LastMeasurement.Date.Date == current.Date)
         {
-            var lastDiary = _energyUsage.Diaries.Last();
-            AccumulatedWatts = ConvertKwhToWs(lastDiary.DailyUsage.PowerUsed);
-            if (lastDiary.HourlyUsage.Count > 0 && lastDiary.HourlyUsage.Last().Date.Hour == current.Hour)
-                AccumulatedWattsHourly = ConvertKwhToWs(lastDiary.HourlyUsage.Last().PowerUsed);
-            else
-                AccumulatedWattsHourly = 0;
+            AccumulatedWatts = ConvertKwhToWs(lastMeasurement.PowerUsed);
+        }
+        else if (LoadLastHourlyLog(current))
+        {
+            AccumulatedWattsHourly = ConvertKwhToWs(_energyUsage.HourlyLogs.Last().PowerUsed);
         }
         else
         {
@@ -173,7 +161,25 @@ public class EnergyUsageModel
     {
         Update(); // update the model before saving.
         Debug.WriteLine("Saving model.");
-        await _databaseService.SaveEnergyData(_energyUsage);
+        await _energyFileService.SaveFileAsync();
+    }
+
+
+    /// <summary>
+    /// Checks if the last saved hourly log is from the current hour.
+    /// </summary>
+    /// <param name="current">Current date and time</param>
+    /// <returns>True if the last saved hourly log is from the current hour, false otherwise</returns>
+    private bool LoadLastHourlyLog(DateTime current)
+    {
+        if (_energyUsage.HourlyLogs.Count > 0)
+        {
+            if (_energyUsage.HourlyLogs.Last().Date.Hour == current.Hour)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary>
@@ -184,16 +190,17 @@ public class EnergyUsageModel
     {
         var current = DateTime.Now;
         float cost = 0;
-        var start = _energyUsage.Diaries.Count - 1;
+        var start = _energyUsage.DailyLogs.Count - 1;
         for (var i = start; i >= 0 && i > start - 7; i--)
         {
-            var log = _energyUsage.Diaries[i];
+            var log = _energyUsage.DailyLogs[i];
             var date = log.Date.Date;
             if (!CheckTwoDatesAreInTheSameWeek(current, date))
+            {
                 break;
-            cost += log.DailyUsage.Cost;
+            }
+            cost += log.Cost;
         }
-
         return cost;
     }
 
@@ -206,17 +213,23 @@ public class EnergyUsageModel
         // iterate through _energyUsage.DailyLogs backwards and calculate the cost for all the days in the previous week
         var current = DateTime.Now;
         var previousWeek = current.AddDays(-7);
+        var previousFortnight = current.AddDays(-14);
 
         float cost = 0;
-        var start = _energyUsage.Diaries.Count - 1;
+        var start = _energyUsage.DailyLogs.Count - 1;
         for (var i = start; i >= 0 && i > start - 14; i--)
         {
-            var log = _energyUsage.Diaries[i];
+            var log = _energyUsage.DailyLogs[i];
             var date = log.Date.Date;
             if (CheckTwoDatesAreInTheSameWeek(previousWeek, date))
-                cost += log.DailyUsage.Cost;
+            {
+                cost += log.Cost;
+            }
+            else if (CheckTwoDatesAreInTheSameWeek(previousFortnight, date))
+            {
+                break;
+            }
         }
-
         return cost;
     }
 
@@ -245,12 +258,8 @@ public class EnergyUsageModel
     /// </summary>
     public List<EnergyUsageLog> GetDailyEnergyUsageLogs()
     {
-        var dailyLogs = new List<EnergyUsageLog>();
+        return _energyUsage.DailyLogs;
 
-        foreach (var diary in _energyUsage.Diaries)
-            dailyLogs.Add(diary.DailyUsage);
-
-        return dailyLogs;
     }
 
     /// <summary>
@@ -258,13 +267,7 @@ public class EnergyUsageModel
     /// </summary>
     public List<EnergyUsageLog> GetHourlyEnergyUsageLogs()
     {
-        var hourlyLogs = new List<EnergyUsageLog>();
-
-        foreach (var diary in _energyUsage.Diaries)
-            foreach (var log in diary.HourlyUsage)
-                hourlyLogs.Add(log);
-
-        return hourlyLogs;
+        return _energyUsage.HourlyLogs;
     }
 
     /// <summary>
@@ -276,12 +279,6 @@ public class EnergyUsageModel
         var energyUsed = ConvertWsToKwh(AccumulatedWatts);
         return energyUsed;
 
-    }
-
-    public double GetEnergyUsed(string proc)
-    {
-        var energyUsed = ConvertWsToKwh(AccumulatedWattsPerApp.GetValueOrDefault(proc, 0));
-        return energyUsed;
     }
 
     /// <summary>
@@ -320,16 +317,9 @@ public class EnergyUsageModel
     private double GetDailyCost()
     {
         return GetEnergyUsed() * CostPerKwh;
+
     }
 
-    /// <summary>
-    /// Calculates the daily cost of a process
-    /// </summary>
-    /// <param name="proc">Name of the process</param>
-    private double GetDailyCost(string proc)
-    {
-        return GetEnergyUsed(proc) * CostPerKwh;
-    }
 
     /// <summary>
     /// Calculates the cost of energy used in the last hour.
@@ -337,32 +327,9 @@ public class EnergyUsageModel
     private double GetHourlyCost()
     {
         return GetEnergyUsedHourly() * CostPerKwh;
+
     }
 
-    /// <summary>
-    /// Calculates the daily carbon emission of the machine
-    /// </summary>
-    private double GetDailyCarbonEmission()
-    {
-        return GetEnergyUsed() * CarbonIntensity;
-    }
-
-    /// <summary>
-    /// Calculates the daily carbon emission of a process
-    /// </summary>
-    /// <param name="proc">Name of the process</param>
-    private double GetDailyCarbonEmission(string proc)
-    {
-        return GetEnergyUsed(proc) * CarbonIntensity;
-    }
-
-    /// <summary>
-    /// Calculates the hourly carbon emission of the machine
-    /// </summary>
-    private double GetHourlyCarbonEmission()
-    {
-        return GetEnergyUsedHourly() * CarbonIntensity;
-    }
 
     /// <summary>
     /// Calculates a daily cost budget based on the weekly budget.
@@ -387,8 +354,8 @@ public class EnergyUsageModel
 
     /// <summary>
     /// Update the model with the latest energy usage data.
-    /// Creates a new EnergyUsageLog for the total daily measurement, the hourly measurement, as well as per process measurement
-    /// then adds this to EnergyUsageData which stores all records.
+    /// Creates a new EnergyUsageLog for the total daily measurement as well as the hourly measurement and
+    /// adds this to EnergyUsageData which stores all records.
     /// </summary>
     public void Update()
     {
@@ -404,14 +371,40 @@ public class EnergyUsageModel
         var lastDiary = _energyUsage.Diaries.Last();
         lastDiary.DailyUsage = lastMeasurement;
 
-        // Update hourly log
-        if (!(lastDiary.HourlyUsage.Count > 0) || lastDiary.HourlyUsage.Last().Date.Hour < current.Hour)
-            lastDiary.HourlyUsage.Add(new EnergyUsageLog());
-        lastDiary.HourlyUsage[^1] = lastMeasurementHourly;
+        // update daily logs
+        if (!(_energyUsage.DailyLogs.Count > 0))
+        {
+            _energyUsage.DailyLogs.Add(lastMeasurement);
+        }
+        else
+        {
+            if (_energyUsage.DailyLogs.Last().Date.Date == current.Date)
+            {
+                // change the last element of _energyUsage.DailyLogs to equal lastMeasurement
+                _energyUsage.DailyLogs[^1] = lastMeasurement;
+            }
+            else if (_energyUsage.DailyLogs.Last().Date.Date.CompareTo(current.Date) < 0)  // If the current date is later than the last recorded date, then add a new entry to the list
+            {
+                _energyUsage.DailyLogs.Add(lastMeasurement);
+            }
+        }
 
-        // Update per process usage
-        foreach (var proc in AccumulatedWattsPerApp.Keys)
-            lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
+        // update hourly logs
+        if (!(_energyUsage.HourlyLogs.Count > 0))
+        {
+            _energyUsage.HourlyLogs.Add(lastMeasurementHourly);
+        }
+        else
+        {
+            if (_energyUsage.HourlyLogs.Last().Date.Hour == current.Hour)
+            {
+                _energyUsage.HourlyLogs[^1] = lastMeasurementHourly;
+            }
+            else if (_energyUsage.HourlyLogs.Last().Date.Date.CompareTo(current.Date) < 0)  // If the current time is later than the last recorded tune, then add a new entry to the list
+            {
+                _energyUsage.HourlyLogs.Add(lastMeasurementHourly);
+            }
+        }
 
         Debug.WriteLine("Model updated.");
 
