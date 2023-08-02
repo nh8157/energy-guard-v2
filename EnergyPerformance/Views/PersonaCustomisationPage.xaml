@@ -45,7 +45,7 @@
                 </ListView>
 
             <Button x:Uid="AddPersonaButton" FontSize="15" Width="150" Height="40" Click="NavigateToSliderPage" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>
-            <Button Content="Test" FontSize="15" Width="150" Height="40" Click="TestFilePicker" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>
+            <!--<Button Content="Test" FontSize="15" Width="150" Height="40" Click="TestFilePicker" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>-->
 
         </StackPanel>
     </GridView>

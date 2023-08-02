@@ -20,7 +20,7 @@ namespace EnergyPerformance.Views;
 public sealed partial class PersonaCustomisationPage : Page
 {
 
-    public static DebugModel debug;
+    //public static DebugModel debug;
     public PersonaCustomisationViewModel ViewModel
     {
         get;
@@ -31,7 +31,7 @@ public sealed partial class PersonaCustomisationPage : Page
         ViewModel = App.GetService<PersonaCustomisationViewModel>();
         InitializeComponent();
 
-        debug = App.GetService<DebugModel>();
+        //debug = App.GetService<DebugModel>();
     }
 
     // Function that is called when item in list view is selected
@@ -48,6 +48,8 @@ public sealed partial class PersonaCustomisationPage : Page
     {
         Frame.Navigate(typeof(PersonaSliderPage));
     }
+
+    #region Select File Code
 
     [ComImport, Guid("3E68D4BD-7135-4D10-8018-9FB6D9F33FA1"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     public interface IInitializeWithWindow
@@ -79,8 +81,8 @@ public sealed partial class PersonaCustomisationPage : Page
 
         if (file != null)
         {
-            debug.AddMessage(file.Name);
-            debug.AddMessage(file.Path);
+            //debug.AddMessage(file.Name);
+            //debug.AddMessage(file.Path);
             // StorageFile can be added to the future access list, wherein it can be then retrieved from with the help of a token
         }
         else
@@ -89,4 +91,6 @@ public sealed partial class PersonaCustomisationPage : Page
         }
 
     }
+
+    #endregion
 }
