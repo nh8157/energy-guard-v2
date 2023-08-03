@@ -12,12 +12,10 @@ public class PeriodicDataSaverService : BackgroundService
     private const int SaveInterval = 5;
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(SaveInterval));
     private readonly EnergyUsageModel _model;
-    private readonly EnergyUsageFileService _fileService;
 
     public PeriodicDataSaverService(EnergyUsageFileService fileService, EnergyUsageModel model)
     {
         _model = model;
-        _fileService = fileService;
     }
 
 

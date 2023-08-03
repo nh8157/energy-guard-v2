@@ -104,12 +104,15 @@ public partial class App : Application
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
+            services.AddSingleton<ILocationService, LocationService>();
+
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
-            services.AddSingleton<ICarbonIntensityUpdateService, CarbonIntensityUpdateService>();
-            services.AddSingleton<ILocationService, LocationService>();
-            services.AddSingleton<IDatabaseService, DatabaseService>();
 
+            services.AddSingleton<EnergyRateInfo>();
+            services.AddHostedService<EnergyRateService>();
+
+            services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---
 
 
@@ -133,7 +136,7 @@ public partial class App : Application
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
-            
+
             // Configuration
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).

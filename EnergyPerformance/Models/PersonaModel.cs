@@ -1,7 +1,5 @@
 ﻿using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
-using OxyPlot;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace EnergyPerformance.Models;
@@ -10,7 +8,6 @@ public class PersonaModel
     private readonly PersonaFileService _personaFileService;
     private readonly ProcessMonitorService _processMonitorService;
     private readonly CpuInfo _cpuInfo;
-    private string _EnabledPersona;
 
     /// <summary>
     /// This field stores all existing personas in a list
@@ -137,7 +134,7 @@ public class PersonaModel
     /// This method reads all existing Personas
     /// And translates the raw CPU, GPU settings into the positioning of the slider
     /// </summary>
-    /// <returns>list of executable path name and energy rating pair for every application</returns>
+    /// <returns>List of executable path name and energy rating pair for every application</returns>
     public List<(string, float)> ReadPersonaAndRating()
     {
         List<(string, float)> profiles = _allPersonas.Select(persona => (persona.Path, ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))).ToList();
