@@ -60,7 +60,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         var client = new HttpClient();
         try
         {
-            var url = String.Format(_ukApiUrl, _locationInfo.PostCode);
+            var url = String.Format(_ukApiUrl, _locationInfo.Postcode);
             HttpResponseMessage response = await client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)

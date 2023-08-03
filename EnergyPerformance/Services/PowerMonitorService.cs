@@ -31,7 +31,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
-    private readonly ICarbonIntensityUpdateService _carbonIntensityUpdateService;
 
     public double Power
     {
@@ -56,7 +55,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     {
         _model = model;
         _powerInfo = powerInfo;
-        _carbonIntensityUpdateService = carbonIntensityUpdateService;
         _cpuInfo = cpuInfo;
         _gpuInfo = gpuInfo;
         // configure computer object to monitor hardware components
