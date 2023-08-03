@@ -1,6 +1,22 @@
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace EnergyPerformance.Models;
+
+
+public record class EnergyCostsModel(
+    [property: JsonPropertyName("data")] Region Data)
+{
+    public double GetEnergyRateUK()
+    {
+        return Data.Data[0].Overall;
+    }
+}
+
+public record class Region(
+    [property: JsonPropertyName("data")] List<Rate> Data);
+
+public record class Rate(
+    [property: JsonPropertyName("Overall")] double Overall);
 
 
 public record class EurostatModel(
@@ -14,8 +30,8 @@ public record class EurostatModel(
 
         foreach (KeyValuePair<string, double> val in Value)
         {
-            string index = val.Key;
-            double rate = val.Value;
+            var index = val.Key;
+            var rate = val.Value;
 
             if (countryCodes.ContainsKey(index))
             {
@@ -44,6 +60,10 @@ public record class Countries(
 {
     public Dictionary<string, string> CountryCodes()
     {
-        return Index.ToDictionary(x => x.Value.ToString(), x=> x.Key);;
+        return Index.ToDictionary(x => x.Value.ToString(), x => x.Key); ;
     }
 }
+
+public record class EnergyNetworksModel(
+    [property: JsonPropertyName("Postcode")] string Postcode,
+    [property: JsonPropertyName("DNOCode")] string DnoCode);
