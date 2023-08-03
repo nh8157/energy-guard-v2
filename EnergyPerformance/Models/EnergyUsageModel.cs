@@ -25,7 +25,10 @@ public class EnergyUsageModel
     public DateTime SelectDate {
         get; set;
     }
-
+    public String SelectedModel
+    {
+        get; set;
+    }
 
 
     public DateTimeOffset CurrentDay

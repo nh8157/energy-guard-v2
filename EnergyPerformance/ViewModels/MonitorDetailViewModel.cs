@@ -30,9 +30,12 @@ public partial class MonitorDetailViewModel : ObservableObject
     private string detailSelectedApplication;
     public MonitorDetailViewModel()
     {
+        Debug.WriteLine(_model.SelectedModel+"zzzzzzzzzzz");
+        
         DetailApplications.Add("Energy Usage");
         DetailApplications.Add("Cost");
         DetailApplications.Add("Carbon Emission");
+        
         ReceivedParameter = _model.SelectDate;
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<TimeSpanPoint>();
@@ -199,6 +202,22 @@ public partial class MonitorDetailViewModel : ObservableObject
             {
                 detailSelectedApplication = value;
                 OnPropertyChanged(nameof(detailSelectedApplication));
+            }
+        }
+    }
+
+    public string SelectedChoiceModel
+    {
+        get
+        {
+            return _model.SelectedModel;
+        }
+        set
+        {
+            if (_model.SelectedModel != value)
+            {
+                _model.SelectedModel = value;
+                OnPropertyChanged(nameof(SelectedChoiceModel));
             }
         }
     }

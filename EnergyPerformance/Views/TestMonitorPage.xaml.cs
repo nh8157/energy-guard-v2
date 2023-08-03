@@ -31,7 +31,10 @@ public sealed partial class TestMonitorPage : Page
         //ViewModel.ModelChanged(selectedValue);
         //Debug.WriteLine(ViewModel.Series.ToString());
         if (selectedValue.Equals("Cost"))
+        {
             LvcChart.Series = ViewModel.CostSeries;
+        }
+            
         else if(selectedValue.Equals("Energy Usage"))
             LvcChart.Series = ViewModel.Series;
         else

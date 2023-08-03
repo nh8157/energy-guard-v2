@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using EnergyPerformance.ViewModels;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 
 namespace EnergyPerformance.Views;
@@ -18,6 +19,8 @@ public sealed partial class MonitorDetailPage : Page
         Debug.WriteLine("xxx");
     }
 
+    
+
     private void ModelSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
         // 在这里处理下拉框值改变的逻辑
@@ -35,4 +38,25 @@ public sealed partial class MonitorDetailPage : Page
         else
             LvcChart.Series = ViewModel.SeriesHourly;
     }
-}
+
+    private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
+    {
+        Frame.Navigate(typeof(TestMonitorPage));
+    }
+
+    private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
+    {
+        var selectedValue = ViewModel.SelectedChoiceModel;
+        ModelSelection.SelectedValue = selectedValue;
+        if (selectedValue.Equals("Cost"))
+        {
+            LvcChart.Series = ViewModel.SeriesCostHourly;
+        }
+
+        else if (selectedValue.Equals("Energy Usage"))
+            LvcChart.Series = ViewModel.SeriesHourly;
+        else
+            LvcChart.Series = ViewModel.SeriesHourly;
+    }
+
+    }

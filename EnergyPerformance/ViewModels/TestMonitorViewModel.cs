@@ -41,6 +41,7 @@ public partial class TestMonitorViewModel : ObservableObject
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<DateTimePoint>();
         _model = App.GetService<EnergyUsageModel>();
+        _model.SelectedModel = "Energy Usage";
         _navigationService = App.GetService<INavigationService>();
         var logs = _model.GetDailyEnergyUsageLogs();
         foreach (var log in logs)
@@ -69,6 +70,7 @@ public partial class TestMonitorViewModel : ObservableObject
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
         historySeries.ChartPointPointerDown += OnPointerDown;
+        costSeries.ChartPointPointerDown += OnCostPointerDown;
 
         Series = new ISeries[]
         {
@@ -128,6 +130,19 @@ public partial class TestMonitorViewModel : ObservableObject
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
         _model.SelectDate = param;
+        _model.SelectedModel = "Energy Usage";
+        _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
+        Debug.Write($"CLick on {point.SecondaryValue}");
+    }
+
+    private void OnCostPointerDown(IChartView chart, ChartPoint<DateTimePoint, RoundedRectangleGeometry, LabelGeometry>? point)
+    {
+        if (point?.Visual is null) return;
+        //point.Visual.Fill = new SolidColorPaint(SKColors.Red);
+        chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
+        DateTime param = new DateTime((long)point.SecondaryValue);
+        _model.SelectDate = param;
+        _model.SelectedModel = "Cost";
         _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
         Debug.Write($"CLick on {point.SecondaryValue}");
     }
