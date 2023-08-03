@@ -57,7 +57,7 @@
                 <NavigationViewItem Icon="Calendar" x:Uid="HistoryEnergy" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.TestMonitorViewModel">
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Uid="PersonaCustomisation" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.PersonaCustomisationViewModel">
+                <NavigationViewItem x:Uid="PersonaCustomisation" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.PersonaViewModel">
                     <NavigationViewItem.Icon>
                         <BitmapIcon UriSource="ms-appx:///Assets/spanner-icon.png"></BitmapIcon>
                     </NavigationViewItem.Icon>

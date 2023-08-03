@@ -19,14 +19,14 @@ public sealed partial class PersonaSliderPage : Page
 {
     const float DEFAULT = 2.0f;
 
-    public PersonaCustomisationViewModel ViewModel
+    public PersonaViewModel ViewModel
     {
         get;
     }
     
     public PersonaSliderPage()
     {
-        ViewModel = App.GetService<PersonaCustomisationViewModel>();
+        ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
     }
 
@@ -45,7 +45,7 @@ public sealed partial class PersonaSliderPage : Page
         var selectedIndex = AppSelection.SelectedIndex;
         if (selectedIndex != -1)
         {
-            var item = ViewModel.ApplicationList[selectedIndex];
+            var item = ViewModel.PersonasAndRatings[selectedIndex];
             item.EnergyValue = (float)PersonaSlider.Value;
             item.EnergyRating = item.UpdateEnergyRating((int)PersonaSlider.Value);
             Frame.Navigate(typeof(PersonaCustomisationPage));
@@ -67,7 +67,7 @@ public sealed partial class PersonaSliderPage : Page
         var selectedIndex = AppSelection.SelectedIndex;
         if (selectedIndex != -1)
         {
-            PersonaSlider.Value = ViewModel.ApplicationList[selectedIndex].EnergyValue;
+            PersonaSlider.Value = ViewModel.PersonasAndRatings[selectedIndex].EnergyValue;
         }
     }
 
@@ -80,7 +80,7 @@ public sealed partial class PersonaSliderPage : Page
             var index = (int)e.Parameter;
             AppSelection.SelectedIndex = index;
 
-            PersonaSlider.Value = ViewModel.ApplicationList[index].EnergyValue;  
+            PersonaSlider.Value = ViewModel.PersonasAndRatings[index].EnergyValue;  
         }
         base.OnNavigatedTo(e);
     }

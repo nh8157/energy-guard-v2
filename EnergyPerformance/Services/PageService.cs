@@ -3,6 +3,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
 using EnergyPerformance.Contracts.Services;
+using EnergyPerformance.Models;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
 
@@ -24,8 +25,7 @@ public class PageService : IPageService
         Configure<TestMonitorViewModel, TestMonitorPage>();
         Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
         Configure<DebugViewModel, DebugPage>();
-        Configure<PersonaCustomisationViewModel, PersonaCustomisationPage>();
-        //Configure<PersonaCustomisationViewModel, PersonaSliderPage>();
+        Configure<PersonaViewModel, PersonaCustomisationPage>();
     }
 
     public Type GetPageType(string key)

@@ -133,7 +133,7 @@ public partial class App : Application
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
-            services.AddTransient<PersonaCustomisationViewModel>();
+            services.AddTransient<PersonaViewModel>();
             services.AddTransient<PersonaCustomisationPage>();
             services.AddTransient<PersonaSliderPage>();
             services.AddTransient<SystemMonitorViewModel>();

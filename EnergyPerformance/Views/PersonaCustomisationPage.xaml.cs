@@ -14,14 +14,14 @@ namespace EnergyPerformance.Views;
 
 public sealed partial class PersonaCustomisationPage : Page
 {
-    public PersonaCustomisationViewModel ViewModel
+    public PersonaViewModel ViewModel
     {
         get;
     }
     
     public PersonaCustomisationPage()
     {
-        ViewModel = App.GetService<PersonaCustomisationViewModel>();
+        ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
     }
 
