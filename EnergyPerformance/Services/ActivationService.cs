@@ -21,17 +21,19 @@ public class ActivationService : IActivationService
     private readonly IEnumerable<IActivationHandler> _activationHandlers;
     private readonly IThemeSelectorService _themeSelectorService;
     private readonly EnergyUsageModel _energyUsageModel;
+    private readonly PersonaModel _personaModel;
     private readonly SettingsViewModel _settingsViewModel;
     private bool _initialized;
     private UIElement? _shell = null;
 
-    public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService, EnergyUsageModel energyUsageModel, SettingsViewModel settingsViewModel)
+    public ActivationService(ActivationHandler<LaunchActivatedEventArgs> defaultHandler, IEnumerable<IActivationHandler> activationHandlers, IThemeSelectorService themeSelectorService, EnergyUsageModel energyUsageModel, PersonaModel personaModel, SettingsViewModel settingsViewModel)
     {
         _initialized = false;
         _defaultHandler = defaultHandler;
         _activationHandlers = activationHandlers;
         _themeSelectorService = themeSelectorService;
         _energyUsageModel = energyUsageModel;
+        _personaModel = personaModel;
         _settingsViewModel = settingsViewModel;
     }
 
@@ -98,6 +100,7 @@ public class ActivationService : IActivationService
         {
             Debug.WriteLine("Initializing model.");
             await _energyUsageModel.InitializeAsync();
+            await _personaModel.InitializeAsync();
             _initialized = true;
         }
         Debug.WriteLine("Initializing services.");

@@ -5,7 +5,6 @@ using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
-using Newtonsoft.Json;
 
 namespace EnergyPerformance.Models;
 
@@ -16,9 +15,11 @@ namespace EnergyPerformance.Models;
 public class EnergyUsageModel
 {
     // initialize default values for fallback in case there is no file or the file is corrupted
-    private const double DefaultWeeklyBudget = 2.0;
-    private const double DefaultCostPerKwh = 0.34;
+    private readonly double DefaultWeeklyBudget = 2.0;
+    private double DefaultCostPerKwh = 0.34;
+
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
+    private readonly EnergyRateInfo _energyRateInfo;
 
     private EnergyUsageData _energyUsage;
     private readonly IDatabaseService _databaseService;
@@ -30,6 +31,10 @@ public class EnergyUsageModel
         get; set;
     }
 
+    public bool IsLiveCost
+    {
+        get; set;
+    }
 
     public DateTimeOffset CurrentDay
     {
@@ -46,31 +51,28 @@ public class EnergyUsageModel
         private set => _carbonIntensityInfo.CarbonIntensity = value;
     }
 
+    public double LiveCostPerKwh => _energyRateInfo.EnergyRate;
+
     /// <summary>
     /// The cost per kWh for the user. Returns data loaded from file or default value if file is not found or corrupted.
     /// </summary>
+
+    // We need a way to fetch energy cost live
     public double CostPerKwh
     {
         get
         {
             var cost = DefaultCostPerKwh;
             // additional check incase the file is corrupted or modified
-            if (!double.IsNaN(_energyUsage.CostPerKwh) && _energyUsage.CostPerKwh > 0)
-            {
-                cost = _energyUsage.CostPerKwh;
-            }
-            else
-            {
-                _energyUsage.CostPerKwh = cost;
-            }
+            if (IsLiveCost && LiveCostPerKwh > 0)
+                cost = LiveCostPerKwh;
+
             return cost;
         }
         set
         {
-            if (!double.IsNaN(value) && value > 0)
-            {
-                _energyUsage.CostPerKwh = value;
-            }
+            if (!IsLiveCost && !double.IsNaN(value) && value > 0)
+                DefaultCostPerKwh = value;
         }
     }
 
@@ -131,15 +133,17 @@ public class EnergyUsageModel
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, IDatabaseService databaseService)
+    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;
+        IsLiveCost = true;
         AccumulatedWatts = 0;
         AccumulatedWattsHourly = 0;
         AccumulatedWattsPerApp = new Dictionary<string, double>();
         _energyUsage = new EnergyUsageData();
         _carbonIntensityInfo = carbonIntensityInfo;
+        _energyRateInfo = energyRateInfo;
         _databaseService = databaseService;
     }
 
@@ -418,34 +422,26 @@ public class EnergyUsageModel
     public void Update()
     {
         var current = DateTime.Now;
-        var energyUsedCurr = GetEnergyUsed();
-        var energyUsedHourlyCurr = GetEnergyUsedHourly();
+        var lastMeasurement = new EnergyUsageLog(current, (float)GetEnergyUsed(), (float)GetDailyCost(), (float)GetDailyCarbonEmission());
+        var lastMeasurementHourly = new EnergyUsageLog(current, (float)GetEnergyUsedHourly(), (float)GetHourlyCost(), (float)GetHourlyCarbonEmission());
+        Debug.WriteLine($"Current energy cost: {CostPerKwh}");
 
         // Update daily log
         if (!(_energyUsage.Diaries.Count > 0) || _energyUsage.Diaries.Last().Date.Date < current.Date)
             _energyUsage.Diaries.Add(new EnergyUsageDiary());
 
         var lastDiary = _energyUsage.Diaries.Last();
-
-        var lastDailyUsage = lastDiary.DailyUsage;
-        var energyUsedPrev = lastDailyUsage.PowerUsed;
-        lastDailyUsage.CarbonEmission += (float)((energyUsedCurr - energyUsedPrev) * CarbonIntensity);
-        lastDailyUsage.Cost += (float)((energyUsedCurr - energyUsedPrev) * CostPerKwh);
-        lastDailyUsage.PowerUsed = (float)energyUsedCurr;
+        lastDiary.DailyUsage = lastMeasurement;
 
         // Update hourly log
         if (!(lastDiary.HourlyUsage.Count > 0) || lastDiary.HourlyUsage.Last().Date.Hour < current.Hour)
             lastDiary.HourlyUsage.Add(new EnergyUsageLog());
+        lastDiary.HourlyUsage[^1] = lastMeasurementHourly;
 
-        var lastHourlyUsage = lastDiary.HourlyUsage.Last();
-        var energyUsedHourlyPrev = lastHourlyUsage.PowerUsed;
-        lastHourlyUsage.CarbonEmission += (float)((energyUsedHourlyCurr - energyUsedHourlyPrev) * CarbonIntensity);
-        lastHourlyUsage.Cost += (float)((energyUsedHourlyCurr - energyUsedHourlyPrev) * CostPerKwh);
-        lastHourlyUsage.PowerUsed = (float)energyUsedHourlyCurr;
-        
         // Update per process usage
         foreach (var proc in AccumulatedWattsPerApp.Keys)
             lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
-    }
 
+        Debug.WriteLine("Model updated.");
+    }
 }

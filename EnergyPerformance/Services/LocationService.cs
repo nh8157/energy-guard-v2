@@ -25,10 +25,10 @@ public class LocationService : ILocationService
         set => _locationInfo.Country = value;
     }
 
-    public string PostCode
+    public string Postcode
     {
-        get => _locationInfo.PostCode;
-        set => _locationInfo.PostCode = value;
+        get => _locationInfo.Postcode;
+        set => _locationInfo.Postcode = value;
     }
 
     public LocationInfo LocationInfo
@@ -49,7 +49,7 @@ public class LocationService : ILocationService
 
     public async Task<LocationInfo> GetLocationInfo()
     {
-        if (_locationInfo.Country == "Unknown" || _locationInfo.PostCode == "Unknown")
+        if (_locationInfo.Country == "Unknown" || _locationInfo.Postcode == "Unknown")
         {
             await retrieveLocation();
         }
@@ -67,7 +67,7 @@ public class LocationService : ILocationService
         string postal = ipResponse.Postal;
         App.GetService<DebugModel>().AddMessage("Location Updated");
         _locationInfo.Country = country;
-        _locationInfo.PostCode = postal;
+        _locationInfo.Postcode = postal;
     }
 
     private async Task<string> RetrieveIPAddress()
