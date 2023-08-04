@@ -44,13 +44,18 @@ public class AppNotificationService : IAppNotificationService
         // E.g. a button within the notification can be used to perform a specific action which can be defined here.
         App.MainWindow.DispatcherQueue.TryEnqueue(async delegate
         {
+            // Extract custom action from argument
             var customAction = args.Argument.Split('=')[1];
             var executablePath = "";
 
-            // If executable path is included in the agrument, then assign to executablePath
+            // If executable path is included in the agrument
+            // then divide custom action and executable path
             if (args.Argument.Contains('&'))
             {
+                // Extract executable path
                 executablePath = customAction.Split('&')[1].ToLower();
+
+                // Extract the custom action
                 customAction = customAction.Split('&')[0];
             }
 
