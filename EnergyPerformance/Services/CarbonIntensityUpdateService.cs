@@ -23,7 +23,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     }
 
     public string Country => _locationInfo.Country;
-    public string PostCode => _locationInfo.PostCode;
+    public string Postcode => _locationInfo.Postcode;
 
     public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo)
     {
@@ -42,7 +42,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     {
         Debug.WriteLine($"Retrieving live carbon intensity for {Country}");
 
-        if (Country == "United Kingdom")
+        if (Country.ToLower() == "united kingdom")
         {
             await FetchLiveCarbonIntensity();
         }
@@ -58,7 +58,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
         var client = new HttpClient();
         try
         {
-            var url = String.Format(_ukApiUrl, PostCode.Split(" ")[0]);
+            var url = String.Format(_ukApiUrl, Postcode.Split(" ")[0]);
             HttpResponseMessage response = await client.GetAsync(url);
 
             if (response.IsSuccessStatusCode)

@@ -40,7 +40,7 @@ public class EnergyRateService: BackgroundService
     {
         var country = _locationInfo.Country.ToLower();
         // get a postcode that's all lower case and has no white space
-        var postCode = _locationInfo.PostCode.Replace(" ", "");
+        var postCode = _locationInfo.Postcode.Replace(" ", "");
         var countryCode = GetCountryCode(country);
         double rate = 0;
 

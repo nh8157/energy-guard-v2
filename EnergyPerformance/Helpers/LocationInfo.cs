@@ -7,7 +7,7 @@ public class LocationInfo
         get;
         set;
     }
-    public string PostCode
+    public string Postcode
     {
         get;
         set;
@@ -22,7 +22,7 @@ public class LocationInfo
     public LocationInfo()
     {
         Country = "Unknown";
-        PostCode = "Unknown";
+        Postcode = "Unknown";
         Region = "Unknown";
     }
 }
