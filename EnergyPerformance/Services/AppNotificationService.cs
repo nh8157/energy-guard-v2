@@ -69,21 +69,21 @@ public class AppNotificationService : IAppNotificationService
 
                     break;
                 case "configurPersonaToPerformant":
-                    var performantEnergyRate = (float) 0.1;
+                    var performantEnergyRate = 0.1f;
 
                     await App.GetService<PersonaModel>().UpdatePersona(executablePath, performantEnergyRate);
                     App.GetService<PersonaModel>().EnablePersona(executablePath);
 
                     break;
                 case "configurPersonaToBalanced":
-                    var balancedEnergyRate = (float) 0.2;
+                    var balancedEnergyRate = 0.2f;
 
                     await App.GetService<PersonaModel>().UpdatePersona(executablePath, balancedEnergyRate);
                     App.GetService<PersonaModel>().EnablePersona(executablePath);
 
                     break;
                 case "configurPersonaToEfficient":
-                    var efficientEnergyRate = (float) 0.3;
+                    var efficientEnergyRate = 0.3f;
 
                     await App.GetService<PersonaModel>().UpdatePersona(executablePath, efficientEnergyRate);
                     App.GetService<PersonaModel>().EnablePersona(executablePath);

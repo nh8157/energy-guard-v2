@@ -249,6 +249,6 @@ public class PersonaModel
 
     private float ConvertSettingsToRating(int cpuSetting, int gpuSetting)
     {
-        return (float) 0.0;
+        return 0.0f;
     }
 }
