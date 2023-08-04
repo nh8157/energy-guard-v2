@@ -42,13 +42,14 @@ public partial class PersonaViewModel : ObservableRecipient
 
     private void Initialise()
     {
-        var list = _model.ReadPersonaAndRating();
-        foreach (var item in list)
-        {
-            Add(item.Item1, item.Item2);
-        }
         if (do_once)
         {
+            var list = _model.ReadPersonaAndRating();
+            foreach (var item in list)
+            {
+                Add(item.Item1, item.Item2);
+            }
+
             Add("Steam", 2.0f);
             Add("Spotify", 3.0f);
             Add("Word", 2.5f);
