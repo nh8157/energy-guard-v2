@@ -116,7 +116,7 @@ public class PersonaModel
     /// <param name="energyRating">The position of the slider defined by the user</param>
     public async Task CreatePersona(string personaName, float energyRating)
     {
-        if (!_allPersonas.Any(persona => persona.Path == personaName))
+        if (!_allPersonas.Any(persona => persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase)))
         {
             var entry = new PersonaEntry(_nextPersonaId, personaName, ConvertRatingToCpuSetting(energyRating), ConvertRatingToGpuSetting(energyRating));
 
@@ -169,7 +169,7 @@ public class PersonaModel
     public async Task DeletePersona(string personaName)
     {
         _processMonitorService.RemoveWatcher(personaName);
-        var res = _allPersonas.RemoveAll(persona => persona.Path == personaName) > 0;
+        var res = _allPersonas.RemoveAll(persona => persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase)) > 0;
         await _personaFileService.SaveFileAsync();
     }
 
@@ -180,7 +180,8 @@ public class PersonaModel
     /// <returns>Whether the enabling was successful</returns>
     public bool EnablePersona(string personaName)
     {
-        var index = _allPersonas.FindIndex(persona => persona.Path == personaName);
+        var index = _allPersonas.FindIndex(persona => persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase));
+
         if (index != -1)
         {
             var persona = _allPersonas[index];
