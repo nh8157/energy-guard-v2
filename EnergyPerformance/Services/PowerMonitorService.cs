@@ -22,8 +22,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
     private readonly PowerInfo _powerInfo;
-    private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-    private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
 
     public double Power
     {
