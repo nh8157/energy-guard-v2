@@ -25,11 +25,6 @@ public class LocationService : BackgroundService
         private set => _locationInfo.Postcode = value;
     }
 
-    public string Region
-    {
-        get => _locationInfo.Region;
-        private set => _locationInfo.Region = value;
-    }
 
     public LocationService(LocationInfo locationInfo)
     {
@@ -41,6 +36,8 @@ public class LocationService : BackgroundService
         do
         {
             await DoAsync();
+            App.GetService<DebugModel>().AddMessage(Postcode);
+
         }
         while (await _periodicTimer.WaitForNextTickAsync(token) && !token.IsCancellationRequested);
     }
@@ -63,7 +60,7 @@ public class LocationService : BackgroundService
                 HttpClient client = new HttpClient();
                 string url = string.Format(_locationUrl, latitude, longitude);
                 JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(client, url)??
-                    throw new InvalidOperationException("Cannot deserialize json object"); ;
+                    throw new InvalidOperationException("Cannot deserialize json object"); 
                 Country = jsonResponse.GetProperty("address").GetProperty("country").ToString();
                 Postcode = jsonResponse.GetProperty("address").GetProperty("postcode").ToString();
             }

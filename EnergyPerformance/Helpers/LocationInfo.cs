@@ -13,16 +13,9 @@ public class LocationInfo
         set;
     }
 
-    public string Region
-    {
-        get;
-        set;
-    }
-
     public LocationInfo()
     {
         Country = "Unknown";
         Postcode = "Unknown";
-        Region = "Unknown";
     }
 }
