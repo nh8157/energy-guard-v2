@@ -1,4 +1,6 @@
 ﻿using System.Diagnostics;
+using System.Xml.Linq;
+using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
 using EnergyPerformance.Core.Services;
@@ -71,34 +73,69 @@ public class DataTestClass
     }
 
 
+    private static Dictionary<string, EnergyUsageLog> GenerateRandomPerProcLogs(DateTime date)
+    {
+        var procDic = new Dictionary<string, EnergyUsageLog>();
+        var procList = new List<string>
+        {
+            "Spotify", "Steam", "Genshin", "Chrome", "Youtube"
+        };
+        for(var i = 0; i < procList.Count; i++)
+        {
+            var proc = procList[i];
+            var procLog = GenerateRandomHourlyLog(date);
+            procDic[proc] = procLog;
+        }
+        return procDic;
+    }
+
+    private static List<EnergyUsageDiary> GenerateListOfRandomEnergyDiaries(int days)
+    {
+        var list = new List<EnergyUsageDiary>();
+        var startDay = DateTime.Now.AddDays(-1 * days + 1);
+        for (var i = 0; i < days; i++)
+        {
+            var day = startDay.AddDays(i).AddHours(8);
+            var dailylog = GenerateRandomDailyLog(day);
+            var hourlylogs = new List<EnergyUsageLog>();
+            var procLogs = GenerateRandomPerProcLogs(day);
+            for (var j = 0; j < 8; j++)
+            {
+                var hour = day.AddHours(j);
+                var houlylog = GenerateRandomHourlyLog(hour);
+                hourlylogs.Add(houlylog);
+            }
+            list.Add(new EnergyUsageDiary(day, dailylog, hourlylogs, procLogs));
+        }
+        return list;
+    }
+
 
     [ClassInitialize]
-    public static void ClassInitialize(TestContext context)
+    public static async Task ClassInitialize(TestContext context)
     {
-
         _fileService = new FileService();
         var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         folderPath = Path.Combine(folderPath, _defaultApplicationDataFolder);
         var fileName = "Data.json";
         var costPerKwh = 0.5;
         var budget = RandomDouble(2, 10);
-        var lastMeasurement = GenerateRandomDailyLog(DateTime.Now);
-        var hourlyLogs = GenerateListOfRandomHourlyLogs(30);
-        var dailyLogs = GenerateListOfRandomDailyLogs(60);
-        
+        var diaries = GenerateListOfRandomEnergyDiaries(30);
 
-        _data = new EnergyUsageData(costPerKwh, budget, lastMeasurement, hourlyLogs, dailyLogs);
+        _data = new EnergyUsageData(costPerKwh, budget, diaries);
         
         _fileService.Save(folderPath, fileName, _data);
     }
 
-
-    
-
-
+    public async Task<DatabaseService> GetDatabaseService()
+    {
+        DatabaseService service =  new DatabaseService("testDB.db");
+        await service.InitializeDB();
+        return service;
+    }
 
     [ClassCleanup]
-    public static void ClassCleanup()
+    public static async Task ClassCleanup()
     {
         Debug.WriteLine("ClassCleanup");
     }
@@ -110,8 +147,10 @@ public class DataTestClass
     }
 
     [TestCleanup]
-    public void TestCleanup()
+    public async Task TestCleanup()
     {
+        var service = await GetDatabaseService();
+        await service.ClearAllData();
         Debug.WriteLine("TestCleanup");
     }
 
@@ -137,6 +176,61 @@ public class DataTestClass
         await Task.CompletedTask;
 
         // process.Kill();
+    }
+
+    [TestMethod]
+    public async Task TestDBInitialization()
+    {
+        var databaseService = await GetDatabaseService();
+        var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        folderPath = Path.Combine(folderPath, _defaultApplicationDataFolder);
+        Assert.IsTrue(File.Exists(Path.Combine(folderPath, "testDB.db")));
+        var data = await databaseService.LoadUsageData();
+        Assert.AreEqual(data.Diaries.Count(), 0);
+    }
+
+    [TestMethod]
+    public async Task TestReadFromDBSuccess()
+    {
+        var databaseService = await GetDatabaseService();
+        await databaseService.SaveEnergyData(_data);
+        var data = await databaseService.LoadUsageData();
+        Assert.AreEqual(data.Diaries.Count(), 30);
+    }
+
+    [TestMethod]
+    public async Task TestReadFromEmptyDB()
+    {
+        var databaseService = await GetDatabaseService();
+        await databaseService.ClearAllData();
+        await databaseService.InitializeDB();
+        var data = await databaseService.LoadUsageData();
+        Assert.AreEqual(data.CostPerKwh,0);
+        Assert.AreEqual(data.WeeklyBudget,0);
+        Assert.AreEqual(data.Diaries.Count(),0);
+    }
+
+    [DataRow(10)]
+    [TestMethod]
+    public async Task TestUpdateCostAndBudget(double value)
+    {
+        var databaseService = await GetDatabaseService();
+        await databaseService.SaveEnergyData(_data);
+        var originalData = await databaseService.LoadUsageData();
+        Assert.AreNotEqual(originalData.CostPerKwh,value);
+        _data.CostPerKwh = 10;
+        await databaseService.SaveEnergyData(_data);
+        var newData = await databaseService.LoadUsageData();
+        Assert.AreEqual(newData.CostPerKwh, value);
+    }
+
+    [TestMethod]
+    public async Task TestInsertDailyLog()
+    {
+        var databaseService = await GetDatabaseService();
+        var dailyLog = GenerateRandomDailyLog(DateTime.Now);
+        string id = await databaseService.InsertDailyLog(dailyLog);
+        Assert.AreNotEqual(id.Length, 0);
     }
 
     [TestMethod]

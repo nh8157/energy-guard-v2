@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
@@ -21,7 +22,14 @@ public class DatabaseService : IDatabaseService
     public DatabaseService()
     {
         _localAppDataFolder = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData");
-        _datasource = Path.Combine(_localAppDataFolder, "database.db");
+        _datasource = Path.Combine(_localAppDataFolder, "database.DB");
+        _energyUsage = new EnergyUsageData();
+    }
+
+    public DatabaseService(string name)
+    {
+        _localAppDataFolder = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData");
+        _datasource = Path.Combine(_localAppDataFolder, name);
         _energyUsage = new EnergyUsageData();
     }
 
@@ -66,17 +74,17 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
+                Debug.WriteLine(ex.ToString());
             }
         }
         if (await DatabaseIsActive())
         {
             _energyUsage = await ReadUsageDataFromDatabase();
-            App.GetService<DebugModel>().AddMessage($"retrieved {_energyUsage.Diaries.Count().ToString()} diaries from databased");
+            Debug.WriteLine($"retrieved {_energyUsage.Diaries.Count().ToString()} diaries from databased");
         }
         else
         {
-            App.GetService<DebugModel>().AddMessage("Empty Database");
+            Debug.WriteLine("Empty Database");
         }
         _isInitialized = true;
     }
@@ -92,7 +100,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
         }
         return sqlite_conn;
     }
@@ -107,7 +115,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
         }
         return sqlite_conn;
     }
@@ -133,7 +141,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
             return string.Empty;
         }
     }
@@ -161,7 +169,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
             return string.Empty;
         }
     }
@@ -194,7 +202,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -227,7 +235,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -270,7 +278,7 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -298,11 +306,11 @@ public class DatabaseService : IDatabaseService
                     await UpdateBudgetAndCostPerKwh(currentDate, data.CostPerKwh, data.WeeklyBudget);
                 }
             }
-            App.GetService<DebugModel>().AddMessage("Usage Data Saved To DB");
+            _energyUsage = data;
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
+            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -567,4 +575,40 @@ public class DatabaseService : IDatabaseService
         SQLiteCommand deleteCommand = new SQLiteCommand(deleteQuery, conn);
         await deleteCommand.ExecuteNonQueryAsync();
     }
+
+    public async Task ClearAllData()
+    {
+        SQLiteConnection conn = CreateConnection();
+        var tableNames = GetTableNames(conn);
+        foreach (var tableName in tableNames)
+        {
+            await ClearTableData(conn, tableName);
+        }
+        conn.Close();
+    }
+
+    private async Task ClearTableData(SQLiteConnection connection, string tableName)
+    {
+        using (var command = new SQLiteCommand($"DELETE FROM {tableName}", connection))
+        {
+            await command.ExecuteNonQueryAsync();
+        }
+    }
+
+    private List<string> GetTableNames(SQLiteConnection connection)
+    {
+        var tableNames = new List<string>();
+        using (var command = new SQLiteCommand("SELECT name FROM sqlite_master WHERE type='table'", connection))
+        {
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    tableNames.Add(reader.GetString(0));
+                }
+            }
+        }
+        return tableNames;
+    }
+
 }

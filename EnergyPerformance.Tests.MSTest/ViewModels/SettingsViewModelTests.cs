@@ -23,6 +23,9 @@ public class SettingsViewModelTests
     private static Mock<IFileService> _fileService;
     private static Mock<IAppNotificationService> _notificationService;
     private static IOptions<LocalSettingsOptions> localSettingsOptions;
+    private static Mock<CarbonIntensityInfo> _carbonIntensityInfo;
+    private static Mock<IDatabaseService> _databaseService;
+    private static Mock<EnergyRateInfo> _energyRateInfo;
 
     [ClassInitialize]
     public static void ClassInit(TestContext context)
@@ -30,11 +33,14 @@ public class SettingsViewModelTests
         _fileService = new Mock<IFileService>();
         _notificationService = new Mock<IAppNotificationService>();
         localSettingsOptions = Options.Create(new LocalSettingsOptions());
+        _carbonIntensityInfo = new Mock<CarbonIntensityInfo>();
+        _databaseService = new Mock<IDatabaseService>();
+        _energyRateInfo = new Mock<EnergyRateInfo>();
     }
 
     public EnergyUsageModel GetModel()
     {
-        return new EnergyUsageModel(new EnergyUsageFileService(_fileService.Object));
+        return new EnergyUsageModel(_carbonIntensityInfo.Object, _energyRateInfo.Object, _databaseService.Object);
     }
 
     public SettingsViewModel GetViewModel()
@@ -56,6 +62,7 @@ public class SettingsViewModelTests
     public void CostSetterTestEqual(double value)
     {
         var viewModel = GetViewModel();
+        viewModel.IsLiveCost = false;
         viewModel.CostPerKwh = value;
         Assert.AreEqual(value, viewModel.CostPerKwh);
     }

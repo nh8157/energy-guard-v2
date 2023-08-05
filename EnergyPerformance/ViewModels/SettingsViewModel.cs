@@ -80,6 +80,11 @@ public partial class SettingsViewModel : ObservableRecipient
         get;
     }
 
+    public bool IsLiveCost
+    {
+        get => _model.IsLiveCost;
+        set => _model.IsLiveCost = value;
+    }
 
     public double WeeklyBudget
     {
@@ -194,7 +199,6 @@ public partial class SettingsViewModel : ObservableRecipient
     {
         var startupTask = await StartupTask.GetAsync("EnergyGuard");
         return startupTask.State == StartupTaskState.Enabled;
-
     }
 
     /// <summary>

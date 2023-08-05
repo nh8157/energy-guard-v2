@@ -125,7 +125,7 @@ public class EnergyUsageModel
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
+    public EnergyUsageModel(CarbonIntensityInfo carbonIntensityInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;

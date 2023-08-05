@@ -12,24 +12,27 @@ using EnergyPerformance.Models;
 using EnergyPerformance.Services;
 using Microsoft.Extensions.Options;
 using Moq;
+using Windows.Foundation;
 
 namespace EnergyPerformance.Tests.MSTest.Services;
 
 [TestClass()]
 public class PowerMonitorServiceTests
 {
-    private static IFileService _fileService;
-    private static EnergyUsageFileService _energyUsageFileService;
+    private static CarbonIntensityInfo _carbonIntensityInfo;
+    private static IDatabaseService _databaseService;
+    private static EnergyRateInfo _energyRateInfo;
 
     [ClassInitialize]
     public static void ClassInit(TestContext context)
     {
-        _fileService = new FileService();
-        _energyUsageFileService = new EnergyUsageFileService(_fileService);
+        _carbonIntensityInfo = new CarbonIntensityInfo();
+        _energyRateInfo = new EnergyRateInfo();
+        _databaseService = new DatabaseService("testDB.db");
     }
     public PowerMonitorService GetService()
     {
-        return new PowerMonitorService(new EnergyUsageModel(_energyUsageFileService), new PowerInfo());
+        return new PowerMonitorService(new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService), new PowerInfo());
     }
 
     [TestMethod]
@@ -44,7 +47,7 @@ public class PowerMonitorServiceTests
     public async Task TestPowerMonitorServiceIsInitializedCorrectly()
     {
         var powerInfo = new PowerInfo();
-        var model = new EnergyUsageModel(_energyUsageFileService);
+        var model = new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService);
         var service = new PowerMonitorService(model, powerInfo);
         Assert.IsTrue(service.sensors.Count() == 0);
         var cts = new CancellationTokenSource();
@@ -69,17 +72,14 @@ public class PowerMonitorServiceTests
     {
         var powerInfo = new Mock<PowerInfo>();
         powerInfo.Setup(p => p.Power).Returns(value);
-        var model = new EnergyUsageModel(_energyUsageFileService);
+        var model = new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService);
         var service = new PowerMonitorService(model, powerInfo.Object);
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         // start the service and immediately cancel
         await service.StartAsync(token);
         cts.Cancel();
+        Assert.AreEqual(model.AccumulatedWattsHourly, Math.Max(value, 0));
         Assert.AreEqual(model.AccumulatedWatts, Math.Max(value,0));
-        Assert.AreEqual(model.AccumulatedWattsHourly, Math.Max(value,0));
     }
-    
-
-
 }

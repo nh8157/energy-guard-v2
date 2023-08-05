@@ -24,17 +24,23 @@ public class EnergyUsageViewModelTests
 {
     private static Mock<IFileService> _fileService;
     private static IOptions<LocalSettingsOptions> localSettingsOptions;
+    private static Mock<CarbonIntensityInfo> _carbonIntensityInfo;
+    private static Mock<IDatabaseService> _databaseService;
+    private static Mock<EnergyRateInfo> _energyRateInfo;
 
     [ClassInitialize]
     public static void ClassInit(TestContext context)
     {
+        _carbonIntensityInfo = new Mock<CarbonIntensityInfo>();
+        _databaseService = new Mock<IDatabaseService>();
+        _energyRateInfo = new Mock<EnergyRateInfo>();
         _fileService = new Mock<IFileService>();
         localSettingsOptions = Options.Create(new LocalSettingsOptions());
     }
 
     public EnergyUsageModel GetModel()
     {
-        return new EnergyUsageModel(new EnergyUsageFileService(_fileService.Object));
+        return new EnergyUsageModel(_carbonIntensityInfo.Object, _energyRateInfo.Object, _databaseService.Object);
     }
 
     public EnergyUsageViewModel GetViewModel()
