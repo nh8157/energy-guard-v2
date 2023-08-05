@@ -36,7 +36,7 @@ public sealed partial class MonitorDetailPage : Page
         else if (selectedValue.Equals("Energy Usage"))
             LvcChart.Series = ViewModel.SeriesHourly;
         else
-            LvcChart.Series = ViewModel.SeriesHourly;
+            LvcChart.Series = ViewModel.SeriesCarbonHourly;
     }
 
     private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
@@ -56,7 +56,7 @@ public sealed partial class MonitorDetailPage : Page
         else if (selectedValue.Equals("Energy Usage"))
             LvcChart.Series = ViewModel.SeriesHourly;
         else
-            LvcChart.Series = ViewModel.SeriesHourly;
+            LvcChart.Series = ViewModel.SeriesCarbonHourly;
     }
 
     }

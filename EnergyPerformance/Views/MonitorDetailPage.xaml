@@ -36,7 +36,7 @@
                 <!--<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;" FontSize="18" VerticalAlignment="Center"/>-->
                 <SymbolIcon Symbol="Back" VerticalAlignment="Center"/>
             </Button>
-            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="35" Width="150" ItemsSource="{x:Bind ViewModel.DetailApplications}"
+            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="35" Width="170" ItemsSource="{x:Bind ViewModel.DetailApplications}"
                   SelectedItem="{x:Bind ViewModel.DetailSelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Grid.Column="1" Margin="20,3,0,0"/>
         </Grid>
         <lvc:CartesianChart Series="{Binding Series}" Grid.Row="2"/>

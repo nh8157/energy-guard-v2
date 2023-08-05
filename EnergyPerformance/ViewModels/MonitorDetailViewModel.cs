@@ -25,6 +25,7 @@ public partial class MonitorDetailViewModel : ObservableObject
     private DateTime _receivedParameter;
     private ColumnSeries<DateTimePoint> historySeries;
     private ColumnSeries<TimeSpanPoint> costSeries;
+    private ColumnSeries<TimeSpanPoint> carbonSeries;
     private ColumnSeries<TimeSpanPoint> hourlySeries;
     public readonly ObservableCollection<String> DetailApplications = new();
     private string detailSelectedApplication;
@@ -40,10 +41,12 @@ public partial class MonitorDetailViewModel : ObservableObject
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<TimeSpanPoint>();
         var hourly = new ObservableCollection<TimeSpanPoint>();
+        var carbons = new ObservableCollection<TimeSpanPoint>();
         for (int i = 0; i <= 23; ++i)
         {
             hourly.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
             costs.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
+            carbons.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
         }
         var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
         foreach (var log in logs)
@@ -53,18 +56,19 @@ public partial class MonitorDetailViewModel : ObservableObject
             Debug.WriteLine(log.Date+ "---" + log.PowerUsed);
             values.Add(new DateTimePoint(log.Date, log.PowerUsed));
             costs[log.Date.Hour].Value += log.Cost;
+            carbons[log.Date.Hour].Value += log.CarbonEmission;
         }
         historySeries = new ColumnSeries<DateTimePoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):HH}H - {chartPoint.PrimaryValue}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):HH}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Watt",
             Values = values
         };
         costSeries = new ColumnSeries<TimeSpanPoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue}",
+                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
             Values = costs,
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
@@ -73,10 +77,18 @@ public partial class MonitorDetailViewModel : ObservableObject
         hourlySeries = new ColumnSeries<TimeSpanPoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue}",
+                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Watt",
             Values = hourly,
             Fill = new SolidColorPaint(new SKColor(51, 181, 255))
+        };
+        carbonSeries = new ColumnSeries<TimeSpanPoint>
+        {
+            YToolTipLabelFormatter = (chartPoint) =>
+                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
+            Name = "CO2",
+            Values = carbons,
+            Fill = new SolidColorPaint(new SKColor(143, 188, 143))
         };
         SeriesHourly = new ISeries[]
         {
@@ -85,6 +97,10 @@ public partial class MonitorDetailViewModel : ObservableObject
         SeriesCostHourly = new ISeries[]
         {
             costSeries
+        };
+        SeriesCarbonHourly = new ISeries[]
+        {
+            carbonSeries
         };
 
         GotoPage();
@@ -125,6 +141,10 @@ public partial class MonitorDetailViewModel : ObservableObject
     }
 
     public ISeries[] SeriesCostHourly
+    {
+        get; set;
+    }
+    public ISeries[] SeriesCarbonHourly
     {
         get; set;
     }

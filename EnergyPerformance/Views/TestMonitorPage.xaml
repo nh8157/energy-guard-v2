@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="Auto"/>
                 <!-- Right column for Buttons -->
             </Grid.ColumnDefinitions>
-            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Grid.Column="0" Height="35" Width="150" ItemsSource="{x:Bind ViewModel.Applications}"
+            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Grid.Column="0" Height="35" Width="170" ItemsSource="{x:Bind ViewModel.Applications}"
                   SelectedItem="{x:Bind ViewModel.SelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Margin="0, 5, 0, 0"/>
             <!-- Middle column can be used for spacing if necessary -->
             <Button Command="{Binding LastWeekCommand}" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0">

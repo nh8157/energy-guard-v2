@@ -38,7 +38,7 @@ public sealed partial class TestMonitorPage : Page
         else if(selectedValue.Equals("Energy Usage"))
             LvcChart.Series = ViewModel.Series;
         else
-            LvcChart.Series = ViewModel.Series;
+            LvcChart.Series = ViewModel.CarbonSeries;
     }
 
 }

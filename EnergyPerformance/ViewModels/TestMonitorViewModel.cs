@@ -29,9 +29,10 @@ public partial class TestMonitorViewModel : ObservableObject
     public readonly ObservableCollection<String> Applications = new();
     private ColumnSeries<DateTimePoint> historySeries;
     private ColumnSeries<DateTimePoint> costSeries;
+    private ColumnSeries<DateTimePoint> carbonSeries;
     private string selectedApplication;
     private DateTime lastDate = DateTime.Today;
-    private DateTime currentStartDate = DateTime.Today.AddDays(-6);
+    private DateTime currentStartDate = DateTime.Today.AddDays(-6.5);
 
     public TestMonitorViewModel()
     {
@@ -40,6 +41,7 @@ public partial class TestMonitorViewModel : ObservableObject
         Applications.Add("Carbon Emission");
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<DateTimePoint>();
+        var carbons = new ObservableCollection<DateTimePoint>();
         _model = App.GetService<EnergyUsageModel>();
         _model.SelectedModel = "Energy Usage";
         _navigationService = App.GetService<INavigationService>();
@@ -52,11 +54,12 @@ public partial class TestMonitorViewModel : ObservableObject
             }
             values.Add(new DateTimePoint(log.Date.Date, log.PowerUsed));
             costs.Add(new DateTimePoint(log.Date.Date, log.Cost));
+            carbons.Add(new DateTimePoint(log.Date.Date, log.CarbonEmission));
         }
         historySeries = new ColumnSeries<DateTimePoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Watt",
             Values = values,
             Fill = new SolidColorPaint(new SKColor(51, 181, 255))
@@ -64,14 +67,22 @@ public partial class TestMonitorViewModel : ObservableObject
         costSeries = new ColumnSeries<DateTimePoint>
         {
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F2")}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
             Values = costs,
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
+        carbonSeries = new ColumnSeries<DateTimePoint>
+        {
+            YToolTipLabelFormatter = (chartPoint) =>
+                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
+            Name = "CO2",
+            Values = values,
+            Fill = new SolidColorPaint(new SKColor(143, 188, 143))
+        };
         historySeries.ChartPointPointerDown += OnPointerDown;
         costSeries.ChartPointPointerDown += OnCostPointerDown;
-
+        carbonSeries.ChartPointPointerDown += OnCarbonPointerDown;
         Series = new ISeries[]
         {
             historySeries
@@ -80,6 +91,11 @@ public partial class TestMonitorViewModel : ObservableObject
         CostSeries = new ISeries[]
        {
             costSeries
+       };
+
+        CarbonSeries = new ISeries[]
+       {
+            carbonSeries
        };
         GoToPage1();
         //XAxes = new[] { new Axis() };
@@ -91,6 +107,11 @@ public partial class TestMonitorViewModel : ObservableObject
     }
 
     public ISeries[] CostSeries
+    {
+        get; set;
+    }
+
+    public ISeries[] CarbonSeries
     {
         get; set;
     }
@@ -119,6 +140,7 @@ public partial class TestMonitorViewModel : ObservableObject
 
             // The MinStep property forces the separator to be greater than 1 day.
             MinStep = TimeSpan.FromDays(1).Ticks,
+            
         }
     };
 
@@ -147,16 +169,28 @@ public partial class TestMonitorViewModel : ObservableObject
         Debug.Write($"CLick on {point.SecondaryValue}");
     }
 
+    private void OnCarbonPointerDown(IChartView chart, ChartPoint<DateTimePoint, RoundedRectangleGeometry, LabelGeometry>? point)
+    {
+        if (point?.Visual is null) return;
+        //point.Visual.Fill = new SolidColorPaint(SKColors.Red);
+        chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
+        DateTime param = new DateTime((long)point.SecondaryValue);
+        _model.SelectDate = param;
+        _model.SelectedModel = "Carbon Emission";
+        _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
+        Debug.Write($"CLick on {point.SecondaryValue}");
+    }
+
     public void GoToPage1()
     {
         // Get the current date
         DateTime currentDate = DateTime.Now.Date;
 
         // Calculate the start date for the last seven days
-        DateTime startDate = currentDate.AddDays(-6); // Subtract 6 days to get the start date
+        DateTime startDate = currentDate.AddDays(-6.5); // Subtract 6 days to get the start date
 
         // Calculate the end date (today)
-        DateTime endDate = currentDate.AddDays(1);
+        DateTime endDate = currentDate.AddDays(0.5);
 
         // Get the ticks for the start and end dates
         long startTicks = startDate.Ticks;
@@ -176,7 +210,7 @@ public partial class TestMonitorViewModel : ObservableObject
         DateTime startDate = currentStartDate.AddDays(-7); // Subtract 6 days to get the start date
 
         // Calculate the end date (today)
-        DateTime endDate = currentStartDate.AddDays(-1);
+        DateTime endDate = currentStartDate;
 
         if(endDate.CompareTo(lastDate) < 0)
         {
@@ -201,9 +235,9 @@ public partial class TestMonitorViewModel : ObservableObject
         DateTime startDate = currentStartDate.AddDays(7); // Subtract 6 days to get the start date
 
         // Calculate the end date (today)
-        DateTime endDate = currentStartDate.AddDays(13);
+        DateTime endDate = currentStartDate.AddDays(14);
 
-        if (endDate.CompareTo(DateTime.Today) > 0)
+        if (endDate.CompareTo(DateTime.Today.AddDays(1)) > 0)
         {
             return;
         }
