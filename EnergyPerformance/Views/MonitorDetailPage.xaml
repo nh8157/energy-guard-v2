@@ -46,6 +46,7 @@
             x:Name="LvcChart"
             Series="{Binding SeriesHourly}"
             XAxes="{Binding XXAxes}"
+            YAxes="{Binding YAxes}"
             LegendPosition="Right"
             Grid.Row="1"
             Margin="0,50,0,0"

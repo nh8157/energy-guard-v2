@@ -139,7 +139,19 @@ public partial class TestMonitorViewModel : ObservableObject
             // Years: TimeSpan.FromDays(365.25).Ticks
 
             // The MinStep property forces the separator to be greater than 1 day.
-            MinStep = TimeSpan.FromDays(1).Ticks,
+            MinStep = TimeSpan.FromDays(1).Ticks
+        }
+    };
+
+    public Axis[] YAxes
+    {
+        get; set;
+
+    } =
+{
+        new Axis
+        {
+            Labeler = value => value.ToString("F4"),
             
         }
     };

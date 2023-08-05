@@ -203,6 +203,19 @@ public partial class MonitorDetailViewModel : ObservableObject
         }
     };
 
+    public Axis[] YAxes
+    {
+        get; set;
+
+    } =
+{
+        new Axis
+        {
+            Labeler = value => value.ToString("F4"),
+
+        }
+    };
+
     public void GotoPage()
     {
         var axis = XAxes[0];
