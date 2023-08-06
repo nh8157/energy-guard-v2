@@ -28,12 +28,10 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
-                <!-- Left column for ComboBox -->
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <Button Width="40" Height="30" FontSize="15"  Click="NavigateToCustomisationPage" Grid.Column="0">
-                <!--<FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;" FontSize="18" VerticalAlignment="Center"/>-->
                 <SymbolIcon Symbol="Back" VerticalAlignment="Center"/>
             </Button>
             <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="35" Width="170" ItemsSource="{x:Bind ViewModel.DetailApplications}"

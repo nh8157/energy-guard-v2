@@ -30,9 +30,7 @@ public partial class MonitorDetailViewModel : ObservableObject
     public readonly ObservableCollection<String> DetailApplications = new();
     private string detailSelectedApplication;
     public MonitorDetailViewModel()
-    {
-        Debug.WriteLine(_model.SelectedModel+"zzzzzzzzzzz");
-        
+    {        
         DetailApplications.Add("Energy Usage");
         DetailApplications.Add("Cost");
         DetailApplications.Add("Carbon Emission");
@@ -42,6 +40,7 @@ public partial class MonitorDetailViewModel : ObservableObject
         var costs = new ObservableCollection<TimeSpanPoint>();
         var hourly = new ObservableCollection<TimeSpanPoint>();
         var carbons = new ObservableCollection<TimeSpanPoint>();
+        //the for loop represents the 24 hour period
         for (int i = 0; i <= 23; ++i)
         {
             hourly.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
@@ -52,14 +51,13 @@ public partial class MonitorDetailViewModel : ObservableObject
         foreach (var log in logs)
         {
             hourly[log.Date.Hour].Value += log.PowerUsed;
-            Debug.WriteLine("XXXXXXXXXXXXXXXXXX");
-            Debug.WriteLine(log.Date+ "---" + log.PowerUsed);
             values.Add(new DateTimePoint(log.Date, log.PowerUsed));
             costs[log.Date.Hour].Value += log.Cost;
             carbons[log.Date.Hour].Value += log.CarbonEmission;
         }
         historySeries = new ColumnSeries<DateTimePoint>
         {
+            //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long)chartPoint.SecondaryValue):HH}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Watt",
@@ -67,6 +65,7 @@ public partial class MonitorDetailViewModel : ObservableObject
         };
         costSeries = new ColumnSeries<TimeSpanPoint>
         {
+            //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
@@ -76,6 +75,7 @@ public partial class MonitorDetailViewModel : ObservableObject
         
         hourlySeries = new ColumnSeries<TimeSpanPoint>
         {
+            //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Watt",
@@ -84,6 +84,7 @@ public partial class MonitorDetailViewModel : ObservableObject
         };
         carbonSeries = new ColumnSeries<TimeSpanPoint>
         {
+            //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "CO2",

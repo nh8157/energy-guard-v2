@@ -136,8 +136,8 @@ public partial class App : Application
             services.AddTransient<SystemMonitorPage>();
             services.AddTransient<MonitorDetailViewModel>();
             services.AddTransient<MonitorDetailPage>();
-            services.AddTransient<TestMonitorViewModel>();
-            services.AddTransient<TestMonitorPage>();
+            services.AddTransient<HistoryViewModel>();
+            services.AddTransient<HistoryPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();

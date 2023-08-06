@@ -21,7 +21,7 @@ using EnergyPerformance.Services;
 using System.ComponentModel;
 
 namespace EnergyPerformance.ViewModels;
-public partial class TestMonitorViewModel : ObservableObject
+public partial class HistoryViewModel : ObservableObject
 {
     private readonly Random _random = new();
     private readonly EnergyUsageModel _model;
@@ -34,7 +34,7 @@ public partial class TestMonitorViewModel : ObservableObject
     private DateTime lastDate = DateTime.Today;
     private DateTime currentStartDate = DateTime.Today.AddDays(-6.5);
 
-    public TestMonitorViewModel()
+    public HistoryViewModel()
     {
         Applications.Add("Energy Usage");
         Applications.Add("Cost");
@@ -58,6 +58,7 @@ public partial class TestMonitorViewModel : ObservableObject
         }
         historySeries = new ColumnSeries<DateTimePoint>
         {
+            //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Watt",
@@ -66,6 +67,7 @@ public partial class TestMonitorViewModel : ObservableObject
         };
         costSeries = new ColumnSeries<DateTimePoint>
         {
+            //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
@@ -74,16 +76,17 @@ public partial class TestMonitorViewModel : ObservableObject
         };
         carbonSeries = new ColumnSeries<DateTimePoint>
         {
+            //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
                 $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "CO2",
-            Values = values,
+            Values = carbons,
             Fill = new SolidColorPaint(new SKColor(143, 188, 143))
         };
         historySeries.ChartPointPointerDown += OnPointerDown;
         costSeries.ChartPointPointerDown += OnCostPointerDown;
         carbonSeries.ChartPointPointerDown += OnCarbonPointerDown;
-        Series = new ISeries[]
+        HistorySeries = new ISeries[]
         {
             historySeries
         };
@@ -97,11 +100,10 @@ public partial class TestMonitorViewModel : ObservableObject
        {
             carbonSeries
        };
-        GoToPage1();
-        //XAxes = new[] { new Axis() };
+        GoToPage();
     }
 
-    public ISeries[] Series
+    public ISeries[] HistorySeries
     {
         get; set;
     }
@@ -125,20 +127,7 @@ public partial class TestMonitorViewModel : ObservableObject
         new Axis
         {
             Labeler = value => new DateTime((long) value).ToString("MM-dd"),
-            //LabelsRotation = 80,
-
-            // when using a date time type, let the library know your unit 
             UnitWidth = TimeSpan.FromDays(1).Ticks, 
-
-            // if the difference between our points is in hours then we would:
-            // UnitWidth = TimeSpan.FromHours(1).Ticks,
-
-            // since all the months and years have a different number of days
-            // we can use the average, it would not cause any visible error in the user interface
-            // Months: TimeSpan.FromDays(30.4375).Ticks
-            // Years: TimeSpan.FromDays(365.25).Ticks
-
-            // The MinStep property forces the separator to be greater than 1 day.
             MinStep = TimeSpan.FromDays(1).Ticks
         }
     };
@@ -160,40 +149,34 @@ public partial class TestMonitorViewModel : ObservableObject
     private void OnPointerDown(IChartView chart, ChartPoint<DateTimePoint, RoundedRectangleGeometry, LabelGeometry>? point)
     {
         if (point?.Visual is null) return;
-        //point.Visual.Fill = new SolidColorPaint(SKColors.Red);
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
         _model.SelectDate = param;
         _model.SelectedModel = "Energy Usage";
         _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
-        Debug.Write($"CLick on {point.SecondaryValue}");
     }
 
     private void OnCostPointerDown(IChartView chart, ChartPoint<DateTimePoint, RoundedRectangleGeometry, LabelGeometry>? point)
     {
         if (point?.Visual is null) return;
-        //point.Visual.Fill = new SolidColorPaint(SKColors.Red);
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
         _model.SelectDate = param;
         _model.SelectedModel = "Cost";
         _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
-        Debug.Write($"CLick on {point.SecondaryValue}");
     }
 
     private void OnCarbonPointerDown(IChartView chart, ChartPoint<DateTimePoint, RoundedRectangleGeometry, LabelGeometry>? point)
     {
         if (point?.Visual is null) return;
-        //point.Visual.Fill = new SolidColorPaint(SKColors.Red);
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
         _model.SelectDate = param;
         _model.SelectedModel = "Carbon Emission";
         _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
-        Debug.Write($"CLick on {point.SecondaryValue}");
     }
 
-    public void GoToPage1()
+    public void GoToPage()
     {
         // Get the current date
         DateTime currentDate = DateTime.Now.Date;
@@ -212,7 +195,6 @@ public partial class TestMonitorViewModel : ObservableObject
         var axis = XAxes[0];
         axis.MinLimit = startTicks;
         axis.MaxLimit = endTicks;
-        Debug.WriteLine(lastDate.ToString() + "xibxobxobo");
     }
 
     [RelayCommand]

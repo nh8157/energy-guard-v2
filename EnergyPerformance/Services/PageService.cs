@@ -21,7 +21,7 @@ public class PageService : IPageService
         Configure<SettingsViewModel, SettingsPage>();
         Configure<SystemMonitorViewModel, SystemMonitorPage>();
         Configure<MonitorDetailViewModel, MonitorDetailPage>();
-        Configure<TestMonitorViewModel, TestMonitorPage>();
+        Configure<HistoryViewModel, HistoryPage>();
         Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
         Configure<DebugViewModel, DebugPage>();
         Configure<PersonaCustomisationViewModel, PersonaCustomisationPage>();

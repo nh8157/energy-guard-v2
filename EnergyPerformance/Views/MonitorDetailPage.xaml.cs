@@ -23,14 +23,7 @@ public sealed partial class MonitorDetailPage : Page
 
     private void ModelSelection_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        // 在这里处理下拉框值改变的逻辑
-        // 获取选中的值
         var selectedValue = ViewModel.DetailSelectedApplication;
-        //Debug.WriteLine(selectedValue);
-        //// 执行你想要执行的函数
-        //// 例如：ViewModel.SomeFunction(selectedValue);
-        //ViewModel.ModelChanged(selectedValue);
-        //Debug.WriteLine(ViewModel.Series.ToString());
         if (selectedValue.Equals("Cost"))
             LvcChart.Series = ViewModel.SeriesCostHourly;
         else if (selectedValue.Equals("Energy Usage"))
@@ -41,7 +34,7 @@ public sealed partial class MonitorDetailPage : Page
 
     private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
     {
-        Frame.Navigate(typeof(TestMonitorPage));
+        Frame.Navigate(typeof(HistoryPage));
     }
 
     private void OnLoaded(object sender, Microsoft.UI.Xaml.RoutedEventArgs e)
