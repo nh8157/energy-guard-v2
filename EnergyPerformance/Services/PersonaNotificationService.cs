@@ -19,7 +19,7 @@ internal class PersonaNotificationService
             .AddButton(new ToastButton()
                 .SetContent("Enable")
                 .AddArgument("action", $"autoConfigurePersonaNotification&{executablePath}"))
-            .AddButton(new ToastButtonDismiss())
+            .AddButton(new ToastButtonDismiss("Dismiss"))
             .Show();
     }
 
