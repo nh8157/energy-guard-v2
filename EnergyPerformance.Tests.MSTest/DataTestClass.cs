@@ -114,28 +114,22 @@ public class DataTestClass
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext context)
     {
-        _fileService = new FileService();
-        var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        folderPath = Path.Combine(folderPath, _defaultApplicationDataFolder);
-        var fileName = "Data.json";
         var costPerKwh = 0.5;
         var budget = RandomDouble(2, 10);
         var diaries = GenerateListOfRandomEnergyDiaries(30);
-
+        DatabaseService service = new DatabaseService("testDB.db");
+        await service.InitializeDB();
         _data = new EnergyUsageData(costPerKwh, budget, diaries);
-        
-        _fileService.Save(folderPath, fileName, _data);
     }
 
-    public async Task<DatabaseService> GetDatabaseService()
+    public DatabaseService GetDatabaseService()
     {
         DatabaseService service =  new DatabaseService("testDB.db");
-        await service.InitializeDB();
         return service;
     }
 
     [ClassCleanup]
-    public static async Task ClassCleanup()
+    public static void ClassCleanup()
     {
         Debug.WriteLine("ClassCleanup");
     }
@@ -149,7 +143,7 @@ public class DataTestClass
     [TestCleanup]
     public async Task TestCleanup()
     {
-        var service = await GetDatabaseService();
+        var service = GetDatabaseService();
         await service.ClearAllData();
         Debug.WriteLine("TestCleanup");
     }
@@ -181,7 +175,7 @@ public class DataTestClass
     [TestMethod]
     public async Task TestDBInitialization()
     {
-        var databaseService = await GetDatabaseService();
+        var databaseService = GetDatabaseService();
         var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         folderPath = Path.Combine(folderPath, _defaultApplicationDataFolder);
         Assert.IsTrue(File.Exists(Path.Combine(folderPath, "testDB.db")));
@@ -192,7 +186,7 @@ public class DataTestClass
     [TestMethod]
     public async Task TestReadFromDBSuccess()
     {
-        var databaseService = await GetDatabaseService();
+        var databaseService = GetDatabaseService();
         await databaseService.SaveEnergyData(_data);
         var data = await databaseService.LoadUsageData();
         Assert.AreEqual(data.Diaries.Count(), 30);
@@ -201,7 +195,7 @@ public class DataTestClass
     [TestMethod]
     public async Task TestReadFromEmptyDB()
     {
-        var databaseService = await GetDatabaseService();
+        var databaseService = GetDatabaseService();
         await databaseService.ClearAllData();
         await databaseService.InitializeDB();
         var data = await databaseService.LoadUsageData();
@@ -214,7 +208,7 @@ public class DataTestClass
     [TestMethod]
     public async Task TestUpdateCostAndBudget(double value)
     {
-        var databaseService = await GetDatabaseService();
+        var databaseService =  GetDatabaseService();
         await databaseService.SaveEnergyData(_data);
         var originalData = await databaseService.LoadUsageData();
         Assert.AreNotEqual(originalData.CostPerKwh,value);
@@ -227,18 +221,10 @@ public class DataTestClass
     [TestMethod]
     public async Task TestInsertDailyLog()
     {
-        var databaseService = await GetDatabaseService();
+        var databaseService = GetDatabaseService();
         var dailyLog = GenerateRandomDailyLog(DateTime.Now);
         string id = await databaseService.InsertDailyLog(dailyLog);
         Assert.AreNotEqual(id.Length, 0);
     }
-
-    [TestMethod]
-    public async Task TestReadFromFile()
-    {
-        var data = await new EnergyUsageFileService(_fileService).ReadFileAsync();
-        Assert.AreEqual(data.CostPerKwh, 0.5);
-    }
-
 
 }

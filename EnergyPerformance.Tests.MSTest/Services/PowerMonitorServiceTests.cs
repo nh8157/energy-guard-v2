@@ -32,7 +32,7 @@ public class PowerMonitorServiceTests
     }
     public PowerMonitorService GetService()
     {
-        return new PowerMonitorService(new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService), new PowerInfo());
+        return new PowerMonitorService(new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), new DatabaseService("testDB.db")), new PowerInfo());
     }
 
     [TestMethod]
@@ -73,6 +73,7 @@ public class PowerMonitorServiceTests
         var powerInfo = new Mock<PowerInfo>();
         powerInfo.Setup(p => p.Power).Returns(value);
         var model = new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService);
+        Assert.AreEqual(model.AccumulatedWatts, 0);
         var service = new PowerMonitorService(model, powerInfo.Object);
         var cts = new CancellationTokenSource();
         var token = cts.Token;

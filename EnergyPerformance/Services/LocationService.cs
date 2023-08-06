@@ -12,7 +12,7 @@ public class LocationService : BackgroundService
     private readonly LocationInfo _locationInfo;
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(1));
     private const string _locationUrl = "https://geocode.maps.co/reverse?lat={0}&lon={1}";
-
+    
     public string Country
     {
         get => _locationInfo.Country;
@@ -72,6 +72,8 @@ public class LocationService : BackgroundService
         else
         {
             Debug.WriteLine("Please Enable Access To Geolocation");
+            Country = "Unavailable";
+            Postcode = "Unavailable";
             // request access permission
         }
         await Task.CompletedTask;

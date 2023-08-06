@@ -9,7 +9,7 @@ using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Models;
 
 namespace EnergyPerformance.Services;
-class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
+public class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
 {
     private readonly string _ukApiUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(5));

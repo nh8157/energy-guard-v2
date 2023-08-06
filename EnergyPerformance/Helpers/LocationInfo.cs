@@ -2,12 +2,12 @@
 
 public class LocationInfo
 {
-    public string Country
+    public virtual string Country
     {
         get;
         set;
     }
-    public string Postcode
+    public virtual string Postcode
     {
         get;
         set;
