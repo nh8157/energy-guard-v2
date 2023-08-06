@@ -136,7 +136,7 @@
     <value>System Monitor</value>
   </data>
   <data name="HistoryEnergy.Content" xml:space="preserve">
-    <value>History Energy</value>
+    <value>History</value>
   </data>
   <data name="Shell_Debug.Content" xml:space="preserve">
     <value>Debug Messages</value>

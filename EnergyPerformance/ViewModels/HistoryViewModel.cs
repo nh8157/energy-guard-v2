@@ -60,7 +60,7 @@ public partial class HistoryViewModel : ObservableObject
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):MM/dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Watt",
             Values = values,
             Fill = new SolidColorPaint(new SKColor(51, 181, 255))
@@ -69,7 +69,7 @@ public partial class HistoryViewModel : ObservableObject
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):MM/dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
             Values = costs,
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
@@ -78,7 +78,7 @@ public partial class HistoryViewModel : ObservableObject
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM-dd}: {chartPoint.PrimaryValue.ToString("F4")}",
+                $"{new DateTime((long)chartPoint.SecondaryValue):MM/dd}: {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "CO2",
             Values = carbons,
             Fill = new SolidColorPaint(new SKColor(143, 188, 143))
@@ -126,7 +126,7 @@ public partial class HistoryViewModel : ObservableObject
 {
         new Axis
         {
-            Labeler = value => new DateTime((long) value).ToString("MM-dd"),
+            Labeler = value => new DateTime((long) value).ToString("MM/dd"),
             UnitWidth = TimeSpan.FromDays(1).Ticks, 
             MinStep = TimeSpan.FromDays(1).Ticks
         }
