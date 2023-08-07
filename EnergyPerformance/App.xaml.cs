@@ -14,6 +14,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Windows;
+using Windows.UI.Notifications;
+
 namespace EnergyPerformance;
 
 /// <summary>
@@ -140,7 +142,7 @@ public partial class App : Application
         }).
         Build();
         Debug.WriteLine("Starting application");
-        App.GetService<IAppNotificationService>().Initialize();
+        
         MainWindow.Closed += async (sender, args) =>
         {
             Debug.WriteLine("MainWindow.Closed");
@@ -154,6 +156,13 @@ public partial class App : Application
     // not needed for application, simply here to show sequence of shutdown events
     private async void CurrentDomain_ProcessExit(object? sender, EventArgs e) {
         Debug.WriteLine("AppDomain.CurrentDomain.ProcessExit");
+
+        // Persona clean up
+        App.GetService<PersonaModel>().DisableEnabledPersona();
+
+        // Notification clean up
+        ToastNotificationManager.History.Clear();
+
         await Task.CompletedTask;
     }
 
@@ -193,7 +202,7 @@ public partial class App : Application
         }
 
         base.OnLaunched(args);
-        App.GetService<IAppNotificationService>().Show("AppStartupNotificationPayload");
+
         // start the ActivationService which all perform required actions at startup and call InitializeAsync() methods
         // for any registered services/objects which require asynchronous initialization
         await App.GetService<IActivationService>().ActivateAsync(args);
@@ -201,5 +210,6 @@ public partial class App : Application
         // call StartAsync() on IHostedServices registered to the Host
         await Host.StartAsync();
 
+        App.GetService<IAppNotificationService>().Initialize();
     }
 }
