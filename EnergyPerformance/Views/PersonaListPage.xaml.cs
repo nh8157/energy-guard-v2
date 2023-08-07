@@ -12,14 +12,14 @@ using Windows.Media.AppRecording;
 
 namespace EnergyPerformance.Views;
 
-public sealed partial class PersonaCustomisationPage : Page
+public sealed partial class PersonaListPage : Page
 {
     public PersonaViewModel ViewModel
     {
         get;
     }
     
-    public PersonaCustomisationPage()
+    public PersonaListPage()
     {
         ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
@@ -29,7 +29,7 @@ public sealed partial class PersonaCustomisationPage : Page
     // Navigates to the Persona Slider Page and passes the selected index as a parameter
     private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        Frame.Navigate(typeof(PersonaSliderPage), PersonaList.SelectedIndex);    
+        Frame.Navigate(typeof(CustomisePersonaPage), PersonaList.SelectedIndex);    
     }
 
     // Function that is called when the Add Persona button is clicked
@@ -37,6 +37,6 @@ public sealed partial class PersonaCustomisationPage : Page
     // Note - No parameter is passed, as we want to add a new persona
     private void NavigateToSliderPage (object sender, RoutedEventArgs e)
     {
-        Frame.Navigate(typeof(PersonaSliderPage));
+        Frame.Navigate(typeof(CustomisePersonaPage));
     }
 }

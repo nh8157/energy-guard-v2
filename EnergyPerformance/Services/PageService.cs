@@ -25,7 +25,7 @@ public class PageService : IPageService
         Configure<TestMonitorViewModel, TestMonitorPage>();
         Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
         Configure<DebugViewModel, DebugPage>();
-        Configure<PersonaViewModel, PersonaCustomisationPage>();
+        Configure<PersonaViewModel, PersonaListPage>();
     }
 
     public Type GetPageType(string key)

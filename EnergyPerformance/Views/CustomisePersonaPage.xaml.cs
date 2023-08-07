@@ -15,7 +15,7 @@ using Windows.Media.AppRecording;
 
 namespace EnergyPerformance.Views;
 
-public sealed partial class PersonaSliderPage : Page
+public sealed partial class CustomisePersonaPage : Page
 {
     const float DEFAULT = 2.0f;
 
@@ -24,7 +24,7 @@ public sealed partial class PersonaSliderPage : Page
         get;
     }
     
-    public PersonaSliderPage()
+    public CustomisePersonaPage()
     {
         ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
@@ -48,7 +48,7 @@ public sealed partial class PersonaSliderPage : Page
             var item = ViewModel.PersonasAndRatings[selectedIndex];
             item.EnergyValue = (float)PersonaSlider.Value;
             item.EnergyRating = item.UpdateEnergyRating((int)PersonaSlider.Value);
-            Frame.Navigate(typeof(PersonaCustomisationPage));
+            Frame.Navigate(typeof(PersonaListPage));
         }
     }
 
@@ -56,7 +56,7 @@ public sealed partial class PersonaSliderPage : Page
     // Navigates to the Persona Customisation Page
     private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
     {
-        Frame.Navigate(typeof(PersonaCustomisationPage));
+        Frame.Navigate(typeof(PersonaListPage));
     }
 
     // Function called when the selection in the combo box is changed
