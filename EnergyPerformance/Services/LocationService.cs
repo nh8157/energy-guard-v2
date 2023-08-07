@@ -1,89 +1,79 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EnergyPerformance.Contracts.Services;
-using EnergyPerformance.Core.Services;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
-using IPinfo;
-using IPinfo.Models;
-using Windows.Media.Protection.PlayReady;
+using Newtonsoft.Json;
+using Windows.Devices.Geolocation;
+using System.Text.Json;
 
 namespace EnergyPerformance.Services;
-public class LocationService : ILocationService
+public class LocationService : BackgroundService
 {
-    private LocationInfo _locationInfo;
-    private readonly string _IPInfoToken;
-    private string _ip;
-    private readonly IPinfoClient _client;
+    private readonly LocationInfo _locationInfo;
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(1));
+    private const string _locationUrl = "https://geocode.maps.co/reverse?lat={0}&lon={1}";
 
     public string Country
     {
         get => _locationInfo.Country;
-        set => _locationInfo.Country = value;
+        private set => _locationInfo.Country = value;
     }
 
     public string Postcode
     {
         get => _locationInfo.Postcode;
-        set => _locationInfo.Postcode = value;
+        private set => _locationInfo.Postcode = value;
     }
 
-    public LocationInfo LocationInfo
+
+    public LocationService(LocationInfo locationInfo)
     {
-        get => _locationInfo;
-        private set => _locationInfo = value;
+        _locationInfo = locationInfo;
     }
 
-    public LocationService()
+    protected async override Task ExecuteAsync(CancellationToken token)
     {
-        _locationInfo = new LocationInfo();
-        _IPInfoToken = "45f7eb1ccaffe7";
-        _client = new IPinfoClient.Builder()
-        .AccessToken(_IPInfoToken)
-        .Build();
-        _ip = string.Empty;
-    }
-
-    public async Task<LocationInfo> GetLocationInfo()
-    {
-        if (_locationInfo.Country == "Unknown" || _locationInfo.Postcode == "Unknown")
+        do
         {
-            await retrieveLocation();
+            await DoAsync();
+            App.GetService<DebugModel>().AddMessage(Postcode);
+
         }
-        return _locationInfo;
+        while (await _periodicTimer.WaitForNextTickAsync(token) && !token.IsCancellationRequested);
     }
 
-    private async Task retrieveLocation()
+    private async Task DoAsync()
     {
-        if (_ip == null)
-        {
-            _ip = await RetrieveIPAddress();
-        }
-        IPResponse ipResponse = await _client.IPApi.GetDetailsAsync(_ip);
-        string country = ipResponse.CountryName;
-        string postal = ipResponse.Postal;
-        App.GetService<DebugModel>().AddMessage("Location Updated");
-        _locationInfo.Country = country;
-        _locationInfo.Postcode = postal;
-    }
+        var accessStatus = await Geolocator.RequestAccessAsync();
 
-    private async Task<string> RetrieveIPAddress()
-    {
-        string apiUrl = "https://ipinfo.io/ip";
-
-        using (HttpClient client = new HttpClient())
+        if (accessStatus == GeolocationAccessStatus.Allowed)
         {
-            HttpResponseMessage response = await client.GetAsync(apiUrl);
-            if (response.IsSuccessStatusCode)
+            Geolocator geolocator = new Geolocator();
+            geolocator.DesiredAccuracyInMeters = 50;
+            try
             {
-                string ipAddress = await response.Content.ReadAsStringAsync();
+                // retrieve coordiates from Geoposition
+                Geoposition pos = await geolocator.GetGeopositionAsync();
+                var latitude = pos.Coordinate.Point.Position.Latitude;
+                var longitude = pos.Coordinate.Point.Position.Longitude;
 
-                return ipAddress.Trim();
+                HttpClient client = new HttpClient();
+                string url = string.Format(_locationUrl, latitude, longitude);
+                JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(client, url)??
+                    throw new InvalidOperationException("Cannot deserialize json object"); 
+                Country = jsonResponse.GetProperty("address").GetProperty("country").ToString();
+                Postcode = jsonResponse.GetProperty("address").GetProperty("postcode").ToString();
+            }
+            catch (Exception ex)
+            {
+                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
-        return string.Empty;
+        else
+        {
+            Debug.WriteLine("Please Enable Access To Geolocation");
+            // request access permission
+        }
+        await Task.CompletedTask;
     }
 }
