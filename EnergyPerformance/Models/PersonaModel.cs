@@ -150,7 +150,7 @@ public class PersonaModel
     {
         _allPersonas.ForEach(persona =>
         {
-            if (string.Equals(persona.Path, personaName))
+            if (persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
             {
                 persona.CpuSetting = ConvertRatingToCpuSetting(energyRating);
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
