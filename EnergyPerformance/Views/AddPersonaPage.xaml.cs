@@ -39,12 +39,6 @@ public sealed partial class AddPersonaPage : Page
         debug = App.GetService<DebugModel>();
     }
 
-    // Function to set the persona slider value to the default setting (2, in this case)
-    private void RestoreDefault(object sender, RoutedEventArgs e)
-    {
-        PersonaSlider.Value = DEFAULT;
-    }
-
     // Function to apply persona to the selected application
     // Grabs the index of the application in the list
     // Sets the corresponding energy value and image path accordingly in the view model
@@ -96,7 +90,7 @@ public sealed partial class AddPersonaPage : Page
     {
         var bi = new BROWSEINFO
         {
-            Title = "Select File",
+            Title = "Select Application",
             Flags = BIF_NEWDIALOGSTYLE | BIF_USENEWUI | BIF_BROWSEINCLUDEFILES,
         };
 
@@ -107,38 +101,20 @@ public sealed partial class AddPersonaPage : Page
             SHGetPathFromIDList(pidl, path);
             Marshal.FreeHGlobal(path);
             var pathString = Marshal.PtrToStringUni(path);
+            //pathString is the application's path
 
-            if (pathString.Substring(pathString.Length - 4).Equals(".exe"))
+            if (pathString != null && pathString.Substring(pathString.Length - 4).Equals(".exe"))
             {
-                AppSelection.Text = pathString;
+                var AppName = GetApplicationName(pathString);
+                AppSelection.Text = AppName;
             }
-
         }
     }
 
-    //// Function called when the selection in the combo box is changed
-    //// Gets the selected index from the combo box
-    //// Grabs the corresponding energy value, and sets the slider value to it
-    //private void UpdateSliderValue(object sender, RoutedEventArgs e)
-    //{
-    //    var selectedIndex = AppSelection.SelectedIndex;
-    //    if (selectedIndex != -1)
-    //    {
-    //        PersonaSlider.Value = ViewModel.PersonasAndRatings[selectedIndex].EnergyValue;
-    //    }
-    //}
+    private string GetApplicationName(string str)
+    {
+        var index = str.LastIndexOf('\\') + 1;
+        return str.Substring(index);
+    }
 
-    //// Overriden OnNavigatedTo - For when a parameter is passed
-    //// Updates the form values accordingly, if parameter is passed
-    //protected override void OnNavigatedTo(NavigationEventArgs e)
-    //{
-    //    if (e.Parameter is int && !e.Equals(-1))
-    //    {
-    //        var index = (int)e.Parameter;
-    //        AppSelection.SelectedIndex = index;
-
-    //        PersonaSlider.Value = ViewModel.PersonasAndRatings[index].EnergyValue;  
-    //    }
-    //    base.OnNavigatedTo(e);
-    //}
 }
