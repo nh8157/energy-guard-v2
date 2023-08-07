@@ -87,15 +87,6 @@ public class ProcessMonitorService
 
             return true;
         }
-        else if (_creationWatcher.ContainsKey(name) && _deletionWatcher.ContainsKey(name))
-        {
-            _creationWatcher[name].Start();
-            _deletionWatcher[name].Start();
-
-            Debug.WriteLine($"Watcher for {name} has been started");
-
-            return true;
-        }
         return false;
     }
 
