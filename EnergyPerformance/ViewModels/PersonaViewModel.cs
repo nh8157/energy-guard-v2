@@ -50,11 +50,7 @@ public partial class PersonaViewModel : ObservableRecipient
                 Add(item.Item1, item.Item2);
             }
 
-            Add("Steam", 2.0f);
-            Add("Spotify", 3.0f);
-            Add("Word", 2.5f);
-            Add("Minecraft", 1.0f);
-            Add("Chrome", 1.3f);
+            AddDummyData();
 
             do_once = false;
         }
@@ -65,6 +61,16 @@ public partial class PersonaViewModel : ObservableRecipient
     {
         personasAndRatings.Add(new PersonaObject(_appName, _energyRating));
         applicationList.Add(_appName);
+    }
+
+    // For Debugging Purposes only - To be removed eventually
+    private void AddDummyData()
+    {
+        Add("Steam", 2.0f);
+        Add("Spotify", 3.0f);
+        Add("Word", 2.5f);
+        Add("Minecraft", 1.0f);
+        Add("Chrome", 1.3f);
     }
 }
 

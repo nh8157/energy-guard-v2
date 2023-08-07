@@ -30,21 +30,24 @@
                         </Grid>
                     </DataTemplate>
                 </ListView.HeaderTemplate>
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:Name="TableDataTemplate" x:DataType="viewmodels:PersonaObject">
-                            <Grid Height="48" AutomationProperties.Name="{x:Bind AppName}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="200"/>
-                                    <ColumnDefinition Width="200"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
-                                <Image Grid.Column="1" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
+                <ListView.ItemTemplate>
+                    <DataTemplate x:Name="TableDataTemplate" x:DataType="viewmodels:PersonaObject">
+                        <Grid Height="48" AutomationProperties.Name="{x:Bind AppName}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
+                            <Image Grid.Column="1" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
                         </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
 
-            <Button x:Uid="AddPersonaButton" FontSize="15" Width="150" Height="40" Click="NavigateToSliderPage" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>
+            <StackPanel Orientation="Horizontal">
+                <Button x:Uid="AddPersonaButton"  FontSize="15" Width="150" Height="40" Click="NavigateToAddPage" HorizontalAlignment="Center" Margin="30, 20, 20, 0"/>
+                <Button x:Uid="EditPersonaButton" FontSize="15" Width="150" Height="40" Click="NavigateToEditPage" HorizontalAlignment="Center" Margin="0, 20, 0, 0"/>
+            </StackPanel>
 
         </StackPanel>
     </GridView>

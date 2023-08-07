@@ -29,6 +29,7 @@
     <Content Remove="Assets\flash.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Views\AddPersonaPage.xaml" />
     <None Remove="Views\CustomisePersonaPage.xaml" />
     <None Remove="Views\SystemMonitorPage.xaml" />
     <None Remove="Views\TestMonitorPage - 复制.xaml" />
@@ -74,6 +75,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Update="Views\AddPersonaPage.xaml">
+      <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Views\CustomisePersonaPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
       <SubType>Designer</SubType>

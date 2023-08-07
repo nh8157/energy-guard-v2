@@ -419,4 +419,13 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="RestoreDefaultButton.Content" xml:space="preserve">
     <value>Restore to Default</value>
   </data>
+  <data name="EditPersonaButton.Content" xml:space="preserve">
+    <value>Edit Persona</value>
+  </data>
+  <data name="AddPersonaLabel.Text" xml:space="preserve">
+    <value>Creating Persona for:</value>
+  </data>
+  <data name="BrowseButton.Content" xml:space="preserve">
+    <value>Browse</value>
+  </data>
 </root>
