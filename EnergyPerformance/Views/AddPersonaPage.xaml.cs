@@ -17,11 +17,13 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Core;
 using WinRT;
+using WinRT.Interop;
 
 namespace EnergyPerformance.Views;
 
 public sealed partial class AddPersonaPage : Page
 {
+    public static DebugModel debug;
     const float DEFAULT = 2.0f;
 
     public PersonaViewModel ViewModel
@@ -33,6 +35,8 @@ public sealed partial class AddPersonaPage : Page
     {
         ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
+
+        debug = App.GetService<DebugModel>();
     }
 
     // Function to set the persona slider value to the default setting (2, in this case)
@@ -65,44 +69,51 @@ public sealed partial class AddPersonaPage : Page
         Frame.Navigate(typeof(PersonaListPage));
     }
 
-    [ComImport, Guid("3E68D4BD-7135-4D10-8018-9FB6D9F33FA1"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    public interface IInitializeWithWindow
+    [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
+    public static extern IntPtr SHBrowseForFolder(ref BROWSEINFO lpbi);
+
+    [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
+    public static extern bool SHGetPathFromIDList(IntPtr pidl, IntPtr pszPath);
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct BROWSEINFO
     {
-        void Initialize([In] IntPtr hwnd);
+        public IntPtr Owner;
+        public IntPtr PIDL;
+        public IntPtr DisplayName;
+        public string Title;
+        public uint Flags;
+        public IntPtr Callback;
+        public IntPtr Param;
+        public int Image;
     }
 
-    [DllImport("user32.dll", ExactSpelling = true, CharSet = CharSet.Auto, PreserveSig = true, SetLastError = false)]
-    public static extern IntPtr GetActiveWindow();
+    public const uint BIF_NEWDIALOGSTYLE = 0x00000040;
+    public const uint BIF_USENEWUI = BIF_NEWDIALOGSTYLE | 0x00000200;
+    public const uint BIF_BROWSEINCLUDEFILES = 0x00004000;
 
-    private async void TestFilePicker(object sender, RoutedEventArgs e)
+    private void BrowseClicked(object sender, RoutedEventArgs e)
     {
-        // Open file explorer at the suggested start location
-        // With respective filters for file types (in this case .exe)
-        FileOpenPicker open = new FileOpenPicker();
-        open.SuggestedStartLocation = PickerLocationId.ComputerFolder;
-        open.FileTypeFilter.Add(".exe");
-
-        if (Window.Current == null)
+        var bi = new BROWSEINFO
         {
-            IInitializeWithWindow initializeWithWindowWrapper = open.As<IInitializeWithWindow>();
-            IntPtr hwnd = GetActiveWindow();
-            initializeWithWindowWrapper.Initialize(hwnd);
-        }
+            Title = "Select File",
+            Flags = BIF_NEWDIALOGSTYLE | BIF_USENEWUI | BIF_BROWSEINCLUDEFILES,
+        };
 
-        // Opens prompt which allows for selection of file type
-        StorageFile file = await open.PickSingleFileAsync();
-
-        if (file != null)
+        var pidl = SHBrowseForFolder(ref bi);
+        if (pidl != IntPtr.Zero)
         {
-            //debug.AddMessage(file.Name);
-            //debug.AddMessage(file.Path);
-            // StorageFile can be added to the future access list, wherein it can be then retrieved from with the help of a token
-        }
-        else
-        {
-            // Logic for no file chosen
-        }
+            var path = Marshal.AllocHGlobal(260);
+            SHGetPathFromIDList(pidl, path);
+            Marshal.FreeHGlobal(path);
+            var pathString = Marshal.PtrToStringUni(path);
 
+            if (pathString.Substring(pathString.Length - 4).Equals(".exe"))
+            {
+                AppSelection.Text = pathString;
+            }
+
+        }
     }
 
     //// Function called when the selection in the combo box is changed

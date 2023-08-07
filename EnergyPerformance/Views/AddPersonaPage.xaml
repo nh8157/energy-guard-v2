@@ -23,7 +23,7 @@
                         <StackPanel Orientation="Horizontal">
                             <TextBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" Margin="0, 10, 30, 20" IsReadOnly="True"/>
                             <!--<ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" SelectionChanged="UpdateSliderValue" Margin="0, 10, 30, 20"/>-->
-                            <Button x:Uid="BrowseButton" Click="TestFilePicker" Width="150" Height="40" Margin="0, 10, 0, 20"/>
+                            <Button x:Uid="BrowseButton" Click="BrowseClicked" Width="150" Height="40" Margin="0, 10, 0, 20"/>
                         </StackPanel>
                         
                     </StackPanel>
