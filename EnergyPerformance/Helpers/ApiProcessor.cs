@@ -5,9 +5,9 @@ namespace EnergyPerformance.Helpers;
 
 public class ApiProcessor<T>
 {
-    public static async Task<T?> Load(HttpClient client, Uri uri)
+    public static async Task<T?> Load(HttpClient client, string uri)
     {
-        await using Stream stream = await client.GetStreamAsync(uri);
+        await using var stream = await client.GetStreamAsync(uri);
         var response = await JsonSerializer.DeserializeAsync<T>(stream);
 
         return response;
