@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Management;
-using EnergyPerformance.Models;
 
 namespace EnergyPerformance.Services;
 
@@ -68,7 +67,7 @@ public class ProcessMonitorService
     {
         if (!_creationWatcher.ContainsKey(name) && !_deletionWatcher.ContainsKey(name))
         {
-            var procQuery = String.Format(_query, name);
+            var procQuery = string.Format(_query, name);
 
             var creationQuery = new WqlEventQuery("__InstanceCreationEvent", new TimeSpan(0, 0, 1), procQuery);
             var deletionQuery = new WqlEventQuery("__InstanceDeletionEvent", new TimeSpan(0, 0, 1), procQuery);
@@ -101,7 +100,7 @@ public class ProcessMonitorService
             _createdProcesses.RemoveAll(proc => proc == name);
             _deletedProcesses.RemoveAll(proc => proc == name);
 
-            Debug.WriteLine($"Watcher for {name} removed");
+            Debug.WriteLine($"Watcher for {name} has been stopped");
 
             return true;
         }

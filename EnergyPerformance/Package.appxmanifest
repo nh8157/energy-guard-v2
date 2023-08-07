@@ -8,7 +8,7 @@
   xmlns:genTemplate="http://schemas.microsoft.com/appx/developer/templatestudio"
   xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  IgnorableNamespaces="uap rescap genTemplate">
+  IgnorableNamespaces="uap rescap genTemplate com desktop">
 
   <Identity
     Name="DAB50940-BBDA-47AE-B460-2523C14D3E0F"
@@ -49,8 +49,8 @@
 		  </desktop:Extension>
           <com:Extension Category="windows.comServer">
               <com:ComServer>
-                  <com:ExeServer Executable="EnergyPerformance.exe" Arguments="----AppNotificationActivated:" DisplayName="Toast activator">
-                      <com:Class Id="5AC157B8-A829-41F8-9776-0232A065AB45" DisplayName="Toast activator"/>
+                  <com:ExeServer Executable="EnergyPerformance.exe" Arguments="----AppNotificationActivated:" DisplayName="App notification activation">
+                      <com:Class Id="5AC157B8-A829-41F8-9776-0232A065AB45" DisplayName="App notification activation"/>
                   </com:ExeServer>
               </com:ComServer>
           </com:Extension>
