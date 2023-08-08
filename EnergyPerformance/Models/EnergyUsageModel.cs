@@ -23,14 +23,19 @@ public class EnergyUsageModel
 
     private EnergyUsageData _energyUsage;
     private readonly IDatabaseService _databaseService;
-    public DateTime SelectDate {
+    public DateTime SelectedDate 
+    {
         get; set;
     }
+
     public String SelectedModel
     {
         get; set;
     }
 
+    /// <summary>
+    /// Encodes whether the energy rate is fetched live
+    /// </summary>
     public bool IsLiveCost
     {
         get; set;
@@ -133,11 +138,12 @@ public class EnergyUsageModel
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
+    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;
         IsLiveCost = true;
+        SelectedModel = "Energy Usage";
         AccumulatedWatts = 0;
         AccumulatedWattsHourly = 0;
         AccumulatedWattsPerApp = new Dictionary<string, double>();

@@ -1,20 +1,11 @@
-﻿using System.Collections.Generic;
-using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using EnergyPerformance.Contracts.ViewModels;
 using EnergyPerformance.Models;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
 using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
-using Microsoft.Extensions.Hosting;
-using Microsoft.UI.Xaml.Navigation;
-using Newtonsoft.Json.Linq;
 using SkiaSharp;
 
 namespace EnergyPerformance.ViewModels;
@@ -22,14 +13,15 @@ namespace EnergyPerformance.ViewModels;
 public partial class MonitorDetailViewModel : ObservableObject
 {
     private readonly EnergyUsageModel _model;
-    private DateTime _receivedParameter;
-    private ColumnSeries<DateTimePoint> _historySeries;
-    private ColumnSeries<TimeSpanPoint> _costSeries;
-    private ColumnSeries<TimeSpanPoint> _carbonSeries;
-    private ColumnSeries<TimeSpanPoint> _hourlySeries;
+    private readonly ColumnSeries<DateTimePoint> _historySeries;
+    private readonly ColumnSeries<TimeSpanPoint> _costSeries;
+    private readonly ColumnSeries<TimeSpanPoint> _carbonSeries;
+    private readonly ColumnSeries<TimeSpanPoint> _hourlySeries;
     public readonly ObservableCollection<String> DetailApplications = new();
+
+    private DateTime _receivedParameter;
     private string _detailSelectedApplication;
-    public MonitorDetailViewModel(EnergyUsageModel model)
+    public MonitorDetailViewModel()
     {        
         DetailApplications.Add("Energy Usage");
         DetailApplications.Add("Cost");
@@ -37,15 +29,15 @@ public partial class MonitorDetailViewModel : ObservableObject
 
         // initialize the field to some default value
         _detailSelectedApplication = "Energy Usage";
-        
-        _model = model
-        ReceivedParameter = _model.SelectDate;
+
+        _model = App.GetService<EnergyUsageModel>();
+        ReceivedParameter = _model.SelectedDate;
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<TimeSpanPoint>();
         var hourly = new ObservableCollection<TimeSpanPoint>();
         var carbons = new ObservableCollection<TimeSpanPoint>();
         //the for loop represents the 24 hour period
-        for (int i = 0; i <= 23; ++i)
+        for (var i = 0; i <= 23; ++i)
         {
             hourly.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
             costs.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));

@@ -33,7 +33,7 @@ public partial class HistoryViewModel : ObservableObject
     private DateTime _lastDate = DateTime.Today;
     private DateTime _currentStartDate = DateTime.Today.AddDays(-6.5);
 
-    public HistoryViewModel(EnergyUsageModel model)
+    public HistoryViewModel()
     {
         Applications.Add("Energy Usage");
         Applications.Add("Cost");
@@ -46,8 +46,7 @@ public partial class HistoryViewModel : ObservableObject
         var costs = new ObservableCollection<DateTimePoint>();
         var carbons = new ObservableCollection<DateTimePoint>();
         
-        _model = model;
-        _model.SelectedModel = "Energy Usage";
+        _model = App.GetService<EnergyUsageModel>();
         _navigationService = App.GetService<INavigationService>();
         var logs = _model.GetDailyEnergyUsageLogs();
         foreach (var log in logs)
@@ -155,7 +154,7 @@ public partial class HistoryViewModel : ObservableObject
         if (point?.Visual is null) return;
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
-        _model.SelectDate = param;
+        _model.SelectedDate = param;
         _model.SelectedModel = "Energy Usage";
         _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
     }
@@ -165,7 +164,7 @@ public partial class HistoryViewModel : ObservableObject
         if (point?.Visual is null) return;
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
-        _model.SelectDate = param;
+        _model.SelectedDate = param;
         _model.SelectedModel = "Cost";
         _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
     }
@@ -175,7 +174,7 @@ public partial class HistoryViewModel : ObservableObject
         if (point?.Visual is null) return;
         chart.Invalidate(); // <- ensures the canvas is redrawn after we set the fill
         DateTime param = new DateTime((long)point.SecondaryValue);
-        _model.SelectDate = param;
+        _model.SelectedDate = param;
         _model.SelectedModel = "Carbon Emission";
         _navigationService?.NavigateTo(typeof(MonitorDetailViewModel).FullName);
     }
