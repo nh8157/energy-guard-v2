@@ -21,20 +21,24 @@ namespace EnergyPerformance.ViewModels;
 
 public partial class MonitorDetailViewModel : ObservableObject
 {
-    private readonly EnergyUsageModel _model = App.GetService<EnergyUsageModel>();
+    private readonly EnergyUsageModel _model;
     private DateTime _receivedParameter;
-    private ColumnSeries<DateTimePoint> historySeries;
-    private ColumnSeries<TimeSpanPoint> costSeries;
-    private ColumnSeries<TimeSpanPoint> carbonSeries;
-    private ColumnSeries<TimeSpanPoint> hourlySeries;
+    private ColumnSeries<DateTimePoint> _historySeries;
+    private ColumnSeries<TimeSpanPoint> _costSeries;
+    private ColumnSeries<TimeSpanPoint> _carbonSeries;
+    private ColumnSeries<TimeSpanPoint> _hourlySeries;
     public readonly ObservableCollection<String> DetailApplications = new();
-    private string detailSelectedApplication;
-    public MonitorDetailViewModel()
+    private string _detailSelectedApplication;
+    public MonitorDetailViewModel(EnergyUsageModel model)
     {        
         DetailApplications.Add("Energy Usage");
         DetailApplications.Add("Cost");
         DetailApplications.Add("Carbon Emission");
+
+        // initialize the field to some default value
+        _detailSelectedApplication = "Energy Usage";
         
+        _model = model
         ReceivedParameter = _model.SelectDate;
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<TimeSpanPoint>();
@@ -55,7 +59,7 @@ public partial class MonitorDetailViewModel : ObservableObject
             costs[log.Date.Hour].Value += log.Cost;
             carbons[log.Date.Hour].Value += log.CarbonEmission;
         }
-        historySeries = new ColumnSeries<DateTimePoint>
+        _historySeries = new ColumnSeries<DateTimePoint>
         {
             //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
@@ -63,7 +67,7 @@ public partial class MonitorDetailViewModel : ObservableObject
             Name = "Watt",
             Values = values
         };
-        costSeries = new ColumnSeries<TimeSpanPoint>
+        _costSeries = new ColumnSeries<TimeSpanPoint>
         {
             //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
@@ -73,7 +77,7 @@ public partial class MonitorDetailViewModel : ObservableObject
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
         
-        hourlySeries = new ColumnSeries<TimeSpanPoint>
+        _hourlySeries = new ColumnSeries<TimeSpanPoint>
         {
             //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
@@ -82,7 +86,7 @@ public partial class MonitorDetailViewModel : ObservableObject
             Values = hourly,
             Fill = new SolidColorPaint(new SKColor(51, 181, 255))
         };
-        carbonSeries = new ColumnSeries<TimeSpanPoint>
+        _carbonSeries = new ColumnSeries<TimeSpanPoint>
         {
             //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
@@ -93,15 +97,15 @@ public partial class MonitorDetailViewModel : ObservableObject
         };
         SeriesHourly = new ISeries[]
         {
-            hourlySeries
+            _hourlySeries
         };
         SeriesCostHourly = new ISeries[]
         {
-            costSeries
+            _costSeries
         };
         SeriesCarbonHourly = new ISeries[]
         {
-            carbonSeries
+            _carbonSeries
         };
 
         GotoPage();
@@ -228,14 +232,14 @@ public partial class MonitorDetailViewModel : ObservableObject
     {
         get
         {
-            return detailSelectedApplication;
+            return _detailSelectedApplication;
         }
         set
         {
-            if (detailSelectedApplication != value)
+            if (_detailSelectedApplication != value)
             {
-                detailSelectedApplication = value;
-                OnPropertyChanged(nameof(detailSelectedApplication));
+                _detailSelectedApplication = value;
+                OnPropertyChanged(nameof(_detailSelectedApplication));
             }
         }
     }

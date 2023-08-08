@@ -23,40 +23,44 @@ using System.ComponentModel;
 namespace EnergyPerformance.ViewModels;
 public partial class HistoryViewModel : ObservableObject
 {
-    private readonly Random _random = new();
     private readonly EnergyUsageModel _model;
     private INavigationService _navigationService;
     public readonly ObservableCollection<String> Applications = new();
-    private ColumnSeries<DateTimePoint> historySeries;
-    private ColumnSeries<DateTimePoint> costSeries;
-    private ColumnSeries<DateTimePoint> carbonSeries;
-    private string selectedApplication;
-    private DateTime lastDate = DateTime.Today;
-    private DateTime currentStartDate = DateTime.Today.AddDays(-6.5);
+    private ColumnSeries<DateTimePoint> _historySeries;
+    private ColumnSeries<DateTimePoint> _costSeries;
+    private ColumnSeries<DateTimePoint> _carbonSeries;
+    private string _selectedApplication;
+    private DateTime _lastDate = DateTime.Today;
+    private DateTime _currentStartDate = DateTime.Today.AddDays(-6.5);
 
-    public HistoryViewModel()
+    public HistoryViewModel(EnergyUsageModel model)
     {
         Applications.Add("Energy Usage");
         Applications.Add("Cost");
         Applications.Add("Carbon Emission");
+
+        // initialize the field to some default value
+        _selectedApplication = "Energy Usage";
+
         var values = new ObservableCollection<DateTimePoint>();
         var costs = new ObservableCollection<DateTimePoint>();
         var carbons = new ObservableCollection<DateTimePoint>();
-        _model = App.GetService<EnergyUsageModel>();
+        
+        _model = model;
         _model.SelectedModel = "Energy Usage";
         _navigationService = App.GetService<INavigationService>();
         var logs = _model.GetDailyEnergyUsageLogs();
         foreach (var log in logs)
         {
-            if (lastDate.CompareTo(log.Date) > 0 && log.PowerUsed>0)
+            if (_lastDate.CompareTo(log.Date) > 0 && log.PowerUsed>0)
             {
-                lastDate = log.Date;
+                _lastDate = log.Date;
             }
             values.Add(new DateTimePoint(log.Date.Date, log.PowerUsed));
             costs.Add(new DateTimePoint(log.Date.Date, log.Cost));
             carbons.Add(new DateTimePoint(log.Date.Date, log.CarbonEmission));
         }
-        historySeries = new ColumnSeries<DateTimePoint>
+        _historySeries = new ColumnSeries<DateTimePoint>
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
@@ -65,7 +69,7 @@ public partial class HistoryViewModel : ObservableObject
             Values = values,
             Fill = new SolidColorPaint(new SKColor(51, 181, 255))
         };
-        costSeries = new ColumnSeries<DateTimePoint>
+        _costSeries = new ColumnSeries<DateTimePoint>
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
@@ -74,7 +78,7 @@ public partial class HistoryViewModel : ObservableObject
             Values = costs,
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
-        carbonSeries = new ColumnSeries<DateTimePoint>
+        _carbonSeries = new ColumnSeries<DateTimePoint>
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
@@ -83,22 +87,22 @@ public partial class HistoryViewModel : ObservableObject
             Values = carbons,
             Fill = new SolidColorPaint(new SKColor(143, 188, 143))
         };
-        historySeries.ChartPointPointerDown += OnPointerDown;
-        costSeries.ChartPointPointerDown += OnCostPointerDown;
-        carbonSeries.ChartPointPointerDown += OnCarbonPointerDown;
+        _historySeries.ChartPointPointerDown += OnPointerDown;
+        _costSeries.ChartPointPointerDown += OnCostPointerDown;
+        _carbonSeries.ChartPointPointerDown += OnCarbonPointerDown;
         HistorySeries = new ISeries[]
         {
-            historySeries
+            _historySeries
         };
 
         CostSeries = new ISeries[]
        {
-            costSeries
+            _costSeries
        };
 
         CarbonSeries = new ISeries[]
        {
-            carbonSeries
+            _carbonSeries
        };
         GoToPage();
     }
@@ -201,12 +205,12 @@ public partial class HistoryViewModel : ObservableObject
     public void LastWeek()
     {
         // Calculate the start date for the last seven days
-        DateTime startDate = currentStartDate.AddDays(-7); // Subtract 6 days to get the start date
+        DateTime startDate = _currentStartDate.AddDays(-7); // Subtract 6 days to get the start date
 
         // Calculate the end date (today)
-        DateTime endDate = currentStartDate;
+        DateTime endDate = _currentStartDate;
 
-        if(endDate.CompareTo(lastDate) < 0)
+        if(endDate.CompareTo(_lastDate) < 0)
         {
             return;
         }
@@ -214,7 +218,7 @@ public partial class HistoryViewModel : ObservableObject
         // Get the ticks for the start and end dates
         long startTicks = startDate.Ticks;
         long endTicks = endDate.Ticks;
-        currentStartDate = startDate;
+        _currentStartDate = startDate;
 
         // Update the X-axis limits to display data for the last seven days
         var axis = XAxes[0];
@@ -226,10 +230,10 @@ public partial class HistoryViewModel : ObservableObject
     [RelayCommand]
     public void NextWeek()
     {
-        DateTime startDate = currentStartDate.AddDays(7); // Subtract 6 days to get the start date
+        DateTime startDate = _currentStartDate.AddDays(7); // Subtract 6 days to get the start date
 
         // Calculate the end date (today)
-        DateTime endDate = currentStartDate.AddDays(14);
+        DateTime endDate = _currentStartDate.AddDays(14);
 
         if (endDate.CompareTo(DateTime.Today.AddDays(1)) > 0)
         {
@@ -239,7 +243,7 @@ public partial class HistoryViewModel : ObservableObject
         // Get the ticks for the start and end dates
         long startTicks = startDate.Ticks;
         long endTicks = endDate.Ticks;
-        currentStartDate = startDate;
+        _currentStartDate = startDate;
 
         // Update the X-axis limits to display data for the last seven days
         var axis = XAxes[0];
@@ -252,13 +256,13 @@ public partial class HistoryViewModel : ObservableObject
     {
         get
         {
-            return selectedApplication;
+            return _selectedApplication;
         }
         set
         {
-            if (selectedApplication != value)
+            if (_selectedApplication != value)
             {
-                selectedApplication = value;
+                _selectedApplication = value;
                 OnPropertyChanged(nameof(SelectedApplication));
             }
         }

@@ -34,7 +34,6 @@ public sealed partial class HistoryPage : Page
         else if(selectedValue.Equals("Energy Usage"))
         {
             LvcChart.Series = ViewModel.HistorySeries;
-            Debug.WriteLine("123");
         }
             
         else if(selectedValue.Equals("Carbon Emission"))
