@@ -53,8 +53,8 @@ public sealed partial class CustomisePersonaPage : Page
     }
 
     // Function called when Go Back button is clicked
-    // Navigates to the Persona Customisation Page
-    private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
+    // Navigates to the Persona List Page
+    private void NavigateToListPage(object sender, RoutedEventArgs e)
     {
         Frame.Navigate(typeof(PersonaListPage));
     }

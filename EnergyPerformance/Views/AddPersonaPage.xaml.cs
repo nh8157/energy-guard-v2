@@ -23,8 +23,8 @@ namespace EnergyPerformance.Views;
 
 public sealed partial class AddPersonaPage : Page
 {
-    public static DebugModel debug;
     const float DEFAULT = 2.0f;
+    private static string CurrentPath = "";
 
     public PersonaViewModel ViewModel
     {
@@ -35,34 +35,28 @@ public sealed partial class AddPersonaPage : Page
     {
         ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
-
-        debug = App.GetService<DebugModel>();
     }
 
-    // Function to apply persona to the selected application
-    // Grabs the index of the application in the list
-    // Sets the corresponding energy value and image path accordingly in the view model
-    // Navigates to the Persona Customisation Page
-    private void ApplyPersona(object sender, RoutedEventArgs e)
+    // Function called when Add Persona is clicked
+    // If a valid app is selected, add the values to the persona list
+    // Navigate back to the Persona List Page
+    private void AddPersona(object sender, RoutedEventArgs e)
     {
-        //var selectedIndex = AppSelection.SelectedIndex;
-        var selectedIndex = 0;
-        if (selectedIndex != -1)
+        if (AppSelection.Text != null && AppSelection.Text != "")
         {
-            var item = ViewModel.PersonasAndRatings[selectedIndex];
-            item.EnergyValue = (float)PersonaSlider.Value;
-            item.EnergyRating = item.UpdateEnergyRating((int)PersonaSlider.Value);
+            ViewModel.Add(AppSelection.Text, (float) PersonaSlider.Value);
             Frame.Navigate(typeof(PersonaListPage));
         }
     }
 
     // Function called when Go Back button is clicked
-    // Navigates to the Persona Customisation Page
-    private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
+    // Navigates to the Persona List Page
+    private void NavigateToListPage(object sender, RoutedEventArgs e)
     {
         Frame.Navigate(typeof(PersonaListPage));
     }
 
+    #region Select File Code
     [DllImport("Shell32.dll", CharSet = CharSet.Unicode)]
     public static extern IntPtr SHBrowseForFolder(ref BROWSEINFO lpbi);
 
@@ -100,21 +94,23 @@ public sealed partial class AddPersonaPage : Page
             var path = Marshal.AllocHGlobal(260);
             SHGetPathFromIDList(pidl, path);
             Marshal.FreeHGlobal(path);
-            var pathString = Marshal.PtrToStringUni(path);
-            //pathString is the application's path
+            CurrentPath = Marshal.PtrToStringUni(path); // Store the path of the object in CurrentPath
 
-            if (pathString != null && pathString.Substring(pathString.Length - 4).Equals(".exe"))
+            if (CurrentPath != null && CurrentPath != "" && CurrentPath.Substring(CurrentPath.Length - 4).Equals(".exe"))
             {
-                var AppName = GetApplicationName(pathString);
+                var AppName = GetApplicationName(CurrentPath);
                 AppSelection.Text = AppName;
             }
         }
     }
 
+    // Function to get the Application Name from the string path
+    // Get the substring after the last occurrence of \ and return
     private string GetApplicationName(string str)
     {
         var index = str.LastIndexOf('\\') + 1;
         return str.Substring(index);
     }
 
+    #endregion
 }
