@@ -23,7 +23,7 @@ public class EnergyRateService: BackgroundService
     private readonly string _voltage = "HV";
 
     private string Country => _locationInfo.Country;
-    private string Postcode => _locationInfo.Postcode;
+    private string Postcode => _locationInfo.PostCode;
 
     public EnergyRateService(LocationInfo locationInfo, EnergyRateInfo energyRateInfo)
     {

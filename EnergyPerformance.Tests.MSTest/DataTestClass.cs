@@ -87,7 +87,7 @@ public class DataTestClass
         var dailyLogs = GenerateListOfRandomDailyLogs(60);
         
 
-        _data = new EnergyUsageData(costPerKwh, budget, lastMeasurement, hourlyLogs, dailyLogs);
+        //_data = new EnergyUsageData(costPerKwh, budget, lastMeasurement, hourlyLogs, dailyLogs);
         
         _fileService.Save(folderPath, fileName, _data);
     }

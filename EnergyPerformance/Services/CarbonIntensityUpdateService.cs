@@ -23,7 +23,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     }
 
     public string Country => _locationInfo.Country;
-    public string Postcode => _locationInfo.Postcode;
+    public string Postcode => _locationInfo.PostCode;
 
     public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo)
     {

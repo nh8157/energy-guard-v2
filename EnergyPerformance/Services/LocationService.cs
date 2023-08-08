@@ -21,8 +21,8 @@ public class LocationService : BackgroundService
 
     public string Postcode
     {
-        get => _locationInfo.Postcode;
-        private set => _locationInfo.Postcode = value;
+        get => _locationInfo.PostCode;
+        private set => _locationInfo.PostCode = value;
     }
 
 

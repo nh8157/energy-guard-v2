@@ -1,4 +1,5 @@
 ﻿namespace EnergyPerformance.Helpers;
+
 public class LocationInfo
 {
     public string Country

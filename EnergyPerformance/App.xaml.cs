@@ -15,6 +15,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Windows;
+using Windows.UI.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
 
@@ -109,7 +110,7 @@ public partial class App : Application
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
-            services.AddSingleton<ILocationService, LocationService>();
+            services.AddSingleton<LocationService>();
 
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();

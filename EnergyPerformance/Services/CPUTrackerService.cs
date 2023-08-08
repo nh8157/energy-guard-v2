@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
