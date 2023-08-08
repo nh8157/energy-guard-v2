@@ -141,7 +141,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         // methods to update the daily and hourly power usage
 
         // TODO: record carbon emissions
-        //Debug.WriteLine(CarbonIntensity);
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
         await Task.CompletedTask;
@@ -192,11 +191,5 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.CurrentHour = currentDateTime;
             _model.AccumulatedWattsHourly = power;
         }
-
     }
-    private double PowerToEnergy(double power)
-    {
-        return power / 1000;
-    }
-
 }

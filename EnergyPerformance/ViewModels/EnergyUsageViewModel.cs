@@ -42,6 +42,14 @@ public partial class EnergyUsageViewModel : ObservableRecipient
     [ObservableProperty] 
     public PlotModel model;
 
+    [ObservableProperty]
+    public PlotModel modelMonitor;
+
+    [ObservableProperty]
+    public PlotController controller;
+
+    
+
     /// <summary>
     /// Initializes a new instance of the <see cref="EnergyUsageViewModel"/> class.
     /// Retrieves localized strings for dynamic content in the viewmodel and initializes the plotmodel and stem series.
@@ -61,14 +69,73 @@ public partial class EnergyUsageViewModel : ObservableRecipient
 
         // initialize plotmodel and stem series in constructor
         this.model = new PlotModel();
+        
+        this.modelMonitor = new PlotModel();
+        
         stemSeriesCost = new StemSeries();
         stemSeriesEnergy = new StemSeries();
         stemSeriesCostHourly = new StemSeries();
         stemSeriesEnergyHourly = new StemSeries();
+        this.controller = new PlotController();
 
         LoadLocalizedStrings();
         InitialiseEnergyUsageModel();
-        
+        InitialiseSystemMonitorModel();
+
+    }
+
+
+    private void InitialiseSystemMonitorModel()
+    {
+        ModelMonitor = new PlotModel
+        {
+            PlotAreaBorderThickness = new OxyThickness(0),
+            DefaultFont = "Segoe UI",
+        };
+
+        //generate a random percentage distribution between the 5
+        //cake-types (see axis below)
+        var rand = new Random();
+        double[] powerUsage = new double[5]
+        {
+            5.00,
+            20.00,
+            40.00,
+            20.00,
+            15.00
+        };
+        var sum = powerUsage.Sum();
+
+        var barSeries = new BarSeries
+        {
+            ItemsSource = new List<BarItem>(new[]
+                {
+                new BarItem{ Value = (powerUsage[0] / sum * 100) },
+                new BarItem{ Value = (powerUsage[1] / sum * 100) },
+                new BarItem{ Value = (powerUsage[2] / sum * 100) },
+                new BarItem{ Value = (powerUsage[3] / sum * 100) },
+                new BarItem{ Value = (powerUsage[4] / sum * 100) }
+        }),
+            LabelPlacement = LabelPlacement.Inside,
+            LabelFormatString = "{0:.00}%"
+        };
+        ModelMonitor.Series.Add(barSeries);
+
+        ModelMonitor.Axes.Add(new CategoryAxis
+        {
+            Position = AxisPosition.Left,
+            Key = "CakeAxis",
+            ItemsSource = new[]
+                {
+                "File Explorer",
+                "Steam",
+                "Chrome",
+                "Spotify",
+                "Word"
+        }
+        });
+        ModelMonitor.InvalidatePlot(true); // call invalidate plot to update the graph
+
 
     }
 
@@ -106,7 +173,6 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             DefaultFont = "Segoe UI",
         };
 
-
         stemSeriesEnergy = new StemSeries
         {
 
@@ -114,6 +180,8 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             MarkerStroke = OxyColors.AliceBlue,
             MarkerType = MarkerType.Circle,
         };
+        
+        
 
         stemSeriesCost = new StemSeries
         {
@@ -307,12 +375,6 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             MarkerStroke = OxyColors.AliceBlue,
             MarkerType = MarkerType.Circle,
         };
-        var logs = _model.GetHourlyEnergyUsageLogs();
-        foreach (var log in logs)
-        {
-            stemSeriesEnergyHourly.Points.Add(new DataPoint(DateTimeAxis.ToDouble(log.Date), log.PowerUsed));
-            stemSeriesCostHourly.Points.Add(new DataPoint(DateTimeAxis.ToDouble(log.Date), log.Cost));
-        }
     }
 
     /// <summary>

@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="EnergyPerformance.Views.MainPage"
+    x:Class="EnergyPerformance.Views.CarbonEmissionPage"
     xmlns:viewmodel="using:EnergyPerformance.ViewModels"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,7 +7,7 @@
     xmlns:helpers="using:EnergyPerformance.Helpers"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:winUi="using:CommunityToolkit.Labs.WinUI"
-    d:DataContext="{d:DesignInstance Type=viewmodel:MainViewModel}"
+    d:DataContext="{d:DesignInstance Type=viewmodel:CarbonEmissionViewModel}"
     mc:Ignorable="d">
     <Page.Resources>
         <helpers:PercentToColourConverter x:Key="PercentToColourConverter" />
@@ -15,13 +15,13 @@
         <helpers:CostStringConverter x:Key="CostStringConverter" />
         <helpers:BudgetStringConverter x:Key="BudgetStringConverter" />
     </Page.Resources>
-    <GridView x:Name="ContentArea" HorizontalAlignment="Center" VerticalAlignment="Center" SelectionMode="None" >
+    <GridView x:Name="ContentArea" HorizontalAlignment="Center" VerticalAlignment="Center" SelectionMode="None" Height="Auto">
         <StackPanel Orientation="Vertical">
             <StackPanel Orientation="Vertical">
-                <TextBlock x:Uid="HomePowerUseTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
+                <TextBlock x:Uid="CarbonEmissionTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
                 <TextBlock Style="{StaticResource DisplayTextBlockStyle}">
                         <Run Text="{x:Bind ViewModel.Power,Mode=OneWay, Converter={StaticResource PowerUsageStringConverter}}"/>
-                        <Run x:Uid="PowerUnit"/>
+                        <Run x:Uid="EmissionsSymbol"/>
                 </TextBlock>
             </StackPanel>
             <StackPanel Orientation="Vertical" Margin="0 10">
@@ -29,16 +29,16 @@
                 <winUi:SettingsCard FontSize="20" x:Uid="HomeLastWeekCard" CornerRadius="15" Margin="0 10">
                     <StackPanel>
                         <TextBlock FontSize="20" Text="">
-                                    <Run x:Uid="CurrencySymbol"/>
-                                    <Run Text="{x:Bind ViewModel.CostPreviousWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run Text="{x:Bind ViewModel.EmissionsPreviousWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
                     </StackPanel>
                 </winUi:SettingsCard>
                 <winUi:SettingsCard FontSize="20" x:Uid="HomeThisWeekCard" CornerRadius="15" Margin="0 10">
                     <StackPanel>
                         <TextBlock FontSize="20" Text="">
-                                    <Run x:Uid="CurrencySymbol"/>
-                                    <Run Text="{x:Bind ViewModel.CostThisWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run Text="{x:Bind ViewModel.EmissionsThisWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
+                                    <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
                     </StackPanel>
                 </winUi:SettingsCard>
@@ -76,35 +76,35 @@
             </StackPanel>
         </StackPanel>
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Grid Margin="0 0 0 5">
+            <Grid>
                 <!--{ThemeResource ControlAltFillColorTertiaryBrush}-->
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.BudgetUsedPercent, Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.BudgetUsedPercent, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock  VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
-                            <Run Text="{x:Bind ViewModel.BudgetUsedPercent, Converter={StaticResource BudgetStringConverter}, Mode=OneWay}" />
-                            <Run x:Uid="PercentSymbol"/>
+                    <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                            <Run Text="{x:Bind ViewModel.Power, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
+                            <Run x:Uid="EmissionsSymbol"/>
                     </TextBlock>
-                    <TextBlock x:Uid="HomeBudgetProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                    <TextBlock x:Uid="TotalCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
-            <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+            <Grid>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                    <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
-                            <Run x:Uid="PercentSymbol"/>
+                            <Run x:Uid="EmissionsSymbol"/>
                     </TextBlock>
-                    <TextBlock x:Uid="HomeCpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                    <TextBlock x:Uid="CPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
-            <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+            <Grid>
+                <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                    <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
-                            <Run x:Uid="PercentSymbol"/>
+                            <Run x:Uid="EmissionsSymbol"/>
                     </TextBlock>
-                    <TextBlock x:Uid="HomeGpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                    <TextBlock x:Uid="GPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                 </StackPanel>
             </Grid>
         </StackPanel>
