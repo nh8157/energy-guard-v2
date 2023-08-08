@@ -19,6 +19,11 @@ namespace CLI
 		m_Instance->MoveAllAppsToSomeEfficiencyCores();
 	}
 
+	void Controller::MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores)
+	{
+		m_Instance->MoveAppToHybridCores(target, eCores, pCores);
+	}
+
 	void Controller::ResetToDefaultCores() {
 		m_Instance->ResetToDefaultCores();
 	}

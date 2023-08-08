@@ -6,15 +6,19 @@ namespace Core
     {
     public:
         const char* m_Name;
-    public:
+
         Controller();
         void MoveAllAppsToEfficiencyCores();
         void MoveAllAppsToSomeEfficiencyCores();
+        void MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores);
         void MoveAllAppsToHybridCores(int eCores, int pCores);
         void ResetToDefaultCores();
         void DetectCoreCount();
         int TotalCoreCount();
         int EfficiencyCoreCount();
         int PerformanceCoreCount();
+
+    private:
+        int CreateAffinityMask(int eCores, int pCores);
     };
 }

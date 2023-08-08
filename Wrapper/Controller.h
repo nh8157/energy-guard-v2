@@ -11,6 +11,7 @@ namespace CLI
 		Controller();
 		void MoveAllAppsToEfficiencyCores();
 		void MoveAllAppsToSomeEfficiencyCores();
+		void MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores);
 		void ResetToDefaultCores();
 		void DetectCoreCount();
 		void MoveAllAppsToHybridCores(int eCores, int pCores);
