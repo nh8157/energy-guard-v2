@@ -54,25 +54,16 @@ public partial class PersonaViewModel : ObservableRecipient
         
     }
 
+    // Function to Add Persona object to the local list of objects
+    // Checks if the list contains a persona for said application
+    // Adds only if persona is not present
     public void Add(string _appName, float _energyRating)
     {
-        if (!Contains(_appName))
+        if (!applicationList.Contains(_appName))
         {
             personasAndRatings.Add(new PersonaObject(_appName, _energyRating));
             applicationList.Add(_appName);
         }
-    }
-
-    private bool Contains(string _appName)
-    {
-        foreach (var item in applicationList)
-        {
-            if (item.Equals(_appName))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
