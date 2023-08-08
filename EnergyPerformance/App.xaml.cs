@@ -150,8 +150,6 @@ public partial class App : Application
         }).
         Build();
      
-        App.GetService<IAppNotificationService>().Initialize();
-        
         Debug.WriteLine("Starting application");
         
         MainWindow.Closed += async (sender, args) =>
