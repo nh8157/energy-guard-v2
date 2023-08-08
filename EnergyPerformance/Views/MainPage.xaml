@@ -98,10 +98,10 @@
                 </StackPanel>
             </Grid>
             <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.GpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.GpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
-                            <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
+                            <Run Text="{x:Bind ViewModel.GpuUsage, Mode=OneWay}" />
                             <Run x:Uid="PercentSymbol"/>
                     </TextBlock>
                     <TextBlock x:Uid="HomeGpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>

@@ -15,6 +15,7 @@ public class GpuTrackerService : BackgroundService
     private ISensor gpuSensor;
     private readonly GpuInfo gpuInfo;
     private readonly Computer computer;
+    private double lastUsage = 0;
 
     public double GpuUsage
     {
@@ -68,7 +69,8 @@ public class GpuTrackerService : BackgroundService
             hardware.Update();
         }
         
-        GpuUsage = gpuSensor.Value ?? 0;
+        GpuUsage = gpuSensor.Value ?? lastUsage;
+        lastUsage = GpuUsage;
 
         await Task.CompletedTask;
     }

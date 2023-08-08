@@ -101,7 +101,7 @@
                 <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
-                            <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
+                            <Run Text="{x:Bind ViewModel.GpuUsage, Mode=OneWay}" />
                             <Run x:Uid="EmissionsSymbol"/>
                     </TextBlock>
                     <TextBlock x:Uid="GPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
