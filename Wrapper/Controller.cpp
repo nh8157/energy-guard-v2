@@ -1,4 +1,7 @@
 #include "Controller.h"
+
+#include <string>
+
 namespace CLI
 {
 	Controller::Controller()
@@ -19,9 +22,11 @@ namespace CLI
 		m_Instance->MoveAllAppsToSomeEfficiencyCores();
 	}
 
-	void Controller::MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores)
+	void Controller::MoveAppToHybridCores(String^ path, int eCores, int pCores)
 	{
-		m_Instance->MoveAppToHybridCores(target, eCores, pCores);
+		const wchar_t* unmanagedPath = (const wchar_t*) (Marshal::StringToHGlobalUni(path)).ToPointer();
+		m_Instance->MoveAppToHybridCores(unmanagedPath, eCores, pCores);
+		Marshal::FreeHGlobal(IntPtr((void*) unmanagedPath));
 	}
 
 	void Controller::ResetToDefaultCores() {

@@ -1,4 +1,6 @@
 #pragma once
+#include <string>
+
 #include "ManagedObject.h"
 #include "../Core/Core.h"
 using namespace System;
@@ -11,7 +13,7 @@ namespace CLI
 		Controller();
 		void MoveAllAppsToEfficiencyCores();
 		void MoveAllAppsToSomeEfficiencyCores();
-		void MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores);
+		void MoveAppToHybridCores(String^ target, int eCores, int pCores);
 		void ResetToDefaultCores();
 		void DetectCoreCount();
 		void MoveAllAppsToHybridCores(int eCores, int pCores);

@@ -1,14 +1,8 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Data;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
-using Microsoft.UI.Xaml.CustomAttributes;
-using Windows.ApplicationModel.Activation;
-using Windows.Media.Core;
 
 namespace EnergyPerformance.ViewModels;
 
