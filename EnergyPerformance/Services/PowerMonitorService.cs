@@ -1,11 +1,7 @@
-﻿using System;
-using System.IO;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
-using EnergyPerformance.ViewModels;
-using EnergyPerformance.Views;
 using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
@@ -23,6 +19,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     public List<ISensor> gpuSensors;
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
+
     private readonly PowerInfo _powerInfo;
     private readonly CpuInfo _cpuInfo;
     private readonly GpuInfo _gpuInfo;
@@ -31,13 +28,13 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
-
+    
     public double Power
     {
         get => _powerInfo.Power;
         private set => _powerInfo.Power = value;
     }
-    
+
     // We want to also track the power usage of the CPU and GPU separately, so we can display them in the View.
     public double CpuPower { get; private set; }
     public double GpuPower { get; private set; }
@@ -173,6 +170,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         
         // methods to update the daily and hourly power usage
         var currentDateTime = DateTimeOffset.Now;
+        // methods to update the daily and hourly power usage
 
         // TODO: record carbon emissions
         UpdateDailyUsage(currentDateTime);

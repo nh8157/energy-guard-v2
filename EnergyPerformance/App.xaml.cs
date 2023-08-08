@@ -9,12 +9,14 @@ using EnergyPerformance.Notifications;
 using EnergyPerformance.Services;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Windows;
-using Windows.UI.Notifications;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 
 namespace EnergyPerformance;
 
@@ -63,7 +65,6 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        Trace.Listeners.Add(new ConsoleTraceListener());
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
@@ -87,7 +88,6 @@ public partial class App : Application
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
 
-
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
@@ -109,7 +109,7 @@ public partial class App : Application
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
-            services.AddHostedService<LocationService>();
+            services.AddSingleton<ILocationService, LocationService>();
 
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
@@ -119,8 +119,7 @@ public partial class App : Application
 
             services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---
-
-
+            
             // Core Services
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<EnergyUsageFileService>();
@@ -131,12 +130,24 @@ public partial class App : Application
             services.AddSingleton<PersonaModel>();
 
             // Views and ViewModels
+            services.AddTransient<CarbonEmissionPage>();
+            services.AddTransient<CarbonEmissionViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<DebugViewModel>();
             services.AddTransient<DebugPage>();
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
+            services.AddTransient<PersonaViewModel>();
+            services.AddTransient<PersonaListPage>();
+            services.AddTransient<CustomisePersonaPage>();
+            services.AddTransient<AddPersonaPage>();
+            services.AddTransient<SystemMonitorViewModel>();
+            services.AddTransient<SystemMonitorPage>();
+            services.AddTransient<MonitorDetailViewModel>();
+            services.AddTransient<MonitorDetailPage>();
+            services.AddTransient<TestMonitorViewModel>();
+            services.AddTransient<TestMonitorPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
@@ -147,7 +158,7 @@ public partial class App : Application
         }).
         Build();
         Debug.WriteLine("Starting application");
-        
+        App.GetService<IAppNotificationService>().Initialize();
         MainWindow.Closed += async (sender, args) =>
         {
             Debug.WriteLine("MainWindow.Closed");
@@ -207,7 +218,7 @@ public partial class App : Application
         }
 
         base.OnLaunched(args);
-
+        App.GetService<IAppNotificationService>().Show("AppStartupNotificationPayload");
         // start the ActivationService which all perform required actions at startup and call InitializeAsync() methods
         // for any registered services/objects which require asynchronous initialization
         await App.GetService<IActivationService>().ActivateAsync(args);
@@ -215,6 +226,5 @@ public partial class App : Application
         // call StartAsync() on IHostedServices registered to the Host
         await Host.StartAsync();
 
-        App.GetService<IAppNotificationService>().Initialize();
     }
 }
