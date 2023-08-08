@@ -69,8 +69,8 @@ public class ProcessMonitorService
         {
             var procQuery = string.Format(_query, name);
 
-            var creationQuery = new WqlEventQuery("__InstanceCreationEvent", new TimeSpan(0, 0, 1), procQuery);
-            var deletionQuery = new WqlEventQuery("__InstanceDeletionEvent", new TimeSpan(0, 0, 1), procQuery);
+            var creationQuery = new WqlEventQuery("__InstanceCreationEvent", new TimeSpan(0, 0, 10), procQuery);
+            var deletionQuery = new WqlEventQuery("__InstanceDeletionEvent", new TimeSpan(0, 0, 10), procQuery);
 
             var creationWatcher = new ManagementEventWatcher(creationQuery);
             var deletionWatcher = new ManagementEventWatcher(deletionQuery);
