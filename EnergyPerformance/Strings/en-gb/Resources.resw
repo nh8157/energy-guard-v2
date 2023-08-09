@@ -415,7 +415,8 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="GoBackButton.Content" xml:space="preserve">
     <value>Go Back</value>
-	<data name="ModelSelection.PlaceholderText" xml:space="preserve">
+  </data>
+  <data name="ModelSelection.PlaceholderText" xml:space="preserve">
     <value>Energy Usage</value>
   </data>
   <data name="ClosePopup.Content" xml:space="preserve">

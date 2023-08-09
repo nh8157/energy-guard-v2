@@ -95,7 +95,8 @@
     </Page>
     <Page Update="Views\TestMonitorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
-	 <Page Update="Views\HistoryPage.xaml">
+    </Page>
+    <Page Update="Views\HistoryPage.xaml">
 	   <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\SystemMonitorPage.xaml">
