@@ -240,11 +240,5 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.CurrentHour = currentDateTime;
             _model.AccumulatedWattsHourly = Power;
         }
-
     }
-    private double PowerToEnergy(double power)
-    {
-        return power / 1000;
-    }
-
 }

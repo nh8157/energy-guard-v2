@@ -24,6 +24,7 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     private readonly ILocalSettingsService _settingsService;
     private readonly CpuInfo _cpuInfo;
     private readonly GpuInfo _gpuInfo;
+
     private readonly PowerInfo _powerInfo;
     private readonly IAppNotificationService _notificationService;
 

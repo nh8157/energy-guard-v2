@@ -85,12 +85,63 @@ public partial class EnergyUsageViewModel : ObservableRecipient
            });
         Controller.BindMouseDown(OxyMouseButton.Left, command); //
 
-       
-
         LoadLocalizedStrings();
         InitialiseEnergyUsageModel();
         InitialiseSystemMonitorModel();
-        
+
+    }
+
+
+    private void InitialiseSystemMonitorModel()
+    {
+        ModelMonitor = new PlotModel
+        {
+            PlotAreaBorderThickness = new OxyThickness(0),
+            DefaultFont = "Segoe UI",
+        };
+
+        //generate a random percentage distribution between the 5
+        //cake-types (see axis below)
+        var rand = new Random();
+        double[] powerUsage = new double[5]
+        {
+            5.00,
+            20.00,
+            40.00,
+            20.00,
+            15.00
+        };
+        var sum = powerUsage.Sum();
+
+        var barSeries = new BarSeries
+        {
+            ItemsSource = new List<BarItem>(new[]
+                {
+                new BarItem{ Value = (powerUsage[0] / sum * 100) },
+                new BarItem{ Value = (powerUsage[1] / sum * 100) },
+                new BarItem{ Value = (powerUsage[2] / sum * 100) },
+                new BarItem{ Value = (powerUsage[3] / sum * 100) },
+                new BarItem{ Value = (powerUsage[4] / sum * 100) }
+        }),
+            LabelPlacement = LabelPlacement.Inside,
+            LabelFormatString = "{0:.00}%"
+        };
+        ModelMonitor.Series.Add(barSeries);
+
+        ModelMonitor.Axes.Add(new CategoryAxis
+        {
+            Position = AxisPosition.Left,
+            Key = "CakeAxis",
+            ItemsSource = new[]
+                {
+                "File Explorer",
+                "Steam",
+                "Chrome",
+                "Spotify",
+                "Word"
+        }
+        });
+        ModelMonitor.InvalidatePlot(true); // call invalidate plot to update the graph
 
     }
 
@@ -182,8 +233,6 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             PlotAreaBorderThickness = new OxyThickness(0),
             DefaultFont = "Segoe UI",
         };
-
-        Console.WriteLine("1222222");
 
         stemSeriesEnergy = new StemSeries
         {
@@ -387,12 +436,6 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             MarkerStroke = OxyColors.AliceBlue,
             MarkerType = MarkerType.Circle,
         };
-        var logs = _model.GetHourlyEnergyUsageLogs();
-        foreach (var log in logs)
-        {
-            stemSeriesEnergyHourly.Points.Add(new DataPoint(DateTimeAxis.ToDouble(log.Date), log.PowerUsed));
-            stemSeriesCostHourly.Points.Add(new DataPoint(DateTimeAxis.ToDouble(log.Date), log.Cost));
-        }
     }
 
     /// <summary>

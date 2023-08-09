@@ -120,7 +120,6 @@ public partial class App : Application
 
             services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---
-            
             // Core Services
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<EnergyUsageFileService>();
@@ -143,12 +142,16 @@ public partial class App : Application
             services.AddTransient<PersonaListPage>();
             services.AddTransient<CustomisePersonaPage>();
             services.AddTransient<AddPersonaPage>();
+            services.AddTransient<PersonaCustomisationViewModel>();
+            services.AddTransient<PersonaCustomisationPage>();
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();
             services.AddTransient<MonitorDetailViewModel>();
             services.AddTransient<MonitorDetailPage>();
             services.AddTransient<TestMonitorViewModel>();
             services.AddTransient<TestMonitorPage>();
+            services.AddTransient<HistoryViewModel>();
+            services.AddTransient<HistoryPage>();
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
             services.AddTransient<ShellPage>();
@@ -158,6 +161,7 @@ public partial class App : Application
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
         Build();
+     
         Debug.WriteLine("Starting application");
         App.GetService<IAppNotificationService>().Initialize();
         MainWindow.Closed += async (sender, args) =>
