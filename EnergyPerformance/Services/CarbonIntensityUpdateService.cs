@@ -7,14 +7,16 @@ using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Models;
+using System.Text.Json;
 
 namespace EnergyPerformance.Services;
 class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
 {
-    private readonly string _ukApiUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
-    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(5));
+    private readonly string _ukUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(5));
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
     private readonly LocationInfo _locationInfo;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public double CarbonIntensity
     {
@@ -25,16 +27,19 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
     public string Country => _locationInfo.Country;
     public string Postcode => _locationInfo.Postcode;
 
-    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo)
+    public CarbonIntensityUpdateService(CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo, IHttpClientFactory httpClientFactory)
     {
         _carbonIntensityInfo = carbonIntensityInfo;
         _locationInfo = locationInfo;
+        _httpClientFactory = httpClientFactory;
     }
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         do
+        {
             await DoAsync();
+        }
         while (await _periodicTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested);
     }
 
@@ -55,40 +60,22 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
 
     private async Task FetchLiveCarbonIntensity()
     {
-        var client = new HttpClient();
+        var httpClient = _httpClientFactory.CreateClient("Live Carbon Intensity");
         try
         {
-            var url = String.Format(_ukApiUrl, Postcode.Split(" ")[0]);
-            
-            HttpResponseMessage response = await client.GetAsync(url);
+            var url = string.Format(_ukUrl, Postcode.Split(" ")[0]);
 
-            if (response.IsSuccessStatusCode)
+            JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(httpClient, url) ??
+                throw new InvalidOperationException("Cannot deserialize object");
+
+            var jsonData = jsonResponse.GetProperty("data");
+            foreach (var entry in jsonData.EnumerateArray())
             {
-                var responseBody = await response.Content.ReadAsStringAsync();
-                dynamic jsonResponse = JsonConvert.DeserializeObject(responseBody)??
-                    throw new InvalidOperationException("Cannot deserialize object");
-                JArray data = jsonResponse.data??
-                    throw new InvalidDataException("'data' field does not exist in jsonResponse");
-
-                foreach (var regionData in data)
+                var data = entry.GetProperty("data");
+                foreach (var detailedData in data.EnumerateArray())
                 {
-                    var detailedData = (JArray?)regionData["data"]??
-                        throw new InvalidOperationException("'data' field does not exist");
-
-                    foreach (var entry in detailedData)
-                    {
-                        JToken carbonInfo = entry["intensity"]??
-                            throw new InvalidOperationException("'intensity' field does not exist");
-                        var carbonIntensity = (double?)carbonInfo["forecast"];
-
-                        if (carbonIntensity != null)
-                            CarbonIntensity = (double)carbonIntensity;
-                    }
+                    CarbonIntensity = detailedData.GetProperty("intensity").GetProperty("forecast").GetDouble();
                 }
-            }
-            else
-            {
-                Debug.WriteLine("Request failed");
             }
         }
         catch (Exception e)

@@ -1,5 +1,4 @@
-﻿using System.Data.SQLite;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
