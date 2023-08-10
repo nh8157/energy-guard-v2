@@ -22,11 +22,14 @@ namespace CLI
 		m_Instance->MoveAllAppsToSomeEfficiencyCores();
 	}
 
-	void Controller::MoveAppToHybridCores(String^ path, int eCores, int pCores)
+	bool Controller::MoveAppToHybridCores(String^ path, int eCores, int pCores)
 	{
-		const wchar_t* unmanagedPath = (const wchar_t*) (Marshal::StringToHGlobalUni(path)).ToPointer();
-		m_Instance->MoveAppToHybridCores(unmanagedPath, eCores, pCores);
-		Marshal::FreeHGlobal(IntPtr((void*) unmanagedPath));
+		IntPtr hGlobal = Marshal::StringToHGlobalUni(path);
+		const wchar_t* unmanagedPath = static_cast<const wchar_t*>(hGlobal.ToPointer());
+		bool success = m_Instance->MoveAppToHybridCores(unmanagedPath, eCores, pCores);
+		Marshal::FreeHGlobal(hGlobal);
+
+		return success;
 	}
 
 	void Controller::ResetToDefaultCores() {

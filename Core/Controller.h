@@ -10,7 +10,7 @@ namespace Core
         Controller();
         void MoveAllAppsToEfficiencyCores();
         void MoveAllAppsToSomeEfficiencyCores();
-        void MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores);
+        bool MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores);
         void MoveAllAppsToHybridCores(int eCores, int pCores);
         void ResetToDefaultCores();
         void DetectCoreCount();

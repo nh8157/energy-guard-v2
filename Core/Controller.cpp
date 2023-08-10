@@ -88,7 +88,7 @@ namespace Core
 
 
 
-	DWORD FindAndBind(const wchar_t* target, int selectedAffinity) {
+	bool FindAndBind(const wchar_t* target, int selectedAffinity) {
 		PROCESSENTRY32 entry;
 		entry.dwSize = sizeof(PROCESSENTRY32);
 		BOOL found = FALSE;
@@ -111,7 +111,7 @@ namespace Core
 					}
 					else {
 						cout << " ERROR -- Retry bind" << endl;
-						system("pause");
+						//system("pause");
 					}
 					CloseHandle(hProcess);
 				}
@@ -127,7 +127,7 @@ namespace Core
 		}
 		cout << "\n" << endl;
 		CloseHandle(snapshot);
-		return 0;
+		return found == TRUE;
 	}
 
 
@@ -200,14 +200,14 @@ namespace Core
 		ProcessesSnapShot(affinity);
 	}
 
-	void Controller::MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores)
+	bool Controller::MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores)
 	{
 		if ((eCores <= 0 && pCores <= 0)|| eCores > eCoreCount || pCores % 2 == 1 || pCores > pCoreCount) {
-			return;
+			return false;
 		}
 
 		int affinity = CreateAffinityMask(eCores, pCores);
-		FindAndBind(target, affinity);
+		return FindAndBind(target, affinity);
 	}
 	
 	void Controller::MoveAllAppsToHybridCores(int eCores, int pCores)
