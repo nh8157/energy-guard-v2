@@ -1,5 +1,4 @@
-﻿using System.Data.SQLite;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
@@ -51,14 +50,6 @@ public class EnergyUsageModel
         get; set;
     }
     
-    public double CarbonIntensity
-    {
-        get => _carbonIntensityInfo.CarbonIntensity;
-        private set => _carbonIntensityInfo.CarbonIntensity = value;
-    }
-
-    public double LiveCostPerKwh => _energyRateInfo.EnergyRate;
-
     public double CarbonIntensity
     {
         get => _carbonIntensityInfo.CarbonIntensity;

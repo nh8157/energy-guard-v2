@@ -1,16 +1,11 @@
 using System.Diagnostics;
-using System.Net.Http;
-using System.Net.Http.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
-using EnergyPerformance.Contracts.Services;
-
-using EnergyPerformance.Models;
 
 namespace EnergyPerformance.Services;
-class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateService
+class CarbonIntensityUpdateService : BackgroundService
 {
     private readonly string _ukApiUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(5));
