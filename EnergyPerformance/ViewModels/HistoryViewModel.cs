@@ -133,7 +133,7 @@ public partial class HistoryViewModel : ObservableObject
             Labeler = value => new DateTime((long) value).ToString("MM/dd"),
             UnitWidth = TimeSpan.FromDays(1).Ticks, 
             MinStep = TimeSpan.FromDays(1).Ticks,
-            TicksAtCenter = true
+            
 
         }
     };
