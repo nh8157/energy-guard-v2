@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
@@ -21,8 +21,8 @@ public class LocationService : BackgroundService
 
     public string Postcode
     {
-        get => _locationInfo.PostCode;
-        private set => _locationInfo.PostCode = value;
+        get => _locationInfo.Postcode;
+        private set => _locationInfo.Postcode = value;
     }
 
 

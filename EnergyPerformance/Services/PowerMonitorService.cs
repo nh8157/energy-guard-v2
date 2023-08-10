@@ -1,7 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.IO;
+using System.Diagnostics;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
+using EnergyPerformance.ViewModels;
+using EnergyPerformance.Views;
 using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
@@ -28,7 +32,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
-    
+
     public double Power
     {
         get => _powerInfo.Power;

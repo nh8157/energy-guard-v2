@@ -1,4 +1,11 @@
-﻿namespace EnergyPerformance.Helpers;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace EnergyPerformance.Helpers;
+
 public class CarbonIntensityInfo
 {
     private double _carbonIntensity;
