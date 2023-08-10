@@ -1,7 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.IO;
+using System.Diagnostics;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
+using EnergyPerformance.ViewModels;
+using EnergyPerformance.Views;
 using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
@@ -17,17 +21,16 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     public List<ISensor> sensors;
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
-
     private readonly PowerInfo _powerInfo;
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
-
 
     public double Power
     {
         get => _powerInfo.Power;
         private set => _powerInfo.Power = value;
     }
+
 
     /// <summary>
     /// Visitor class used to update the hardware components of the system.
@@ -138,11 +141,10 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         Power = power; // update the front end power value only with the value read from sensors
         var currentDateTime = DateTimeOffset.Now;
         // methods to update the daily and hourly power usage
-        
+
         // TODO: record carbon emissions
         UpdateDailyUsage(currentDateTime, Power);
         UpdateHourlyUsage(currentDateTime, Power);
-
         await Task.CompletedTask;
     }
 
@@ -181,7 +183,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             power = 0;
         }
         // accumulate watts if the same hour
-        if (currentDateTime.DateTime.Hour == _model.CurrentDay.DateTime.Hour)
+        if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
             _model.AccumulatedWattsHourly += power;
         }
@@ -192,6 +194,4 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             _model.AccumulatedWattsHourly = power;
         }
     }
-
-
 }

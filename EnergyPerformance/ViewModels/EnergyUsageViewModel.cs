@@ -78,19 +78,9 @@ public partial class EnergyUsageViewModel : ObservableRecipient
         stemSeriesEnergyHourly = new StemSeries();
         this.controller = new PlotController();
 
-        var command = new DelegatePlotCommand<OxyMouseEventArgs>(
-           (v, c, a) =>
-           {
-               Console.WriteLine("1223");
-           });
-        Controller.BindMouseDown(OxyMouseButton.Left, command); //
-
-       
-
         LoadLocalizedStrings();
         InitialiseEnergyUsageModel();
         InitialiseSystemMonitorModel();
-        
 
     }
 
@@ -182,8 +172,6 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             PlotAreaBorderThickness = new OxyThickness(0),
             DefaultFont = "Segoe UI",
         };
-
-        Console.WriteLine("1222222");
 
         stemSeriesEnergy = new StemSeries
         {
@@ -387,12 +375,6 @@ public partial class EnergyUsageViewModel : ObservableRecipient
             MarkerStroke = OxyColors.AliceBlue,
             MarkerType = MarkerType.Circle,
         };
-        var logs = _model.GetHourlyEnergyUsageLogs();
-        foreach (var log in logs)
-        {
-            stemSeriesEnergyHourly.Points.Add(new DataPoint(DateTimeAxis.ToDouble(log.Date), log.PowerUsed));
-            stemSeriesCostHourly.Points.Add(new DataPoint(DateTimeAxis.ToDouble(log.Date), log.Cost));
-        }
     }
 
     /// <summary>

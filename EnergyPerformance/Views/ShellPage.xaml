@@ -41,20 +41,11 @@
                         <BitmapIcon UriSource="ms-appx:///Assets/electric-plug-icon.png"></BitmapIcon>
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                
+
                 <NavigationViewItem Icon="World" x:Uid="CarbonEmission" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.CarbonEmissionViewModel">
                 </NavigationViewItem>
 
-                <!--<NavigationViewItem x:Uid="PowerConsumption" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.SystemMonitorViewModel">
-                    <NavigationViewItem.Icon>
-                        <BitmapIcon UriSource="ms-appx:///Assets/screen-icon.png"></BitmapIcon>
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
-                
-                <!--<NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
-                </NavigationViewItem>-->
-
-                <NavigationViewItem Icon="Calendar" x:Uid="HistoryEnergy" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.TestMonitorViewModel">
+                <NavigationViewItem Icon="Calendar" x:Uid="HistoryEnergy" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.HistoryViewModel">
                 </NavigationViewItem>
 
                 <NavigationViewItem x:Uid="PersonaCustomisation" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.PersonaViewModel">
@@ -65,6 +56,11 @@
                 
                 <NavigationViewItem Icon="Zoom" x:Uid="Shell_Debug" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.DebugViewModel">
                 </NavigationViewItem>
+
+                <NavigationViewItem x:Name="MonitorDetailNavItem" Visibility="Collapsed" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MonitorDetailViewModel">
+                </NavigationViewItem>
+
+
             </NavigationView.MenuItems>
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

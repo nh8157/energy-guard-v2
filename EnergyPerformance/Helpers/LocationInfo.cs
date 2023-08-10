@@ -1,23 +1,21 @@
 ﻿namespace EnergyPerformance.Helpers;
+
 public class LocationInfo
 {
     public string Country
     {
-        get; set;
+        get;
+        set;
     }
-    public string PostCode
+    public string Postcode
     {
-        get; set;
+        get;
+        set;
     }
-    public LocationInfo(string country, string postCode)
-    {
-        // UCL's address is set as the default address
-        Country = country;
-        PostCode = postCode;
-    }
+
     public LocationInfo()
     {
         Country = "Unknown";
-        PostCode = "Unknown";
+        Postcode = "Unknown";
     }
 }
