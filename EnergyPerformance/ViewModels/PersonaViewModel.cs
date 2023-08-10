@@ -43,29 +43,23 @@ public partial class PersonaViewModel : ObservableRecipient
             {
                 Add(item.Item1, item.Item2);
             }
-
-            AddDummyData();
-
             do_once = false;
         }
         
     }
 
-    private void Add(string _appName, float _energyRating)
+    // Function to Add Persona object to the local list of objects
+    // Checks if the list contains a persona for said application
+    // Adds only if persona is not present
+    public void Add(string _appName, float _energyRating)
     {
-        personasAndRatings.Add(new PersonaObject(_appName, _energyRating));
-        applicationList.Add(_appName);
+        if (!applicationList.Contains(_appName))
+        {
+            personasAndRatings.Add(new PersonaObject(_appName, _energyRating));
+            applicationList.Add(_appName);
+        }
     }
 
-    // For Debugging Purposes only - To be removed eventually
-    private void AddDummyData()
-    {
-        Add("Steam", 2.0f);
-        Add("Spotify", 3.0f);
-        Add("Word", 2.5f);
-        Add("Minecraft", 1.0f);
-        Add("Chrome", 1.3f);
-    }
 }
 
 // Class for Application Object - Inherits from INotifyPropertyChanged - Notifies the View that a change has occured

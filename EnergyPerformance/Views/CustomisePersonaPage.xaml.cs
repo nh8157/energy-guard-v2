@@ -39,7 +39,7 @@ public sealed partial class CustomisePersonaPage : Page
     // Function to apply persona to the selected application
     // Grabs the index of the application in the list
     // Sets the corresponding energy value and image path accordingly in the view model
-    // Navigates to the Persona Customisation Page
+    // Navigates to the Persona List Page
     private void ApplyPersona(object sender, RoutedEventArgs e)
     {
         var selectedIndex = AppSelection.SelectedIndex;
@@ -53,8 +53,8 @@ public sealed partial class CustomisePersonaPage : Page
     }
 
     // Function called when Go Back button is clicked
-    // Navigates to the Persona Customisation Page
-    private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
+    // Navigates to the Persona List Page
+    private void NavigateToListPage(object sender, RoutedEventArgs e)
     {
         Frame.Navigate(typeof(PersonaListPage));
     }
