@@ -142,6 +142,7 @@ public partial class App : Application
             services.AddTransient<PersonaViewModel>();
             services.AddTransient<PersonaListPage>();
             services.AddTransient<CustomisePersonaPage>();
+            services.AddTransient<PersonaCustomisationViewModel>();
             services.AddTransient<AddPersonaPage>();
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();

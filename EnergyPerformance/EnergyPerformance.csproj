@@ -29,8 +29,7 @@
     <Content Remove="Assets\flash.png" />
   </ItemGroup>
   <ItemGroup>
-<<<<<<<<< Temporary merge branch 1
-    <None Remove="Views\AddPersonaPage.xaml" />
+	<None Remove="Views\AddPersonaPage.xaml" />
     <None Remove="Views\CustomisePersonaPage.xaml" />
     <None Remove="Views\ProcessesPage.xaml" />
     <None Remove="Views\HistoryPage.xaml" />
@@ -88,8 +87,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Update="Views\SystemMonitor.xaml">
-	 <Page Update="Views\HistoryPage.xaml">
-	   <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+	  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+    </Page>
+	<Page Update="Views\HistoryPage.xaml">
+	  <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
     </Page>
     <Page Update="Views\SystemMonitorPage.xaml">
       <XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>

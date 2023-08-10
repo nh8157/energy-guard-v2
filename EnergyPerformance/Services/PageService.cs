@@ -27,7 +27,6 @@ public class PageService : IPageService
         Configure<DebugViewModel, DebugPage>();
         Configure<PersonaViewModel, PersonaListPage>();
         Configure<HistoryViewModel, HistoryPage>();
-        Configure<PersonaCustomisationViewModel, PersonaCustomisationPage>();
     }
 
     public Type GetPageType(string key)
