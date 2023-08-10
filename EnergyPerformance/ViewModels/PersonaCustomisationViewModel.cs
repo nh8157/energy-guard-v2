@@ -14,24 +14,23 @@ namespace EnergyPerformance.ViewModels;
 public partial class PersonaCustomisationViewModel : ObservableRecipient, INotifyPropertyChanged
 {
     [ObservableProperty]
+    private ObservableCollection<ApplicationObject> applicationList = new();
+    
+    [ObservableProperty]
     private ObservableCollection<String> applications = new();
 
-    [ObservableProperty]
-    private ObservableCollection<ApplicationObject> applicationList = new();
+    private readonly PersonaModel _personaModel;
 
-    public PersonaCustomisationViewModel()
+    public PersonaCustomisationViewModel(PersonaModel personaModel)
     {
-        applications.Add("Steam");
-        applications.Add("Spotify");
-        applications.Add("Word");
-        applications.Add("Minecraft");
-        applications.Add("Chrome");
+        _personaModel = personaModel;
 
-        applicationList.Add(new ApplicationObject("Steam", 3));
-        applicationList.Add(new ApplicationObject("Spotify", 1));
-        applicationList.Add(new ApplicationObject("Word", 1));
-        applicationList.Add(new ApplicationObject("Minecraft", 3));
-        applicationList.Add(new ApplicationObject("Chrome", 2));
+        foreach (var (path, rating) in _personaModel.ReadPersonaAndRating())
+        {
+            var appName = Path.GetFileNameWithoutExtension(path);
+            applications.Add(appName);
+            applicationList.Add(new ApplicationObject(appName, (int)Math.Round(rating)));
+        }
     }
 }
 

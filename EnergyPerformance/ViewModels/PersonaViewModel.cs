@@ -43,9 +43,9 @@ public partial class PersonaViewModel : ObservableRecipient
             {
                 Add(item.Item1, item.Item2);
             }
+
             do_once = false;
         }
-        
     }
 
     // Function to Add Persona object to the local list of objects
@@ -59,7 +59,6 @@ public partial class PersonaViewModel : ObservableRecipient
             applicationList.Add(_appName);
         }
     }
-
 }
 
 // Class for Application Object - Inherits from INotifyPropertyChanged - Notifies the View that a change has occured

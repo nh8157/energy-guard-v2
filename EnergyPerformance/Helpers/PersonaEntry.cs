@@ -17,8 +17,13 @@ public class PersonaEntry
     {
         set; get;
     }
+    
+    public float EnergyRating
+    {
+        set; get;
+    }
 
-    public PersonaEntry(int id, string path, (int, int) cpuSetting, int gpuSetting)
+    public PersonaEntry(int id, string path, float energyRating, (int, int) cpuSetting, int gpuSetting)
     {
         Id = id;
         Path = path;

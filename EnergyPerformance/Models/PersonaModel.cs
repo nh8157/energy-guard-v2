@@ -129,7 +129,8 @@ public class PersonaModel
     {
         if (!_allPersonas.Any(persona => persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase)))
         {
-            var entry = new PersonaEntry(_nextPersonaId, personaName, ConvertRatingToCpuSetting(energyRating), ConvertRatingToGpuSetting(energyRating));
+            var entry = new PersonaEntry(_nextPersonaId, personaName, energyRating,
+                ConvertRatingToCpuSetting(energyRating), ConvertRatingToGpuSetting(energyRating));
 
             _allPersonas.Add(entry);
 
@@ -142,14 +143,13 @@ public class PersonaModel
     }
 
     /// <summary>
-    /// This method reads all existing Personas
-    /// And translates the raw CPU, GPU settings into the positioning of the slider
+    /// This method reads all existing Personas with their respective energy ratings
     /// </summary>
     /// <returns>List of executable path name and energy rating pair for every application</returns>
     public List<(string, float)> ReadPersonaAndRating()
     {
         List<(string, float)> profiles = _allPersonas.Select(persona => 
-            (persona.Path, ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))
+            (persona.Path, persona.EnergyRating)
         ).ToList();
         return profiles;
     }
@@ -167,6 +167,7 @@ public class PersonaModel
             {
                 persona.CpuSetting = ConvertRatingToCpuSetting(energyRating);
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
+                persona.EnergyRating = energyRating;
 
                 _processMonitorService.RemoveWatcher(personaName);
                 _processMonitorService.AddWatcher(personaName);
