@@ -261,7 +261,7 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
     <value>Automatically control system resources to save power.</value>
   </data>
   <data name="HomeBudgetProgressRingLabel.Text" xml:space="preserve">
-    <value>of budget used</value>
+    <value>Budget Used</value>
   </data>
   <data name="HomeCasualAppBarButton.Label" xml:space="preserve">
     <value>Casual</value>
