@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
+using EnergyPerformance.ViewModels;
 using Microsoft.Extensions.Hosting;
 
 namespace EnergyPerformance.Services;
@@ -11,53 +12,64 @@ public class ProcessTrackerService : BackgroundService
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(10000));
     private readonly Dictionary<Process, PerformanceCounter> processCpuCounters = new();
     private readonly Dictionary<Process, PerformanceCounter> processGpuCounters = new();
-    private readonly string[] processBlacklist =
-    {
-        "Idle", "System", "svchost", "Registry", "smss", "csrss", "wininit", "services", "lsass", "winlogon",
-        "fontdrvhost", "dwm", "taskhostw", "sihost", "explorer", "SearchApp", "SearchIndexer", "RuntimeBroker",
-    };
-
     private readonly CpuInfo cpuInfo;
     private readonly GpuInfo gpuInfo;
+    private readonly PersonaModel personaModel;
     
-    private readonly DebugModel _debug = App.GetService<DebugModel>();
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _debug.AddMessage("GPU Tracker Service Started");
         while (await _periodicTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
         {
             await DoAsync();
         }
     }
+    
+    public void AddProcess(Process process)
+    {
+        var cpuInstanceName = GetCpuInstanceNameForProcess(process);
+        var gpuInstanceName = GetGpuInstanceNameForProcess(process);
 
-    public ProcessTrackerService(CpuInfo cpuInfo, GpuInfo gpuInfo)
+        processCpuCounters.TryAdd(process, 
+            new PerformanceCounter("Process", "% Processor Time", cpuInstanceName));
+
+        if (gpuInstanceName == null)
+        {
+            return;
+        }
+        
+        processGpuCounters.TryAdd(process, 
+            new PerformanceCounter("GPU Engine", "Utilization Percentage", gpuInstanceName));
+    }
+    
+    public void RemoveProcess(Process process)
+    {
+        processCpuCounters.Remove(process);
+        processGpuCounters.Remove(process);
+    }
+
+    public ProcessTrackerService(CpuInfo cpuInfo, GpuInfo gpuInfo, PersonaModel personaModel)
     {
         this.cpuInfo = cpuInfo;
         this.gpuInfo = gpuInfo;
+        this.personaModel = personaModel;
+
+        var processes = this.personaModel.ReadPersonaAndRating();
         
-        // Create a performance counter for all user processes
-        var processes = Process.GetProcesses();
-        processes = processes.Where(process => !processBlacklist.Contains(process.ProcessName)).ToArray();
-
-        foreach (var process in processes)
+        // Create a performance counter for each already running process in the persona list
+        foreach (var (path, rating) in processes)
         {
-            var cpuInstanceName = GetCpuInstanceNameForProcess(process);
-            var gpuInstanceName = GetGpuInstanceNameForProcess(process);
-
-            processCpuCounters.Add(process, 
-                new PerformanceCounter("Process", "% Processor Time", cpuInstanceName));
-
-            if (gpuInstanceName == null)
+            var processName = Path.GetFileName(path);
+            var process = Process.GetProcessesByName(processName).FirstOrDefault();
+            if (process == null)
             {
                 continue;
             }
             
-            processGpuCounters.Add(process, 
-                new PerformanceCounter("GPU Engine", "Utilization Percentage", gpuInstanceName));
+            AddProcess(process);
         }
     }
-    
+
     private string GetCpuInstanceNameForProcess(Process process)
     {
         var instanceName = process.ProcessName;

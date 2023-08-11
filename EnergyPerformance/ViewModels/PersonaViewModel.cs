@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
@@ -36,6 +37,7 @@ public partial class PersonaViewModel : ObservableRecipient
 
     private void Initialise()
     {
+        Debug.WriteLine("Initialising PersonaViewModel");
         if (do_once)
         {
             var list = _model.ReadPersonaAndRating();
@@ -51,13 +53,23 @@ public partial class PersonaViewModel : ObservableRecipient
     // Function to Add Persona object to the local list of objects
     // Checks if the list contains a persona for said application
     // Adds only if persona is not present
-    public void Add(string _appName, float _energyRating)
+    public async void Add(string _appName, float _energyRating)
     {
         if (!applicationList.Contains(_appName))
         {
+            await _model.CreatePersona(_appName, _energyRating);
             personasAndRatings.Add(new PersonaObject(_appName, _energyRating));
             applicationList.Add(_appName);
         }
+    }
+    
+    public async void Update(int index, float value)
+    {
+        var item = personasAndRatings[index];
+        var appName = item.AppName;
+        await _model.UpdatePersona(appName, value);
+        item.EnergyValue = value;
+        item.EnergyRating = item.UpdateEnergyRating((int)value);
     }
 }
 

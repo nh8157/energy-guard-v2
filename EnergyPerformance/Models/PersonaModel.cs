@@ -168,6 +168,7 @@ public class PersonaModel
         {
             if (persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
             {
+                Debug.WriteLine($"Updating persona {personaName} to {energyRating}");
                 persona.CpuSetting = ConvertRatingToCpuSetting(energyRating);
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
                 persona.EnergyRating = energyRating;

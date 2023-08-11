@@ -46,6 +46,7 @@ public sealed partial class CustomisePersonaPage : Page
         if (selectedIndex != -1)
         {
             var item = ViewModel.PersonasAndRatings[selectedIndex];
+            ViewModel.Update(selectedIndex, (float)PersonaSlider.Value);
             item.EnergyValue = (float)PersonaSlider.Value;
             item.EnergyRating = item.UpdateEnergyRating((int)PersonaSlider.Value);
             Frame.Navigate(typeof(PersonaListPage));
