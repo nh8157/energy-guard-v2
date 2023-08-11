@@ -113,15 +113,15 @@ public sealed partial class AddPersonaPage : Page
 
     private string GetTargetFile(string path)
     {
-        string filepath = System.IO.Path.GetDirectoryName(path);
-        string filename = System.IO.Path.GetFileName(path);
+        var filepath = Path.GetDirectoryName(path);
+        var filename = Path.GetFileName(path);
 
         Shell shell = new Shell();
         Folder folder = shell.NameSpace(filepath);
         FolderItem folderItem = folder.ParseName(filename);
         if (folderItem != null && folderItem.IsLink)
         {
-            Shell32.ShellLinkObject link = (Shell32.ShellLinkObject)folderItem.GetLink;
+            ShellLinkObject link = (ShellLinkObject)folderItem.GetLink;
             return link.Path;
         }
         return string.Empty;
