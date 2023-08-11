@@ -26,7 +26,6 @@ public sealed partial class AddPersonaPage : Page
 {
     const float DEFAULT = 2.0f;
     private static string CurrentPath = "";
-    public static DebugModel debug;
 
     public PersonaViewModel ViewModel
     {
@@ -37,7 +36,6 @@ public sealed partial class AddPersonaPage : Page
     {
         ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
-        debug = App.GetService<DebugModel>();
     }
 
     // Function called when Add Persona is clicked
@@ -101,7 +99,7 @@ public sealed partial class AddPersonaPage : Page
 
             if (CurrentPath != null && CurrentPath != "" && CurrentPath.Substring(CurrentPath.Length - 4).Equals(".lnk"))
             {
-                CurrentPath = GetTargetFile(CurrentPath);
+                CurrentPath = GetTargetExecutable(CurrentPath);
             }
             if (CurrentPath != null && CurrentPath != "" && CurrentPath.Substring(CurrentPath.Length - 4).Equals(".exe"))
             {
@@ -111,7 +109,8 @@ public sealed partial class AddPersonaPage : Page
         }
     }
 
-    private string GetTargetFile(string path)
+    // Function to get the Target Executable, if the path supplied points to a shortcut
+    private string GetTargetExecutable(string path)
     {
         var filepath = Path.GetDirectoryName(path);
         var filename = Path.GetFileName(path);
