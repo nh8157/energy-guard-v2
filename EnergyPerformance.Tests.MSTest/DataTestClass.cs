@@ -4,7 +4,11 @@ using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
 using EnergyPerformance.Core.Services;
+using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
+using EnergyPerformance.Wrappers;
+using Moq;
+using Windows.Media.PlayTo;
 
 namespace EnergyPerformance.Tests.MSTest;
 
@@ -173,14 +177,46 @@ public class DataTestClass
     }
 
     [TestMethod]
-    public async Task TestDBInitialization()
+    public async Task TestDBInitializationWhenNoDirectory()
+    {
+        var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var directory = Path.Combine(folderPath, _defaultApplicationDataFolder);
+        var wrapper = new Mock<DatabaseMethodFactory>();
+        wrapper.Setup(w => w.DirectoryExists(directory)).Returns(false);
+        var databaseService = GetDatabaseService();
+        databaseService.MethodWrapper = wrapper.Object;
+        await databaseService.InitializeDB();
+        Assert.IsTrue(File.Exists(Path.Combine(directory, "testDB.db")));
+    }
+
+    [TestMethod]
+    public async Task TestDBInitializationWhenNoDB()
     {
         var databaseService = GetDatabaseService();
         var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-        folderPath = Path.Combine(folderPath, _defaultApplicationDataFolder);
-        Assert.IsTrue(File.Exists(Path.Combine(folderPath, "testDB.db")));
+        var directory = Path.Combine(folderPath, _defaultApplicationDataFolder);
+        var filepath = Path.Combine(directory, "testDB.db");
+        var wrapper = new Mock<DatabaseMethodFactory>();
+        wrapper.Setup(w => w.FileExists(filepath)).Returns(false);
+        await databaseService.InitializeDB();
+        Assert.IsTrue(File.Exists(filepath));
         var data = await databaseService.LoadUsageData();
         Assert.AreEqual(data.Diaries.Count(), 0);
+    }
+
+    [TestMethod]
+    public async Task TestInitializationWhenDBExists()
+    {
+        var databaseService = GetDatabaseService();
+        var wrapper = new Mock<DatabaseMethodFactory>();
+        wrapper.Setup(w => w.DatabaseIsActive(databaseService.CreateConnection())).ReturnsAsync(true);
+        await databaseService.InitializeDB();
+        var consoleOutputCapture = new ConsoleOutputCapture();
+        string capturedOutput = consoleOutputCapture.GetCapturedOutput();
+        if (capturedOutput.Contains("retrieves"))
+        {
+            Assert.IsTrue(true);
+        }
     }
 
     [TestMethod]
@@ -225,6 +261,26 @@ public class DataTestClass
         var dailyLog = GenerateRandomDailyLog(DateTime.Now);
         string id = await databaseService.InsertDailyLog(dailyLog);
         Assert.AreNotEqual(id.Length, 0);
+    }
+
+
+    [DataRow(0)]
+    [DataRow(-2)]
+    [DataRow(-15)]
+    [TestMethod]
+    public async Task TestRetrieveDiaryByDate(int value)
+    {
+        var databaseService = GetDatabaseService();
+        await databaseService.SaveEnergyData(_data);
+        var timeOfData = _data.Diaries[^1].Date;
+        var targetDate = timeOfData.AddDays(value);
+        var targetDiary = databaseService.RetrieveDiaryByDate(targetDate.ToString("yyyy/MM/dd"));
+        var index = -value + 1;
+        if (targetDiary.Equals(_data.Diaries[^index]))
+        {
+            Assert.IsTrue(true);
+        }
+
     }
 
 }

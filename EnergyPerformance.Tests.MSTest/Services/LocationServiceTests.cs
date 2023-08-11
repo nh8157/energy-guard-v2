@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using EnergyPerformance.Contracts.Services;
-using EnergyPerformance.Core.Contracts.Services;
-using EnergyPerformance.Core.Services;
+﻿using System.Diagnostics;
 using EnergyPerformance.Helpers;
-using EnergyPerformance.Models;
 using EnergyPerformance.Services;
-using Microsoft.Extensions.Options;
+using EnergyPerformance.Wrapper;
 using Moq;
-using Windows.Foundation;
+using Windows.Devices.Geolocation;
 
 namespace EnergyPerformance.Tests.MSTest.Services;
 [TestClass()]
@@ -36,11 +27,15 @@ public class LocationServiceTests
         Assert.IsNotNull(service);
     }
 
+
     [TestMethod]
-    public async Task TestLocationInfoUpdateCorrectly()
+    public async Task TestLocationInfoUpdateWithGeoLocationAccess()
     {
+        var methodWrapper = new Mock<LocationServiceMethodFactory>();
+        methodWrapper.Setup(m => m.RequestAccessAsync()).ReturnsAsync(GeolocationAccessStatus.Allowed);
         var locationInfo = new LocationInfo();
         var locationService = new LocationService(locationInfo);
+        locationService.MethodsWrapper = methodWrapper.Object;
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         await locationService.StartAsync(token);
@@ -48,4 +43,21 @@ public class LocationServiceTests
         cts.Cancel();
         Assert.AreNotEqual(locationInfo.Country, "Unknown");
     }
+
+    [TestMethod]
+    public async Task TestLocationUpdateWithoutGeoLocationAccess()
+    {
+        var methodWrapper = new Mock<LocationServiceMethodFactory>();
+        methodWrapper.Setup(m => m.RequestAccessAsync()).ReturnsAsync(GeolocationAccessStatus.Denied);
+        var locationInfo = new LocationInfo();
+        var locationService = new LocationService(locationInfo);
+        locationService.MethodsWrapper = methodWrapper.Object;
+        var cts = new CancellationTokenSource();
+        var token = cts.Token;
+        await locationService.StartAsync(token);
+        await Task.Delay(3000);
+        cts.Cancel();
+        Assert.AreEqual(locationInfo.Country, "Unavailable");
+    }
+    
 }

@@ -1,4 +1,7 @@
-﻿namespace EnergyPerformance.Helpers;
+﻿using System;
+using Windows.Devices.Geolocation;
+
+namespace EnergyPerformance.Helpers;
 
 public class LocationInfo
 {

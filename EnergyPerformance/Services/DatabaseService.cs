@@ -6,6 +6,7 @@ using System.Globalization;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
 using EnergyPerformance.Models;
+using EnergyPerformance.Wrappers;
 
 namespace EnergyPerformance.Services;
 public class DatabaseService : IDatabaseService
@@ -19,11 +20,17 @@ public class DatabaseService : IDatabaseService
 
     private bool _isInitialized = false;
 
+    public DatabaseMethodFactory MethodWrapper
+    {
+        get; set; 
+    }
+
     public DatabaseService()
     {
         _localAppDataFolder = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData");
         _datasource = Path.Combine(_localAppDataFolder, "database.DB");
         _energyUsage = new EnergyUsageData();
+        MethodWrapper = new DatabaseMethodFactory();
     }
 
     public DatabaseService(string name)
@@ -31,15 +38,16 @@ public class DatabaseService : IDatabaseService
         _localAppDataFolder = Path.Combine(_localApplicationData, "EnergyPerformance/ApplicationData");
         _datasource = Path.Combine(_localAppDataFolder, name);
         _energyUsage = new EnergyUsageData();
+        MethodWrapper = new DatabaseMethodFactory();
     }
 
     public async Task InitializeDB()
     {
-        if (!File.Exists(_datasource))
+        if (MethodWrapper.FileExists(_datasource))
         {
             try
             {
-                if (!Directory.Exists(_localAppDataFolder))
+                if (MethodWrapper.DirectoryExists(_localAppDataFolder))
                 {
                     Directory.CreateDirectory(_localAppDataFolder);
                 }
@@ -77,10 +85,10 @@ public class DatabaseService : IDatabaseService
                 Debug.WriteLine(ex.ToString());
             }
         }
-        if (await DatabaseIsActive())
+        if (await MethodWrapper.DatabaseIsActive(CreateConnection()))
         {
             _energyUsage = await ReadUsageDataFromDatabase();
-            Debug.WriteLine($"retrieved {_energyUsage.Diaries.Count().ToString()} diaries from databased");
+            Debug.WriteLine($"retrieved {_energyUsage.Diaries.Count().ToString()} diaries from database");
         }
         else
         {
@@ -90,7 +98,7 @@ public class DatabaseService : IDatabaseService
     }
 
 
-    private SQLiteConnection CreateConnection()
+    public SQLiteConnection CreateConnection()
     {
         SQLiteConnection sqlite_conn;
         sqlite_conn = new SQLiteConnection($"Data Source={_datasource}; Version = 3; New = True; Compress = True; ");
@@ -105,7 +113,7 @@ public class DatabaseService : IDatabaseService
         return sqlite_conn;
     }
 
-    private async Task<SQLiteConnection> CreateConnectionAsync()
+    public async Task<SQLiteConnection> CreateConnectionAsync()
     {
         SQLiteConnection sqlite_conn;
         sqlite_conn = new SQLiteConnection($"Data Source={_datasource}; Version = 3; New = True; Compress = True; ");
@@ -520,15 +528,6 @@ public class DatabaseService : IDatabaseService
         return _energyUsage;
     }
 
-    private async Task<bool> DatabaseIsActive()
-    {
-        SQLiteConnection conn = CreateConnection();
-        string query = "SELECT COUNT(*) FROM energy_diary_log";
-        SQLiteCommand cmd = new SQLiteCommand(query, conn);
-        int count = Convert.ToInt32(await cmd.ExecuteScalarAsync());
-        conn.Close();
-        return count > 0;
-    }
 
     private async Task<bool> CheckIfDailyLogExists(SQLiteConnection conn, string date)
     {
