@@ -60,7 +60,7 @@ public class LocationService : BackgroundService
                 var latitude = pos.Coordinate.Point.Position.Latitude;
                 var longitude = pos.Coordinate.Point.Position.Longitude;
 
-                HttpClient client = _httpClientFactory.CreateClient("Location Service");
+                HttpClient client = _httpClientFactory.CreateClient();
 
                 var url = string.Format(_locationUrl, latitude, longitude);
                 JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(client, url)??

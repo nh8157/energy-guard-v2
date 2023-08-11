@@ -60,7 +60,7 @@ class CarbonIntensityUpdateService : BackgroundService, ICarbonIntensityUpdateSe
 
     private async Task FetchLiveCarbonIntensity()
     {
-        var httpClient = _httpClientFactory.CreateClient("Live Carbon Intensity");
+        var httpClient = _httpClientFactory.CreateClient();
         try
         {
             var url = string.Format(_ukUrl, Postcode.Split(" ")[0]);
