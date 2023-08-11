@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Shell32;
 using Windows.Media.AppRecording;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -25,6 +26,7 @@ public sealed partial class AddPersonaPage : Page
 {
     const float DEFAULT = 2.0f;
     private static string CurrentPath = "";
+    public static DebugModel debug;
 
     public PersonaViewModel ViewModel
     {
@@ -35,6 +37,7 @@ public sealed partial class AddPersonaPage : Page
     {
         ViewModel = App.GetService<PersonaViewModel>();
         InitializeComponent();
+        debug = App.GetService<DebugModel>();
     }
 
     // Function called when Add Persona is clicked
@@ -96,12 +99,32 @@ public sealed partial class AddPersonaPage : Page
             Marshal.FreeHGlobal(path);
             CurrentPath = Marshal.PtrToStringUni(path); // Store the path of the object in CurrentPath
 
+            if (CurrentPath != null && CurrentPath != "" && CurrentPath.Substring(CurrentPath.Length - 4).Equals(".lnk"))
+            {
+                CurrentPath = GetTargetFile(CurrentPath);
+            }
             if (CurrentPath != null && CurrentPath != "" && CurrentPath.Substring(CurrentPath.Length - 4).Equals(".exe"))
             {
                 var AppName = GetApplicationName(CurrentPath);
                 AppSelection.Text = AppName;
             }
         }
+    }
+
+    private string GetTargetFile(string path)
+    {
+        string filepath = System.IO.Path.GetDirectoryName(path);
+        string filename = System.IO.Path.GetFileName(path);
+
+        Shell shell = new Shell();
+        Folder folder = shell.NameSpace(filepath);
+        FolderItem folderItem = folder.ParseName(filename);
+        if (folderItem != null && folderItem.IsLink)
+        {
+            Shell32.ShellLinkObject link = (Shell32.ShellLinkObject)folderItem.GetLink;
+            return link.Path;
+        }
+        return string.Empty;
     }
 
     // Function to get the Application Name from the string path
