@@ -47,7 +47,7 @@ internal class PersonaNotification
     public static void StartAutoConfigurationNotification(string executable)
     {
         new ToastContentBuilder()
-            .AddText($"Persona auto-configuration for {executable} has started.\n\n" +
+            .AddText($"Persona auto-configuration for {executable.ToLower()} has started.\n\n" +
                 "We'll inquire about app stability during usage.")
             .AddButton(new ToastButtonDismiss("Dismiss"))
             .Show();
@@ -60,7 +60,7 @@ internal class PersonaNotification
     public static void StabilityCheckNotification(string executable)
     {
         new ToastContentBuilder()
-            .AddText($"Is the performance of {executable} stable?")
+            .AddText($"Is the performance of {executable.ToLower()} stable?")
             .AddButton(new ToastButton()
                 .SetContent("Yes")
                 .AddArgument("action", $"moveTowardsPerformance&{executable}"))
@@ -73,7 +73,7 @@ internal class PersonaNotification
     public static void AutoConfigurationSuccessNotification(string executable)
     {
         new ToastContentBuilder()
-            .AddText($"Successfully auto-configured Persona for {executable}.")
+            .AddText($"Successfully auto-configured Persona for {executable.ToLower()}.")
             .AddButton(new ToastButtonDismiss("Dismiss"))
             .Show();
     }
