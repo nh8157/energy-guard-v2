@@ -77,7 +77,7 @@ public class PersonaModel
         {
             if (executablePath != null)
             {
-                PersonaNotificationService.EnablePersona(executablePath);
+                PersonaNotification.EnablePersonaNotification(executablePath);
             }
         });
     }
@@ -97,7 +97,7 @@ public class PersonaModel
             {
                 if (personaName != null)
                 {
-                    PersonaNotificationService.DisabledPersona(personaName);
+                    PersonaNotification.DisabledPersonaNotification(personaName);
                 }
             });
         }
