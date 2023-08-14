@@ -53,7 +53,7 @@ public class AppNotificationService : IAppNotificationService
             if (args.Argument.Contains('&'))
             {
                 // Extract executable path
-                executablePath = customAction.Split('&')[1].ToLower();
+                executablePath = customAction.Split('&')[1];
 
                 // Extract the custom action
                 customAction = customAction.Split('&')[0];
@@ -74,21 +74,21 @@ public class AppNotificationService : IAppNotificationService
 
                     break;
                 case "configurPersonaToPerformant":
-                    var performantEnergyRate = 0.1f;
+                    var performantEnergyRate = 1.0f;
 
                     await App.GetService<PersonaModel>().UpdatePersona(executablePath, performantEnergyRate);
                     App.GetService<PersonaModel>().EnablePersona(executablePath);
 
                     break;
                 case "configurPersonaToBalanced":
-                    var balancedEnergyRate = 0.2f;
+                    var balancedEnergyRate = 2.0f;
 
                     await App.GetService<PersonaModel>().UpdatePersona(executablePath, balancedEnergyRate);
                     App.GetService<PersonaModel>().EnablePersona(executablePath);
 
                     break;
                 case "configurPersonaToEfficient":
-                    var efficientEnergyRate = 0.3f;
+                    var efficientEnergyRate = 3.0f;
 
                     await App.GetService<PersonaModel>().UpdatePersona(executablePath, efficientEnergyRate);
                     App.GetService<PersonaModel>().EnablePersona(executablePath);

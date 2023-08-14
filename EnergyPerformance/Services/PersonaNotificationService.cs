@@ -13,9 +13,8 @@ internal class PersonaNotificationService
     /// </summary>
     public static void EnablePersona(string executablePath)
     {
-        executablePath = executablePath.ToLower();
         new ToastContentBuilder()
-            .AddText($"Enable Persona for {executablePath}?")
+            .AddText($"Enable Persona for {executablePath.ToLower()}?")
             .AddButton(new ToastButton()
                 .SetContent("Enable")
                 .AddArgument("action", $"autoConfigurePersonaNotification&{executablePath}"))
@@ -29,9 +28,8 @@ internal class PersonaNotificationService
     /// </summary>
     public static void AutoConfigurePersona(string executablePath)
     {
-        executablePath = executablePath.ToLower();
         new ToastContentBuilder()
-            .AddText($"Auto-configure Persona for {executablePath}?")
+            .AddText($"Auto-configure Persona for {executablePath.ToLower()}?")
             .AddButton(new ToastButton()
                 .SetContent("Yes")
                 .AddArgument("action", $"chooseConfigurationNotification&{executablePath}"))
@@ -47,9 +45,8 @@ internal class PersonaNotificationService
     /// </summary>
     public static void ChooseConfiguration(string executablePath)
     {
-        executablePath = executablePath.ToLower();
         new ToastContentBuilder()
-            .AddText($"Choose Persona configuration for {executablePath}:")
+            .AddText($"Choose Persona configuration for {executablePath.ToLower()}:")
             .AddButton(new ToastButton()
                 .SetContent("Performant")
                 .AddArgument("action", $"configurPersonaToPerformant&{executablePath}"))
@@ -70,7 +67,7 @@ internal class PersonaNotificationService
     {
         executablePath = executablePath.ToLower();
         new ToastContentBuilder()
-            .AddText($"Disabled Persona for {executablePath}")
+            .AddText($"Disabled Persona for {executablePath.ToLower()}")
             .Show();
     }
 }
