@@ -60,7 +60,7 @@ public class AutoConfigurationService
             {
                 _right = mid - 1;
             }
-            await Task.Delay(TimeSpan.FromSeconds(delayInMinutes));
+            await Task.Delay(TimeSpan.FromMinutes(delayInMinutes));
             PersonaNotification.StabilityCheckNotification(_executable);
         }
         else
