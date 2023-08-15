@@ -12,10 +12,12 @@ using EnergyPerformance.Models;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Services;
 using EnergyPerformance.Core.Contracts.Services;
+using EnergyPerformance.Core.Helpers;
 using Microsoft.Extensions.Options;
 using System.Xml.Linq;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Notifications;
+using System.Linq.Expressions;
 
 namespace EnergyPerformance.ViewModels.Tests;
 
@@ -24,23 +26,23 @@ public class EnergyUsageViewModelTests
 {
     private static Mock<IFileService> _fileService;
     private static IOptions<LocalSettingsOptions> localSettingsOptions;
-    private static Mock<CarbonIntensityInfo> _carbonIntensityInfo;
+    private static CarbonIntensityInfo _carbonIntensityInfo;
     private static Mock<IDatabaseService> _databaseService;
-    private static Mock<EnergyRateInfo> _energyRateInfo;
+    private static EnergyRateInfo _energyRateInfo;
 
     [ClassInitialize]
     public static void ClassInit(TestContext context)
     {
-        _carbonIntensityInfo = new Mock<CarbonIntensityInfo>();
+        _carbonIntensityInfo = new CarbonIntensityInfo();
         _databaseService = new Mock<IDatabaseService>();
-        _energyRateInfo = new Mock<EnergyRateInfo>();
+        _energyRateInfo = new EnergyRateInfo();
         _fileService = new Mock<IFileService>();
         localSettingsOptions = Options.Create(new LocalSettingsOptions());
     }
 
     public EnergyUsageModel GetModel()
     {
-        return new EnergyUsageModel(_carbonIntensityInfo.Object, _energyRateInfo.Object, _databaseService.Object);
+        return new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService.Object);
     }
 
     public EnergyUsageViewModel GetViewModel()
@@ -49,7 +51,6 @@ public class EnergyUsageViewModelTests
         var viewModel = new EnergyUsageViewModel(model);
         return viewModel;
     }
-
 
     [TestMethod()]
     public void TestViewModelIsInitializedCorrectly()

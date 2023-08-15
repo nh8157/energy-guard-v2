@@ -38,10 +38,15 @@ public class EnergyUsageDiary
         {
             return false;
         }
-        return this.Date == ((EnergyUsageDiary)obj).Date &&
+        return this.Date.Year == ((EnergyUsageDiary)obj).Date.Year &&
+            this.Date.Month == ((EnergyUsageDiary)obj).Date.Month &&
+            this.Date.Minute == ((EnergyUsageDiary)obj).Date.Minute &&
+            this.Date.Second == ((EnergyUsageDiary)obj).Date.Second &&
             this.DailyUsage.Equals(((EnergyUsageDiary)obj).DailyUsage) &&
             this.HourlyUsage.SequenceEqual(((EnergyUsageDiary)obj).HourlyUsage) &&
-            this.PerProcUsage.SequenceEqual(((EnergyUsageDiary)obj).PerProcUsage);
+            this.PerProcUsage.Keys.Count == ((EnergyUsageDiary)obj).PerProcUsage.Keys.Count &&
+            this.PerProcUsage.Keys.All(k => ((EnergyUsageDiary)obj).PerProcUsage.ContainsKey(k) &&
+            object.Equals(this.PerProcUsage[k], ((EnergyUsageDiary)obj).PerProcUsage[k]));
     }
 
     public EnergyUsageDiary(DateTime date, EnergyUsageLog dailyLog, List<EnergyUsageLog> hourlyLog, Dictionary<string, EnergyUsageLog> perProcLog)

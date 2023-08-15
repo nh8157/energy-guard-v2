@@ -43,7 +43,10 @@ public class EnergyUsageLog
         {
             return false;
         }
-        return this.Date == ((EnergyUsageLog)obj).Date &&
+        return this.Date.Year == ((EnergyUsageLog)obj).Date.Year &&
+            this.Date.Month == ((EnergyUsageLog)obj).Date.Month &&
+            this.Date.Minute == ((EnergyUsageLog)obj).Date.Minute &&
+            this.Date.Second == ((EnergyUsageLog)obj).Date.Second &&
             this.PowerUsed == ((EnergyUsageLog)obj).PowerUsed &&
             this.Cost == ((EnergyUsageLog)obj).Cost &&
             this.CarbonEmission == ((EnergyUsageLog)obj).CarbonEmission;

@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Data.SQLite;
+using System.Diagnostics;
 using System.Xml.Linq;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Contracts.Services;
@@ -20,6 +21,7 @@ public class DataTestClass
     private static EnergyUsageData _data;
     private static IFileService _fileService;
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
+    private static string _filepath;
 
     // Helper method
     private static double RandomDouble(double min, double max)
@@ -88,7 +90,7 @@ public class DataTestClass
         {
             var proc = procList[i];
             var procLog = GenerateRandomHourlyLog(date);
-            procDic[proc] = procLog;
+            procDic.Add(proc, procLog);
         }
         return procDic;
     }
@@ -121,8 +123,17 @@ public class DataTestClass
         var costPerKwh = 0.5;
         var budget = RandomDouble(2, 10);
         var diaries = GenerateListOfRandomEnergyDiaries(30);
-        DatabaseService service = new DatabaseService("testDB.db");
-        await service.InitializeDB();
+        var folderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        var directory = Path.Combine(folderPath, _defaultApplicationDataFolder);
+        _filepath= Path.Combine(directory, "testDB.db");
+        if (File.Exists(_filepath))
+        {
+            SQLiteConnection connection = new SQLiteConnection("Data Source=" + _filepath+ ";Version=3;");
+            connection.Close();
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            File.Delete(_filepath);
+        }
         _data = new EnergyUsageData(costPerKwh, budget, diaries);
     }
 
@@ -148,7 +159,6 @@ public class DataTestClass
     public async Task TestCleanup()
     {
         var service = GetDatabaseService();
-        await service.ClearAllData();
         Debug.WriteLine("TestCleanup");
     }
 
@@ -208,15 +218,13 @@ public class DataTestClass
     public async Task TestInitializationWhenDBExists()
     {
         var databaseService = GetDatabaseService();
+        await databaseService.SaveEnergyData(_data);
+        databaseService = GetDatabaseService();
         var wrapper = new Mock<DatabaseMethodFactory>();
         wrapper.Setup(w => w.DatabaseIsActive(databaseService.CreateConnection())).ReturnsAsync(true);
         await databaseService.InitializeDB();
-        var consoleOutputCapture = new ConsoleOutputCapture();
-        string capturedOutput = consoleOutputCapture.GetCapturedOutput();
-        if (capturedOutput.Contains("retrieves"))
-        {
-            Assert.IsTrue(true);
-        }
+        var data = await databaseService.LoadUsageData();
+        Assert.AreEqual(data.Diaries.Count(),30);
     }
 
     [TestMethod]
@@ -263,7 +271,6 @@ public class DataTestClass
         Assert.AreNotEqual(id.Length, 0);
     }
 
-
     [DataRow(0)]
     [DataRow(-2)]
     [DataRow(-15)]
@@ -276,11 +283,8 @@ public class DataTestClass
         var targetDate = timeOfData.AddDays(value);
         var targetDiary = databaseService.RetrieveDiaryByDate(targetDate.ToString("yyyy/MM/dd"));
         var index = -value + 1;
-        if (targetDiary.Equals(_data.Diaries[^index]))
-        {
-            Assert.IsTrue(true);
-        }
-
+        Assert.AreEqual(targetDiary.PerProcUsage.Keys.Count(), _data.Diaries[^index].PerProcUsage.Keys.Count());
+        Assert.IsTrue(targetDiary.Equals(_data.Diaries[^index]));
     }
 
 }

@@ -38,6 +38,12 @@ public class EnergyUsageModel
         get; set;
     }
 
+    public EnergyUsageData EnergyUsage
+    {
+        get => _energyUsage;
+        private set => _energyUsage = value;
+    }
+
     public double CarbonIntensity
     {
         get => _carbonIntensityInfo.CarbonIntensity;
@@ -99,7 +105,7 @@ public class EnergyUsageModel
     /// <summary>
     /// The Accumulated Watts used for the current day.
     /// </summary>
-    public double AccumulatedWatts
+    public virtual double AccumulatedWatts
     {
         get; set;
     }
@@ -107,7 +113,7 @@ public class EnergyUsageModel
     /// <summary>
     /// The Accumulated Watts used for the current hour.
     /// </summary>
-    public double AccumulatedWattsHourly
+    public virtual double AccumulatedWattsHourly
     {
         get; set;
     }

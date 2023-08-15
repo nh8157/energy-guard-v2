@@ -19,15 +19,11 @@ namespace EnergyPerformance.Tests.MSTest.Services;
 [TestClass()]
 public class PowerMonitorServiceTests
 {
-    private static CarbonIntensityInfo _carbonIntensityInfo;
     private static IDatabaseService _databaseService;
-    private static EnergyRateInfo _energyRateInfo;
 
     [ClassInitialize]
     public static void ClassInit(TestContext context)
     {
-        _carbonIntensityInfo = new CarbonIntensityInfo();
-        _energyRateInfo = new EnergyRateInfo();
         _databaseService = new DatabaseService("testDB.db");
     }
     public PowerMonitorService GetService()
@@ -47,7 +43,7 @@ public class PowerMonitorServiceTests
     public async Task TestPowerMonitorServiceIsInitializedCorrectly()
     {
         var powerInfo = new PowerInfo();
-        var model = new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService);
+        var model = new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), _databaseService);
         var service = new PowerMonitorService(model, powerInfo);
         Assert.IsTrue(service.sensors.Count() == 0);
         var cts = new CancellationTokenSource();
@@ -57,7 +53,7 @@ public class PowerMonitorServiceTests
         cts.Cancel();
         if (service.sensors.Count() > 0)
         {
-            Assert.IsTrue(true);
+           Assert.IsTrue(true);
         } else
         {
             Debug.WriteLine("No sensors found. Restart VS 2022 in Admin Mode to detect hardware sensors.");
@@ -72,7 +68,7 @@ public class PowerMonitorServiceTests
     {
         var powerInfo = new Mock<PowerInfo>();
         powerInfo.Setup(p => p.Power).Returns(value);
-        var model = new EnergyUsageModel(_carbonIntensityInfo, _energyRateInfo, _databaseService);
+        var model = new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), _databaseService);
         Assert.AreEqual(model.AccumulatedWatts, 0);
         var service = new PowerMonitorService(model, powerInfo.Object);
         var cts = new CancellationTokenSource();
