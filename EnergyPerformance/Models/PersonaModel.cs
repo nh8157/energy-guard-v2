@@ -1,6 +1,8 @@
-﻿using EnergyPerformance.Helpers;
+using EnergyPerformance.Core.Contracts.Services;
+using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
 using System.Diagnostics;
+using System.Management;
 
 namespace EnergyPerformance.Models;
 public class PersonaModel
@@ -15,8 +17,9 @@ public class PersonaModel
     private List<PersonaEntry> _allPersonas;
     private int _nextPersonaId = 0;
 
-    /// <summary>
-    /// This property indicates whether any Persona is enabled right now
+    /// <summary>    
+    /// This property indicates whether any persona is enabled right now
+
     /// </summary>
     public bool IsEnabled
     {
@@ -45,7 +48,7 @@ public class PersonaModel
     }
 
     /// <summary>
-    /// This method will be executed in ActivationService, and will read Persona data from persistent storage
+    /// This method will be executed in ActivationService, and will read persona data from persistent storage
     /// </summary>
     /// <returns></returns>
     public async Task InitializeAsync()
@@ -195,7 +198,6 @@ public class PersonaModel
             EnableGpuSetting(persona.GpuSetting);
 
             Debug.WriteLine($"Persona for {personaName} enabled");
-
             return true;
         }
         Debug.WriteLine($"Cannot find persona for {personaName}");

@@ -1,0 +1,56 @@
+﻿<Page
+    x:Class="EnergyPerformance.Views.AddPersonaPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DataContext="{d:DesignInstance Type=viewmodels:PersonaViewModel}"
+    xmlns:viewmodels="using:EnergyPerformance.ViewModels"
+    xmlns:helpers="using:EnergyPerformance.Helpers"
+    xmlns:local1="using:EnergyPerformance.Models"
+    mc:Ignorable="d">
+    <Page.Resources>
+    </Page.Resources>
+
+    <GridView x:Name="ContentArea" SelectionMode="None">
+        <StackPanel Orientation="Vertical">
+            <Border BorderThickness="2">
+                <StackPanel Orientation="Vertical">
+                    <StackPanel Orientation="Vertical" Margin="0, 10, 0, 10">
+                        <TextBlock FontSize="20">
+                            <Run x:Uid="AddPersonaLabel"/>
+                        </TextBlock>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBox x:Uid="AppSelection" x:Name="AppSelection" Height="40" Width="300" Margin="0, 10, 20, 20" IsReadOnly="True"/>
+                            <Button x:Uid="BrowseButton" Click="BrowseClicked" Width="150" Height="40" Margin="0, 10, 0, 20"/>
+                        </StackPanel>
+                        
+                    </StackPanel>
+
+                    <StackPanel Orientation="Vertical">
+                        <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock FontSize="20" Margin="0, 0, 155, 0">
+                                <Run x:Uid="PerformanceLabel"/>
+                            </TextBlock>
+                            <TextBlock FontSize="20" Margin="0, 0, 185, 0">
+                                <Run x:Uid="BalancedLabel"/>
+                            </TextBlock>
+                            <TextBlock FontSize="20">
+                                <Run x:Uid="EfficiencyLabel"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
+                            <Button x:Uid="AddPersonaButton" Click="AddPersona" Width="150" Height="40" FontSize="15" Margin="300, 0, 20, 0"/>
+                            <Button x:Uid="GoBackButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="NavigateToListPage"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </GridView>
+
+</Page>

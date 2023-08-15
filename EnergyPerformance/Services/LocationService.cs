@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
@@ -9,9 +9,12 @@ using System.Text.Json;
 namespace EnergyPerformance.Services;
 public class LocationService : BackgroundService
 {
-    private readonly LocationInfo _locationInfo;
-    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(1));
     private const string _locationUrl = "https://geocode.maps.co/reverse?lat={0}&lon={1}";
+    private const int duration = 1;
+
+    private readonly LocationInfo _locationInfo;
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(duration));
+    private readonly IHttpClientFactory _httpClientFactory;
 
     public string Country
     {
@@ -26,9 +29,10 @@ public class LocationService : BackgroundService
     }
 
 
-    public LocationService(LocationInfo locationInfo)
+    public LocationService(LocationInfo locationInfo, IHttpClientFactory httpClientFactory)
     {
         _locationInfo = locationInfo;
+        _httpClientFactory = httpClientFactory;
     }
 
     protected async override Task ExecuteAsync(CancellationToken token)
@@ -37,7 +41,6 @@ public class LocationService : BackgroundService
         {
             await DoAsync();
             App.GetService<DebugModel>().AddMessage(Postcode);
-
         }
         while (await _periodicTimer.WaitForNextTickAsync(token) && !token.IsCancellationRequested);
     }
@@ -57,12 +60,29 @@ public class LocationService : BackgroundService
                 var latitude = pos.Coordinate.Point.Position.Latitude;
                 var longitude = pos.Coordinate.Point.Position.Longitude;
 
-                HttpClient client = new HttpClient();
-                string url = string.Format(_locationUrl, latitude, longitude);
+                HttpClient client = _httpClientFactory.CreateClient();
+
+                var url = string.Format(_locationUrl, latitude, longitude);
                 JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(client, url)??
-                    throw new InvalidOperationException("Cannot deserialize json object"); 
-                Country = jsonResponse.GetProperty("address").GetProperty("country").ToString();
-                Postcode = jsonResponse.GetProperty("address").GetProperty("postcode").ToString();
+                    throw new InvalidOperationException("Cannot deserialize json object");
+
+                try
+                {
+                    Country = jsonResponse.GetProperty("address").GetProperty("country").ToString();
+                }
+                catch (KeyNotFoundException)
+                {
+                    Country = "Unknown";
+                }
+
+                try
+                {
+                    Postcode = jsonResponse.GetProperty("address").GetProperty("postcode").ToString();
+                }
+                catch (KeyNotFoundException)
+                {
+                    Postcode = "Unknown";
+                }
             }
             catch (Exception ex)
             {
