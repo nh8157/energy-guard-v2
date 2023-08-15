@@ -10,11 +10,11 @@ using EnergyPerformance.Services;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
 
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
-using System.Windows;
 using Windows.UI.Notifications;
 
 namespace EnergyPerformance;
@@ -90,8 +90,9 @@ public partial class App : Application
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
-            
-            
+
+            // Initializing HttpClientFactory
+            services.AddHttpClient();
 
             // --- Registering background services and their dependencies
             services.AddHostedService<PeriodicDataSaverService>();
