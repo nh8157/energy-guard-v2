@@ -8,6 +8,4 @@ public interface IDatabaseService
     public Task SaveEnergyData(EnergyUsageData data);
 
     public Task<EnergyUsageData> LoadUsageData();
-
-    public Task ClearAllData();
 }
