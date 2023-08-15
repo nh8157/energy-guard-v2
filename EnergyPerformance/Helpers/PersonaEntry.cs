@@ -29,5 +29,6 @@ public class PersonaEntry
         Path = path;
         CpuSetting = cpuSetting;
         GpuSetting = gpuSetting;
+        EnergyRating = energyRating;
     }
 }
