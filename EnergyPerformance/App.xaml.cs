@@ -15,6 +15,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
+using System.Windows;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
 using Windows.UI.Notifications;
 
 namespace EnergyPerformance;
@@ -133,8 +136,10 @@ public partial class App : Application
             services.AddTransient<SettingsPage>();
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
-            services.AddTransient<PersonaCustomisationViewModel>();
-            services.AddTransient<PersonaCustomisationPage>();
+            services.AddTransient<PersonaViewModel>();
+            services.AddTransient<PersonaListPage>();
+            services.AddTransient<CustomisePersonaPage>();
+            services.AddTransient<AddPersonaPage>();
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();
             services.AddTransient<MonitorDetailViewModel>();
@@ -222,4 +227,5 @@ public partial class App : Application
 
         App.GetService<IAppNotificationService>().Initialize();
     }
+
 }
