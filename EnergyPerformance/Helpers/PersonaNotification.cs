@@ -47,7 +47,7 @@ internal class PersonaNotification
     public static void StartAutoConfigurationNotification(string executable)
     {
         new ToastContentBuilder()
-            .AddText($"Persona auto-configuration for {executable.ToLower()} has started.\n\n" +
+            .AddText($"Auto-configuration of Persona for {executable.ToLower()} has started.\n\n" +
                 "We'll inquire about app stability during usage.")
             .AddButton(new ToastButtonDismiss("Dismiss"))
             .Show();
