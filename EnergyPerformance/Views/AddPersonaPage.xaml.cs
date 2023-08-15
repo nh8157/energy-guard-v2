@@ -12,6 +12,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
+using Shell32;
 using Windows.Media.AppRecording;
 using Windows.Storage;
 using Windows.Storage.Pickers;
@@ -96,12 +97,33 @@ public sealed partial class AddPersonaPage : Page
             Marshal.FreeHGlobal(path);
             CurrentPath = Marshal.PtrToStringUni(path); // Store the path of the object in CurrentPath
 
+            if (CurrentPath != null && CurrentPath != "" && CurrentPath.Substring(CurrentPath.Length - 4).Equals(".lnk"))
+            {
+                CurrentPath = GetTargetExecutable(CurrentPath);
+            }
             if (CurrentPath != null && CurrentPath != "" && CurrentPath.Substring(CurrentPath.Length - 4).Equals(".exe"))
             {
                 var AppName = GetApplicationName(CurrentPath);
                 AppSelection.Text = AppName;
             }
         }
+    }
+
+    // Function to get the Target Executable, if the path supplied points to a shortcut
+    private string GetTargetExecutable(string path)
+    {
+        var filepath = Path.GetDirectoryName(path);
+        var filename = Path.GetFileName(path);
+
+        Shell shell = new Shell();
+        Folder folder = shell.NameSpace(filepath);
+        FolderItem folderItem = folder.ParseName(filename);
+        if (folderItem != null && folderItem.IsLink)
+        {
+            ShellLinkObject link = (ShellLinkObject)folderItem.GetLink;
+            return link.Path;
+        }
+        return string.Empty;
     }
 
     // Function to get the Application Name from the string path
