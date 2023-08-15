@@ -51,28 +51,30 @@
 
             </StackPanel>
         </StackPanel>
-        <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Center" Margin="10, 0, 0, 0">
             <Button x:Uid="ViewCarbonEmissionsButton"  Margin="0, 0, 0, 30" Click="SwitchToCarbonEmissions" HorizontalAlignment="Center"/>
-            <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" CornerRadius="15" Padding="5" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource CardBackgroundFillColorDefaultBrush}">
+                <Grid Margin="0 0 0 5">
+                    <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
                             <Run x:Uid="PercentSymbol"/>
-                    </TextBlock>
-                    <TextBlock x:Uid="HomeCpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Grid>
-            <Grid Margin="0 0 0 5">
-                <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
-                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                        </TextBlock>
+                        <TextBlock x:Uid="HomeCpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="0 0 0 5">
+                    <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
                             <Run x:Uid="PercentSymbol"/>
-                    </TextBlock>
-                    <TextBlock x:Uid="HomeGpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
-                </StackPanel>
-            </Grid>
+                        </TextBlock>
+                        <TextBlock x:Uid="HomeGpuUsageProgressRingLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
         </StackPanel>
     </GridView>
 </Page>
