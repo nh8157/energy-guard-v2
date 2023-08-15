@@ -46,39 +46,6 @@ public class DataTestClass
 
     }
 
-    private static List<EnergyUsageLog> GenerateListOfRandomDailyLogs(int days)
-    {
-        var list = new List<EnergyUsageLog>();
-        var startDay = DateTime.Now.AddDays(-1 * days);
-        for (var i = 0; i <= days; i++)
-        {
-            var day = startDay.AddDays(i);
-            var log = GenerateRandomDailyLog(day);
-            list.Add(log);
-        }
-
-        return list;
-    }
-
-    private static List<EnergyUsageLog> GenerateListOfRandomHourlyLogs(int days)
-    {
-        var list = new List<EnergyUsageLog>();
-        var startDay = DateTime.Now.AddDays(-1 * days);
-        for (var i = 0; i <= days; i++)
-        {
-            var day = startDay.AddDays(i).AddHours(8);
-            for (var j = 0; j < 8; j++)
-            {
-                var hour = day.AddHours(j);
-                var log = GenerateRandomHourlyLog(hour);
-                list.Add(log);
-            }
-        }
-
-        return list;
-    }
-
-
     private static Dictionary<string, EnergyUsageLog> GenerateRandomPerProcLogs(DateTime date)
     {
         var procDic = new Dictionary<string, EnergyUsageLog>();
@@ -95,7 +62,7 @@ public class DataTestClass
         return procDic;
     }
 
-    private static List<EnergyUsageDiary> GenerateListOfRandomEnergyDiaries(int days)
+    public static List<EnergyUsageDiary> GenerateListOfRandomEnergyDiaries(int days)
     {
         var list = new List<EnergyUsageDiary>();
         var startDay = DateTime.Now.AddDays(-1 * days + 1);
