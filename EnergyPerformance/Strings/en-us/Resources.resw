@@ -431,7 +431,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="ViewPowerButton.Content" xml:space="preserve">
     <value>View Power Usage</value>
   </data>
-  <data name="BudgetProgressCard.Header" xml:space="preserve">
+  <data name="BudgetProgressLabel.Text" xml:space="preserve">
     <value>Budget Used</value>
   </data>
   <data name="CarbonEmissionCard.Header" xml:space="preserve">
@@ -439,5 +439,8 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="HomeBudgetProgressRingLabel.Text" xml:space="preserve">
     <value>Budget Used</value>
+  </data>
+  <data name="HomeThisWeek.Text" xml:space="preserve">
+    <value>This Week</value>
   </data>
 </root>
