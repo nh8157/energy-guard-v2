@@ -437,4 +437,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="HomeThisWeek.Text" xml:space="preserve">
     <value>This Week</value>
   </data>
+  <data name="EmissionsLabel.Text" xml:space="preserve">
+    <value>Emissions</value>
+  </data>
 </root>
