@@ -44,4 +44,9 @@ public sealed partial class PersonaListPage : Page
     {
         Frame.Navigate(typeof(AddPersonaPage));
     }
+
+    private void DeleteButtonClicked(object sender, RoutedEventArgs e)
+    {
+        // Functionality to Add
+    }
 }

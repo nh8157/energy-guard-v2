@@ -13,18 +13,18 @@
 
     <GridView x:Name="ContentArea" SelectionMode="None">
         <StackPanel Orientation="Vertical">
-            <ListView x:Name="PersonaList" ItemsSource="{x:Bind ViewModel.PersonasAndRatings, Mode=OneWay}" Width="400" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
+            <ListView x:Name="PersonaList" ItemsSource="{x:Bind ViewModel.PersonasAndRatings, Mode=OneWay}" Width="425" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
                 <ListView.HeaderTemplate>
                     <DataTemplate>
                         <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="180"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock>
                                 <Run x:Uid="ApplicationNameHeader"/>
                             </TextBlock>
-                            <TextBlock Grid.Column="1">
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left">
                                 <Run x:Uid="EnergyRatingHeader"/>
                             </TextBlock>
                         </Grid>
@@ -35,10 +35,18 @@
                         <Grid Height="48" AutomationProperties.Name="{x:Bind AppName}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="80"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
-                            <Image Grid.Column="1" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left" Margin="0, 0, 125, 0"/>
+                            <Image Grid.Column="1" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Margin="0, 0, 0, 0"/>
+                            <Button Grid.Column="2" Height="40" Width="40" Margin="0, 0, 0, 0" HorizontalAlignment="Right" Click="DeleteButtonClicked">
+                                <Button.ContentTemplate>
+                                    <DataTemplate>
+                                        <Image Source="ms-appx:///Assets/delete-icon.png"/>
+                                    </DataTemplate>
+                                </Button.ContentTemplate>
+                            </Button>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
