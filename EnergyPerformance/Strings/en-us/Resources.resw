@@ -270,9 +270,6 @@ Best for: Casual Browsing, Watching Videos</value>
   <data name="HomeCpuUsageProgressRingLabel.Text" xml:space="preserve">
     <value>CPU Usage</value>
   </data>
-  <data name="HomeLastWeekCard.Header" xml:space="preserve">
-    <value>Last Week</value>
-  </data>
   <data name="HomePerformanceAppBarButton.Label" xml:space="preserve">
     <value>Speed</value>
   </data>
@@ -285,9 +282,6 @@ Best for: Gaming, Video Editing</value>
   </data>
   <data name="HomeProfileBar.Header" xml:space="preserve">
     <value>Profile</value>
-  </data>
-  <data name="HomeThisWeekCard.Header" xml:space="preserve">
-    <value>This Week</value>
   </data>
   <data name="HomeWorkAppBarButton.Label" xml:space="preserve">
     <value>Work</value>
@@ -434,7 +428,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="BudgetProgressLabel.Text" xml:space="preserve">
     <value>Budget Used</value>
   </data>
-  <data name="CarbonEmissionCard.Header" xml:space="preserve">
+  <data name="CarbonEmissionCard.Text" xml:space="preserve">
     <value>Total Carbon Emissions</value>
   </data>
   <data name="BudgetProgressBarLabel.Text" xml:space="preserve">
