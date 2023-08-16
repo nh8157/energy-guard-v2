@@ -437,8 +437,8 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="CarbonEmissionCard.Header" xml:space="preserve">
     <value>Total Carbon Emissions</value>
   </data>
-  <data name="HomeBudgetProgressRingLabel.Text" xml:space="preserve">
-    <value>Budget Used</value>
+  <data name="BudgetProgressBarLabel.Text" xml:space="preserve">
+    <value>of Budget Used</value>
   </data>
   <data name="HomeThisWeek.Text" xml:space="preserve">
     <value>This Week</value>
