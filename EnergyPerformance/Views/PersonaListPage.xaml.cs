@@ -49,4 +49,14 @@ public sealed partial class PersonaListPage : Page
     {
         // Functionality to Add
     }
+
+    private void PlayButtonClicked(object sender, RoutedEventArgs e)
+    {
+        // Functionality to Add
+    }
+
+    private void PauseButtonClicked(object sender, RoutedEventArgs e)
+    {
+        // Functionality to Add
+    }
 }
