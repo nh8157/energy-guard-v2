@@ -30,12 +30,6 @@ public sealed partial class CustomisePersonaPage : Page
         InitializeComponent();
     }
 
-    // Function to set the persona slider value to the default setting (2, in this case)
-    private void RestoreDefault(object sender, RoutedEventArgs e)
-    {
-        PersonaSlider.Value = DEFAULT;
-    }
-
     // Function to apply persona to the selected application
     // Grabs the index of the application in the list
     // Sets the corresponding energy value and image path accordingly in the view model

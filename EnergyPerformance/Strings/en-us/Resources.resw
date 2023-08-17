@@ -124,7 +124,7 @@
     <value>EnergyGuard</value>
   </data>
   <data name="Shell_Main.Content" xml:space="preserve">
-    <value>Power Consumption</value>
+    <value>System Monitor</value>
   </data>
   <data name="Shell_EnergyUsage.Content" xml:space="preserve">
     <value>Energy Usage</value>
@@ -260,9 +260,6 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
   <data name="HomeAutoTooltip.Content" xml:space="preserve">
     <value>Automatically control system resources to save power.</value>
   </data>
-  <data name="HomeBudgetProgressRingLabel.Text" xml:space="preserve">
-    <value>Budget Used</value>
-  </data>
   <data name="HomeCasualAppBarButton.Label" xml:space="preserve">
     <value>Casual</value>
   </data>
@@ -272,9 +269,6 @@ Best for: Casual Browsing, Watching Videos</value>
   </data>
   <data name="HomeCpuUsageProgressRingLabel.Text" xml:space="preserve">
     <value>CPU Usage</value>
-  </data>
-  <data name="HomeLastWeekCard.Header" xml:space="preserve">
-    <value>Last Week</value>
   </data>
   <data name="HomePerformanceAppBarButton.Label" xml:space="preserve">
     <value>Speed</value>
@@ -288,9 +282,6 @@ Best for: Gaming, Video Editing</value>
   </data>
   <data name="HomeProfileBar.Header" xml:space="preserve">
     <value>Profile</value>
-  </data>
-  <data name="HomeThisWeekCard.Header" xml:space="preserve">
-    <value>This Week</value>
   </data>
   <data name="HomeWorkAppBarButton.Label" xml:space="preserve">
     <value>Work</value>
@@ -430,5 +421,26 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="BrowseButton.Content" xml:space="preserve">
     <value>Browse</value>
+  </data>
+  <data name="ViewCarbonEmissions.Content" xml:space="preserve">
+    <value>View Carbon Emissions</value>
+  </data>
+  <data name="ViewPowerButton.Content" xml:space="preserve">
+    <value>View Power Usage</value>
+  </data>
+  <data name="BudgetProgressLabel.Text" xml:space="preserve">
+    <value>Budget Used</value>
+  </data>
+  <data name="CarbonEmissionCard.Text" xml:space="preserve">
+    <value>Total Carbon Emissions</value>
+  </data>
+  <data name="BudgetProgressBarLabel.Text" xml:space="preserve">
+    <value>of Budget Used</value>
+  </data>
+  <data name="HomeThisWeek.Text" xml:space="preserve">
+    <value>This Week</value>
+  </data>
+  <data name="EmissionsLabel.Text" xml:space="preserve">
+    <value>Emissions</value>
   </data>
 </root>
