@@ -7,7 +7,7 @@ namespace EnergyPerformance.Services;
 class CarbonIntensityUpdateService : BackgroundService
 {
     private readonly string _ukUrl = "https://api.carbonintensity.org.uk/regional/postcode/{0}";
-    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromSeconds(5));
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(5));
     private readonly CarbonIntensityInfo _carbonIntensityInfo;
     private readonly LocationInfo _locationInfo;
     private readonly IHttpClientFactory _httpClientFactory;
