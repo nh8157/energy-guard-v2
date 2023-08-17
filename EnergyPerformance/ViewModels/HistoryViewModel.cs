@@ -76,7 +76,7 @@ public partial class HistoryViewModel : ObservableObject
                 $"\u00A3{chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
             Values = costs,
-            Fill = new SolidColorPaint(new SKColor(255, 0, 0))
+            Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
         _carbonSeries = new ColumnSeries<DateTimePoint>
         {
@@ -307,4 +307,5 @@ public partial class HistoryViewModel : ObservableObject
             }
         }
     }
+
 }

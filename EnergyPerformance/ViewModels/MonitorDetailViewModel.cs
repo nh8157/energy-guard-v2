@@ -66,7 +66,7 @@ public partial class MonitorDetailViewModel : ObservableObject
                 $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
             Values = costs,
-            Fill = new SolidColorPaint(new SKColor(255, 0, 0))
+            Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
         
         _hourlySeries = new ColumnSeries<TimeSpanPoint>
