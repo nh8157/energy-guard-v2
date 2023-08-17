@@ -173,6 +173,13 @@ public class PersonaModel
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
                 persona.EnergyRating = energyRating;
 
+                // If persona is enabled, reapply the affinity mask
+                if (PersonaEnabled != null && IsEnabled && 
+                    PersonaEnabled.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
+                {
+                    _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
+                }
+                
                 _processMonitorService.RemoveWatcher(personaName);
                 _processMonitorService.AddWatcher(personaName);
             }
