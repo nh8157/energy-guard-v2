@@ -1,8 +1,7 @@
 using System.Diagnostics;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
+using System.Text.Json;
 
 namespace EnergyPerformance.Services;
 class CarbonIntensityUpdateService : BackgroundService

@@ -15,6 +15,7 @@ namespace EnergyPerformance.Notifications;
 public class AppNotificationService : IAppNotificationService
 {
     private readonly INavigationService _navigationService;
+    private readonly AutoConfigurationService autoConfigurationService = new();
 
     public AppNotificationService(INavigationService navigationService)
     {
@@ -38,7 +39,7 @@ public class AppNotificationService : IAppNotificationService
     /// <param name="sender"></param>
     /// <param name="args">Contains the custom action of a toast notification and may also include the persona name.</param>
     /// </summary>
-    public void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
+    public async void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
     {
         // Can perform custom actions here based on arguments specified in notification payload.
         // E.g. a button within the notification can be used to perform a specific action which can be defined here.
@@ -53,7 +54,7 @@ public class AppNotificationService : IAppNotificationService
             if (args.Argument.Contains('&'))
             {
                 // Extract executable path
-                executablePath = customAction.Split('&')[1].ToLower();
+                executablePath = customAction.Split('&')[1];
 
                 // Extract the custom action
                 customAction = customAction.Split('&')[0];
@@ -63,35 +64,23 @@ public class AppNotificationService : IAppNotificationService
             {
                 case "enableLaunchedAppPersona":
                     App.GetService<PersonaModel>().EnablePersona(executablePath);
+                    
+                    break;
+                case "autoConfigurePersona":
+                    PersonaNotification.AutoConfigurePersonaNotification(executablePath);
 
                     break;
-                case "autoConfigurePersonaNotification":
-                    PersonaNotificationService.AutoConfigurePersona(executablePath);
+                case "startAutoConfiguration":
+                    PersonaNotification.StartAutoConfigurationNotification(executablePath);
+                    autoConfigurationService.Start(executablePath);
 
                     break;
-                case "chooseConfigurationNotification":
-                    PersonaNotificationService.ChooseConfiguration(executablePath);
+                case "moveTowardsPerformance":
+                    autoConfigurationService.AutoConfigure(true);
 
                     break;
-                case "configurPersonaToPerformant":
-                    var performantEnergyRate = 0.1f;
-
-                    await App.GetService<PersonaModel>().UpdatePersona(executablePath, performantEnergyRate);
-                    App.GetService<PersonaModel>().EnablePersona(executablePath);
-
-                    break;
-                case "configurPersonaToBalanced":
-                    var balancedEnergyRate = 0.2f;
-
-                    await App.GetService<PersonaModel>().UpdatePersona(executablePath, balancedEnergyRate);
-                    App.GetService<PersonaModel>().EnablePersona(executablePath);
-
-                    break;
-                case "configurPersonaToEfficient":
-                    var efficientEnergyRate = 0.3f;
-
-                    await App.GetService<PersonaModel>().UpdatePersona(executablePath, efficientEnergyRate);
-                    App.GetService<PersonaModel>().EnablePersona(executablePath);
+                case "moveTowardsEfficiency":
+                    autoConfigurationService.AutoConfigure(false);
 
                     break;
             }
