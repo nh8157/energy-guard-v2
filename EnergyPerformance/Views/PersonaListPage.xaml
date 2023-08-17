@@ -13,21 +13,21 @@
 
     <GridView x:Name="ContentArea" SelectionMode="None">
         <StackPanel Orientation="Vertical">
-            <ListView x:Name="PersonaList" ItemsSource="{x:Bind ViewModel.PersonasAndRatings, Mode=OneWay}" Width="505" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
+            <ListView x:Name="PersonaList" ItemsSource="{x:Bind ViewModel.PersonasAndRatings, Mode=OneWay}" Width="490" HorizontalAlignment="Left" SelectionChanged="ListView_SelectionChanged">
                 <ListView.HeaderTemplate>
                     <DataTemplate>
                         <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
                             
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="275"/>
+                                <ColumnDefinition Width="260"/>
                             </Grid.ColumnDefinitions>
                             
                             <TextBlock FontSize="18">
                                 <Run x:Uid="ApplicationNameHeader"/>
                             </TextBlock>
 
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" FontSize="18" Margin="15, 0, 0, 0">
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" FontSize="18" Margin="0, 0, 0, 0">
                                 <Run x:Uid="EnergyRatingHeader"/>
                             </TextBlock>
 
@@ -40,38 +40,20 @@
 
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="200"/>
-                                <ColumnDefinition Width="125"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="120"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
-                            <Image Grid.Column="1" Height="40" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center"/>
+                            <Image Grid.Column="1" Height="35" Width="105" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left"/>
 
-                            <Button Grid.Column="2" Height="40" Width="45" HorizontalAlignment="Right" Click="PlayButtonClicked">
-                                <Button.ContentTemplate>
-                                    <DataTemplate>
-                                        <SymbolIcon Symbol="Play"/>
-                                    </DataTemplate>
-                                </Button.ContentTemplate>
-                            </Button>
 
-                            <Button Grid.Column="3" Height="40" Width="45" HorizontalAlignment="Right" Click="PauseButtonClicked">
-                                <Button.ContentTemplate>
-                                    <DataTemplate>
-                                        <SymbolIcon Symbol="Pause"/>
-                                    </DataTemplate>
-                                </Button.ContentTemplate>
-                            </Button>
+                            <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <AppBarButton Icon="Play"  Height="45" Width="40"  Click="PlayButtonClicked"/>
+                                <AppBarButton Icon="Pause"  Height="45" Width="40" Click="PauseButtonClicked"/>
+                                <AppBarButton Icon="Delete"  Height="45" Width="40"  Click="DeleteButtonClicked"/>
+                            </StackPanel>
 
-                            <Button Grid.Column="4" Height="40" Width="45" HorizontalAlignment="Right" Click="DeleteButtonClicked">
-                                <Button.ContentTemplate>
-                                    <DataTemplate>
-                                        <SymbolIcon Symbol="Delete"/>
-                                    </DataTemplate>
-                                </Button.ContentTemplate>
-                            </Button>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
