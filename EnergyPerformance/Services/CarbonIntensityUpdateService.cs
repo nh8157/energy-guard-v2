@@ -1,6 +1,5 @@
 using System.Diagnostics;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
 

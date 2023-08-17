@@ -272,6 +272,7 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         }
 
 
+        /*
         if (!_settingsService.SelectedMode.Equals("Auto"))
         {
             ModeSwitch(_settingsService.SelectedMode);
@@ -293,6 +294,7 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
             await AutomaticModeControl(activeCores, _totalCores, runningAverage);
             runningAverage = CpuUsage;
         }
+        */
         
         // Where does the switching occur?
         // What is this line for?
