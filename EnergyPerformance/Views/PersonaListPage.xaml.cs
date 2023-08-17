@@ -32,16 +32,23 @@ public sealed partial class PersonaListPage : Page
         Frame.Navigate(typeof(CustomisePersonaPage), PersonaList.SelectedIndex);    
     }
 
-    // Function that is called when the Edit Persona button is clicked
-    // Navigates to the Customise Persona Page
-    // Note - No parameter is passed, as we want to add a new persona
-    private void NavigateToEditPage (object sender, RoutedEventArgs e)
-    {
-        Frame.Navigate(typeof(CustomisePersonaPage));
-    }
-
     private void NavigateToAddPage(object sender, RoutedEventArgs e)
     {
         Frame.Navigate(typeof(AddPersonaPage));
+    }
+
+    private void DeleteButtonClicked(object sender, RoutedEventArgs e)
+    {
+        // Functionality to Add
+    }
+
+    private void PlayButtonClicked(object sender, RoutedEventArgs e)
+    {
+        // Functionality to Add
+    }
+
+    private void PauseButtonClicked(object sender, RoutedEventArgs e)
+    {
+        // Functionality to Add
     }
 }
