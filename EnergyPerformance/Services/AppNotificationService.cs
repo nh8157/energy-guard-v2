@@ -72,7 +72,7 @@ public class AppNotificationService : IAppNotificationService
                     break;
                 case "startAutoConfiguration":
                     PersonaNotification.StartAutoConfigurationNotification(executablePath);
-                    autoConfigurationService.Initialize(executablePath);
+                    autoConfigurationService.Start(executablePath);
 
                     break;
                 case "moveTowardsPerformance":

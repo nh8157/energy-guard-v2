@@ -48,7 +48,7 @@ internal class PersonaNotification
     {
         new ToastContentBuilder()
             .AddText($"Auto-configuration of Persona for {executable.ToLower()} has started.\n\n" +
-                "We'll inquire about app stability during usage.")
+                $"We'll inquire 5 times about app stability every 3 minutes during usage.")
             .AddButton(new ToastButtonDismiss("Dismiss"))
             .Show();
     }
@@ -57,10 +57,10 @@ internal class PersonaNotification
     /// Asks user if current application is stable.
     /// <param name="executable">The executable application.</param>
     /// </summary>
-    public static void StabilityCheckNotification(string executable)
+    public static void StabilityCheckNotification(string executable, int stabilityCheckCount)
     {
         new ToastContentBuilder()
-            .AddText($"Is the performance of {executable.ToLower()} stable?")
+            .AddText($"[{stabilityCheckCount}/5] Is the performance of {executable.ToLower()} stable?")
             .AddButton(new ToastButton()
                 .SetContent("Yes")
                 .AddArgument("action", $"moveTowardsPerformance&{executable}"))
@@ -82,18 +82,21 @@ internal class PersonaNotification
     /// Notifies the user that the Persona has been disabled.
     /// <param name="executablePath">Path to the program's executable.</param>
     /// </summary>
-    public static void DisabledPersonaNotification(string executablePath)
+    public static void DisabledPersonaNotification(string executable)
     {
         new ToastContentBuilder()
-            .AddText($"Disabled Persona for {executablePath.ToLower()}")
+            .AddText($"Disabled Persona for {executable.ToLower()}")
             .Show();
     }
 
-    public static void FailedAutoConfigurationNotification(string executablePath)
+    public static void FailedAutoConfigurationNotification(string executable)
     {
         new ToastContentBuilder()
-            .AddText($"Unable to auto-configure Persona for {executablePath.ToLower()}.\n\n" +
-                "Please try manual configuration.")
+            .AddText($"Unable to auto-configure Persona for {executable.ToLower()}.\n\n" +
+                "Want to try again?")
+            .AddButton(new ToastButton()
+                .SetContent("Retry")
+                .AddArgument("action", $"startAutoConfiguration&{executable}"))
             .AddButton(new ToastButtonDismiss("Dismiss"))
             .Show();
     }
