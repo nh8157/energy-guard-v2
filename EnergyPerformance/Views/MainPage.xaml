@@ -56,9 +56,9 @@
         </StackPanel>
             
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Button x:Uid="ViewCarbonEmissionsButton"  Margin="0, 10, 0, 30" Click="SwitchToCarbonEmissions" HorizontalAlignment="Center"/>
+            <Button x:Uid="ViewCarbonEmissionsButton"  Margin="0, 80, 0, 10" Click="SwitchToCarbonEmissions" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
 
-            <StackPanel Orientation="Vertical" Width="410" Height="300" Margin="0, 80, 0, 0" HorizontalAlignment="Center" CornerRadius="20" Padding="5" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
+            <StackPanel Orientation="Vertical" Width="410" Height="300" Margin="0, 30, 0, 0" HorizontalAlignment="Center" CornerRadius="20" Padding="5" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
                 
                 <TextBlock FontSize="25" Text="" Margin="10, 5, 10, 20">
                     <Run x:Uid="PerformanceLabel"/>
