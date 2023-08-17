@@ -1,5 +1,4 @@
-﻿using System.Data.SQLite;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
@@ -23,6 +22,7 @@ public class EnergyUsageModel
 
     private EnergyUsageData _energyUsage;
     private readonly IDatabaseService _databaseService;
+
     public DateTime SelectedDate 
     {
         get; set;
@@ -61,8 +61,6 @@ public class EnergyUsageModel
     /// <summary>
     /// The cost per kWh for the user. Returns data loaded from file or default value if file is not found or corrupted.
     /// </summary>
-
-    // We need a way to fetch energy cost live
     public double CostPerKwh
     {
         get
@@ -265,7 +263,6 @@ public class EnergyUsageModel
         {
             dailyLogs.Add(diary.DailyUsage);
         }
-            
 
         return dailyLogs;
     }

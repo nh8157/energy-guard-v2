@@ -261,7 +261,7 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
     <value>Automatically control system resources to save power.</value>
   </data>
   <data name="HomeBudgetProgressRingLabel.Text" xml:space="preserve">
-    <value>of budget used</value>
+    <value>Budget Used</value>
   </data>
   <data name="HomeCasualAppBarButton.Label" xml:space="preserve">
     <value>Casual</value>
@@ -410,13 +410,22 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   <data name="AppSelection.PlaceholderText" xml:space="preserve">
     <value>Select Application</value>
   </data>
-	<data name="ModelSelection.PlaceholderText" xml:space="preserve">
+  <data name="ModelSelection.PlaceholderText" xml:space="preserve">
     <value>Energy Usage</value>
   </data>
-  <data name="ClosePopup.Content" xml:space="preserve">
-    <value>Close Popup</value>
+  <data name="GoBackButton.Content" xml:space="preserve">
+    <value>Go Back</value>
   </data>
   <data name="RestoreDefaultButton.Content" xml:space="preserve">
     <value>Restore to Default</value>
+  </data>
+  <data name="EditPersonaButton.Content" xml:space="preserve">
+    <value>Edit Persona</value>
+  </data>
+  <data name="AddPersonaLabel.Text" xml:space="preserve">
+    <value>Creating Persona for:</value>
+  </data>
+  <data name="BrowseButton.Content" xml:space="preserve">
+    <value>Browse</value>
   </data>
 </root>
