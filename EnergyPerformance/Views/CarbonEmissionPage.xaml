@@ -42,9 +42,9 @@
                     <TextBlock FontSize="25" Text="" Margin="10, 5">
                         <Run x:Uid="CarbonEmissionCard"/>
                     </TextBlock>
-                    <Grid>
+                    <Grid Margin="0, 15, 0, 0">
                         <!--{ThemeResource ControlAltFillColorTertiaryBrush}-->
-                        <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
+                        <BitmapIcon Height="176" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.Power, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
@@ -59,34 +59,36 @@
         </StackPanel>
 
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Button x:Uid="ViewPowerButton" Margin="0, 0, 0, 30" Click="SwitchToPowerUsage" HorizontalAlignment="Center"/>
+            <Button x:Uid="ViewPowerButton" Margin="0, 0, 0, 100" Click="SwitchToPowerUsage" HorizontalAlignment="Center"/>
 
-            <StackPanel Width="400" Height="500" Orientation="Vertical" CornerRadius="15" Padding="5" Margin="0, 0, 0, 25" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
+            <StackPanel Width="400" Height="410" Orientation="Vertical" CornerRadius="15" Padding="5" Margin="0, 0, 0, 0" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
 
-                <TextBlock FontSize="25" Text="" Margin="10, 5, 10, 20">
+                <TextBlock FontSize="25" Text="" Margin="10, 5, 10, 10">
                     <Run x:Uid="EmissionsLabel"/>
                 </TextBlock>
 
-                <Grid>
-                    <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
+                <StackPanel Orientation="Vertical">
+                <Grid Margin="0, 0, 0, 15">
+                    <BitmapIcon Height="155" Width="185" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                        <TextBlock FontSize="22" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
                             <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
-                        <TextBlock x:Uid="CPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                        <TextBlock x:Uid="CPUCarbonEmissionLabel"  FontSize="17" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
                 <Grid>
-                    <BitmapIcon Height="210" Width="210" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
+                    <BitmapIcon Height="155" Width="185" UriSource="ms-appx:///Assets/cloud-icon.png"></BitmapIcon>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
+                        <TextBlock FontSize="22" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
                             <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
                             <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
-                        <TextBlock x:Uid="GPUCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+                        <TextBlock x:Uid="GPUCarbonEmissionLabel"  FontSize="17" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
+                </StackPanel>
             </StackPanel>
         </StackPanel>
     </GridView>
