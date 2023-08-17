@@ -27,7 +27,7 @@
                                 <Run x:Uid="ApplicationNameHeader"/>
                             </TextBlock>
 
-                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" FontSize="18">
+                            <TextBlock Grid.Column="1" HorizontalAlignment="Left" FontSize="18" Margin="5, 0, 0, 0">
                                 <Run x:Uid="EnergyRatingHeader"/>
                             </TextBlock>
 
