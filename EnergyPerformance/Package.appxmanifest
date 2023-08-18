@@ -67,8 +67,6 @@
 
   <Capabilities>
     <rescap:Capability Name="runFullTrust" />
-	<!--comment out the line below disable request for admin priveleges at startup-->
-    <rescap:Capability Name="allowElevation" />
   </Capabilities>
   
   <genTemplate:Metadata>

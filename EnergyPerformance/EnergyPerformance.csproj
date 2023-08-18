@@ -76,7 +76,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\EnergyPerformance.Core\EnergyPerformance.Core.csproj" />
-    <ProjectReference Include="..\Wrapper\Wrapper.vcxproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">
