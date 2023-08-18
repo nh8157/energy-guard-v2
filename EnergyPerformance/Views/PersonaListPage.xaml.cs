@@ -59,6 +59,6 @@ public sealed partial class PersonaListPage : Page
         var button = sender.As<AppBarButton>();
         var appName = button.Tag.ToString();
         
-        ViewModel.Disable(appName);
+        ViewModel.Disable();
     }
 }
