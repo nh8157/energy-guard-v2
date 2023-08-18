@@ -77,12 +77,12 @@ public partial class PersonaViewModel : ObservableRecipient
 
     public void Enable(string _appName)
     {
-        //_model.EnablePersona(_appName);
+        _model.EnablePersona(_appName);
     }
 
     public void Disable(string _appName)
     {
-        //_model.DisableEnabledPersona();
+        _model.DisableEnabledPersona();
     }
 
 }
