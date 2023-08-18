@@ -5,8 +5,19 @@ using System.Diagnostics;
 using System.Management;
 
 namespace EnergyPerformance.Models;
+
 public class PersonaModel
 {
+    private static float Lerp(float start, float end, float t)
+    {
+        return start + t * (end - start);
+    }
+
+    private static float InverseLerp(float start, float end, float value)
+    {
+        return (value - start) / (end - start);
+    }
+    
     private readonly PersonaFileService _personaFileService;
     private readonly ProcessMonitorService _processMonitorService;
     private readonly CpuInfo _cpuInfo;
@@ -80,7 +91,7 @@ public class PersonaModel
         {
             if (executablePath != null)
             {
-                PersonaNotificationService.EnablePersona(executablePath);
+                PersonaNotification.EnablePersonaNotification(executablePath);
             }
         });
     }
@@ -100,7 +111,7 @@ public class PersonaModel
             {
                 if (personaName != null)
                 {
-                    PersonaNotificationService.DisabledPersona(personaName);
+                    PersonaNotification.DisabledPersonaNotification(personaName);
                 }
             });
         }
@@ -121,7 +132,8 @@ public class PersonaModel
     {
         if (!_allPersonas.Any(persona => persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase)))
         {
-            var entry = new PersonaEntry(_nextPersonaId, personaName, ConvertRatingToCpuSetting(energyRating), ConvertRatingToGpuSetting(energyRating));
+            var entry = new PersonaEntry(_nextPersonaId, personaName, energyRating,
+                ConvertRatingToCpuSetting(energyRating), ConvertRatingToGpuSetting(energyRating));
 
             _allPersonas.Add(entry);
 
@@ -134,13 +146,14 @@ public class PersonaModel
     }
 
     /// <summary>
-    /// This method reads all existing Personas
-    /// And translates the raw CPU, GPU settings into the positioning of the slider
+    /// This method reads all existing Personas with their respective energy ratings
     /// </summary>
     /// <returns>List of executable path name and energy rating pair for every application</returns>
     public List<(string, float)> ReadPersonaAndRating()
     {
-        List<(string, float)> profiles = _allPersonas.Select(persona => (persona.Path, ConvertSettingsToRating(persona.CpuSetting, persona.GpuSetting))).ToList();
+        List<(string, float)> profiles = _allPersonas.Select(persona => 
+            (persona.Path, persona.EnergyRating)
+        ).ToList();
         return profiles;
     }
 
@@ -155,9 +168,18 @@ public class PersonaModel
         {
             if (persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
             {
+                Debug.WriteLine($"Updating persona {personaName} to {energyRating}");
                 persona.CpuSetting = ConvertRatingToCpuSetting(energyRating);
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
+                persona.EnergyRating = energyRating;
 
+                // If persona is enabled, reapply the affinity mask
+                if (PersonaEnabled != null && IsEnabled && 
+                    PersonaEnabled.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
+                {
+                    _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
+                }
+                
                 _processMonitorService.RemoveWatcher(personaName);
                 _processMonitorService.AddWatcher(personaName);
             }
@@ -241,17 +263,75 @@ public class PersonaModel
     {
     }
 
-    private int ConvertRatingToCpuSetting(float energyRating)
+    // The conversion works as follows: the value of the slider is between 1 and 3 where
+    // 1 is the highest energy saving setting and 3 is the highest performance setting.
+    // For the lowest energy setting we want to use a single performance core, for 2
+    // we want to use all performance cores and for  3  we want to
+    // use all performance cores and all efficiency cores.
+    // The idea is that the slider is linearly mapped to the number of cores.
+    private (int, int) ConvertRatingToCpuSetting(float energyRating)
     {
-        return 0;
+        var numEfficiencyCores = _cpuInfo.CpuController.EfficiencyCoreCount();
+        var numPerformanceCores = _cpuInfo.CpuController.PerformanceCoreCount();
+        
+        if(energyRating < 1 || energyRating > 3)
+        {
+            throw new ArgumentException("Energy rating must be between 1 and 3");
+        }
+
+        // Interpolate between one core and the total number of efficiency cores
+        if (energyRating <= 2)
+        {
+            var setEfficiencyCores = (int)Math.Round(Lerp(1, numEfficiencyCores, energyRating-1));
+            return (setEfficiencyCores, 0);
+        }
+
+        var setPerformanceCores = (int)Math.Round(Lerp(0, numPerformanceCores, energyRating-2));
+        return (numEfficiencyCores, setPerformanceCores);
     }
+
+    //Perform the inverse of the above operation
+    private float ConvertSettingsToRating((int, int) cpuSetting, int gpuSetting)
+    {
+        var numEfficiencyCores = _cpuInfo.CpuController.EfficiencyCoreCount();
+        var numPerformanceCores = _cpuInfo.CpuController.PerformanceCoreCount();
+
+        var (setEfficiencyCores, setPerformanceCores) = cpuSetting;
+
+        if (setEfficiencyCores < 1 || setEfficiencyCores > numEfficiencyCores)
+        {
+            throw new ArgumentException("Efficiency core setting must be between 1 and the number of efficiency cores");
+        }
+
+        if (setPerformanceCores < 0 || setPerformanceCores > numPerformanceCores)
+        {
+            throw new ArgumentException("Performance core setting must be between 0 and the number of performance cores");
+        }
+
+        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == 0)
+        {
+            return 1;
+        }
+
+        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == numPerformanceCores)
+        {
+            return 3;
+        }
+
+        if (setEfficiencyCores == 1 && setPerformanceCores == 0)
+        {
+            return 2;
+        }
+
+        var efficiencyRating = InverseLerp(1, numEfficiencyCores, setEfficiencyCores);
+        var performanceRating = InverseLerp(0, numPerformanceCores, setPerformanceCores);
+
+        return efficiencyRating + performanceRating + 1;
+        
+    }
+    
     private int ConvertRatingToGpuSetting(float energyRating)
     {
         return 0;
-    }
-
-    private float ConvertSettingsToRating(int cpuSetting, int gpuSetting)
-    {
-        return 0.0f;
     }
 }

@@ -12,6 +12,12 @@
     </Page.Resources>
     <Grid x:Name="ContentArea">
         <StackPanel Orientation="Vertical" >
+            <!--<labs:SettingsCard x:Uid="EnergyUsageInfoBar">-->
+                <!--<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Content="{x:Bind ViewModel.CurrentMode, Mode=OneWay, Converter={StaticResource LocalizedStringConverter}}" Command="{x:Bind ViewModel.SwitchCostEnergyModelCommand}" Margin="5 0"/>
+                    <Button Content="{x:Bind ViewModel.CurrentTimeSpan, Mode=OneWay, Converter={StaticResource LocalizedStringConverter}}" Command="{x:Bind ViewModel.SwitchTimeSpanCommand}"  Margin="5 0"/>
+                </StackPanel>
+            </labs:SettingsCard>-->
             <Grid Margin="0 20">
 
                 <oxy:PlotView Model="{x:Bind ViewModel.Model, Mode=OneWay}" Background="Transparent" MinHeight="600">

@@ -12,7 +12,7 @@
         <helpers:EnergyUsageLocalizedStringConverter x:Key="LocalizedStringConverter" />
         <DataTemplate x:Key="MessageViewTemplate" x:DataType="local1:DebugMessage">
             <Grid Height="Auto" Margin="4">
-                <StackPanel MinHeight="20" Padding="10, 0, 0, 10" Background="{ThemeResource SystemColorHighlightColor}" CornerRadius="5" HorizontalAlignment="Stretch">
+                <StackPanel MinHeight="20" Padding="10, 0, 0, 10" Background="{x:Bind Colour}" CornerRadius="5" HorizontalAlignment="Stretch">
                     <TextBlock Text="{x:Bind Message}" Padding="0, 10, 0, 0" FontSize="14" Foreground="{ThemeResource SystemColorHighlightTextColor}"/>
                     <TextBlock Text="{x:Bind TimeStamp}" Padding="0, 0, 0, 10" FontSize="12" Foreground="{ThemeResource SystemColorHighlightTextColor}"/>
                 </StackPanel>

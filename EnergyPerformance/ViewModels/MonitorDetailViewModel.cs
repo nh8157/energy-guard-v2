@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Models;
 using LiveChartsCore;
@@ -9,6 +9,7 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 
 namespace EnergyPerformance.ViewModels;
+
 
 public partial class MonitorDetailViewModel : ObservableObject
 {

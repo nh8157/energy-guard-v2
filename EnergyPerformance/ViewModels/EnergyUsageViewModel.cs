@@ -78,13 +78,19 @@ public partial class EnergyUsageViewModel : ObservableRecipient
         stemSeriesEnergyHourly = new StemSeries();
         this.controller = new PlotController();
 
+        var command = new DelegatePlotCommand<OxyMouseEventArgs>(
+           (v, c, a) =>
+           {
+               Console.WriteLine("1223");
+           });
+        Controller.BindMouseDown(OxyMouseButton.Left, command); //
+
         LoadLocalizedStrings();
         InitialiseEnergyUsageModel();
         InitialiseSystemMonitorModel();
 
     }
-
-
+    
     private void InitialiseSystemMonitorModel()
     {
         ModelMonitor = new PlotModel
