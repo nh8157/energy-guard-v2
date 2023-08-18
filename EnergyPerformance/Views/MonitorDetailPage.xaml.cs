@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using EnergyPerformance.ViewModels;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
@@ -16,7 +16,6 @@ public sealed partial class MonitorDetailPage : Page
     {
         ViewModel = App.GetService<MonitorDetailViewModel>();
         InitializeComponent();
-        Debug.WriteLine("xxx");
     }
 
     
@@ -51,5 +50,4 @@ public sealed partial class MonitorDetailPage : Page
         else
             LvcChart.Series = ViewModel.SeriesCarbonHourly;
     }
-
-    }
+}

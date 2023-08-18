@@ -354,7 +354,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
     <value>System Monitor</value>
   </data>
   <data name="HistoryEnergy.Content" xml:space="preserve">
-    <value>History</value>
+    <value>History Energy</value>
   </data>
   <data name="CarbonEmissionTitle.Text" xml:space="preserve">
     <value>Currently emitting:</value>
@@ -406,6 +406,9 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="GoBackButton.Content" xml:space="preserve">
     <value>Go Back</value>
+  </data>
+  <data name="ClosePopup.Content" xml:space="preserve">
+    <value>Close Popup</value>
   </data>
   <data name="RestoreDefaultButton.Content" xml:space="preserve">
     <value>Restore to Default</value>

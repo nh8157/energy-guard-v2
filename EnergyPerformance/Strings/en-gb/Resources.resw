@@ -136,7 +136,7 @@
     <value>System Monitor</value>
   </data>
   <data name="HistoryEnergy.Content" xml:space="preserve">
-    <value>History</value>
+    <value>History Energy</value>
   </data>
   <data name="Shell_Debug.Content" xml:space="preserve">
     <value>Debug Messages</value>
@@ -409,6 +409,12 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="GoBackButton.Content" xml:space="preserve">
     <value>Go Back</value>
+  </data>
+  <data name="ModelSelection.PlaceholderText" xml:space="preserve">
+    <value>Energy Usage</value>
+  </data>
+  <data name="ClosePopup.Content" xml:space="preserve">
+    <value>Close Popup</value>
   </data>
   <data name="RestoreDefaultButton.Content" xml:space="preserve">
     <value>Restore to Default</value>

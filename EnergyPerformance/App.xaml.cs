@@ -16,9 +16,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Windows;
+using Windows.UI.Notifications;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Navigation;
-using Windows.UI.Notifications;
 
 namespace EnergyPerformance;
 
@@ -102,12 +102,17 @@ public partial class App : Application
 
             services.AddSingleton<CpuInfo>(); // container for live CPU usage data
             services.AddHostedService<CpuTrackerService>();
+            
+            services.AddSingleton<GpuInfo>(); // container for live GPU usage data
+            services.AddHostedService<GpuTrackerService>();
+
+            services.AddHostedService<ProcessTrackerService>();
 
             services.AddSingleton<PowerInfo>(); // container for live Power usage data
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
-            services.AddHostedService<LocationService>();
+            services.AddSingleton<LocationService>();
 
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
@@ -139,6 +144,7 @@ public partial class App : Application
             services.AddTransient<PersonaViewModel>();
             services.AddTransient<PersonaListPage>();
             services.AddTransient<CustomisePersonaPage>();
+            services.AddTransient<PersonaCustomisationViewModel>();
             services.AddTransient<AddPersonaPage>();
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();
@@ -217,7 +223,7 @@ public partial class App : Application
         }
 
         base.OnLaunched(args);
-
+        App.GetService<IAppNotificationService>().Show("AppStartupNotificationPayload");
         // start the ActivationService which all perform required actions at startup and call InitializeAsync() methods
         // for any registered services/objects which require asynchronous initialization
         await App.GetService<IActivationService>().ActivateAsync(args);

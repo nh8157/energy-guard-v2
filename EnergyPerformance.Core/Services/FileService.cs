@@ -17,6 +17,7 @@ public class FileService : IFileService
         if (File.Exists(path))
         {
             var json = File.ReadAllText(path);
+            Debug.WriteLine($"Read: {json}");
             return JsonConvert.DeserializeObject<T>(json);
         }
 

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
+using EnergyPerformance.Models;
 
 namespace EnergyPerformance.Services;
 
@@ -12,7 +13,7 @@ namespace EnergyPerformance.Services;
 public class CpuTrackerService : BackgroundService, ICpuTrackerService
 {
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(1000));
-    private readonly PerformanceCounter performanceCounter;
+    private readonly PerformanceCounter totalPerformanceCounter;
     private readonly ILocalSettingsService _settingsService;
     private readonly IAppNotificationService _notificationService;
     private int runningAverageCounter;
@@ -32,6 +33,7 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
 
     public const int Duration = 30;
 
+    private DebugModel Debug => App.GetService<DebugModel>();
 
     public bool SupportedCpu => _cpuInfo.IsSupported;
 
@@ -44,7 +46,6 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         set => _cpuInfo.CpuUsage = value;
     }
 
-
     public CpuTrackerService(ILocalSettingsService settingsService, IAppNotificationService notificationService, CpuInfo cpuInfo)
     {
         _settingsService = settingsService;
@@ -52,10 +53,10 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         runningAverage = 0; runningAverageCounter = 0;
         eCoresActive = 0; pCoresActive = 0;
         _cpuInfo = cpuInfo;
-        Debug.WriteLine("CPU Supported: " + _cpuInfo.IsSupported);
-        performanceCounter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total");
+        Debug.AddMessage("CPU Supported: " + _cpuInfo.IsSupported);
+        totalPerformanceCounter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total");
         _totalCores = _cpuInfo.CpuController.TotalCoreCount();
-        Debug.WriteLine("Total Cores: " + _totalCores);
+        Debug.AddMessage("Total Cores: " + _totalCores);
         currentMode = 2;
 
     }
@@ -66,7 +67,7 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         {
             await DoAsync();
         }
-        Debug.WriteLine("Stopped executing CPUTrackerService async method");
+        Debug.AddMessage("Stopped executing CPUTrackerService async method");
     }
 
     /// <summary>
@@ -263,13 +264,15 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
     /// <returns></returns>
     private async Task DoAsync()
     {
+        CpuUsage = Math.Round(Math.Min(totalPerformanceCounter.NextValue(), 100.0), CpuUsageDoublePrecision);
+        
         if (!SupportedCpu || !_settingsService.AutoControlSetting)
         {
             return;
         }
 
-        CpuUsage = Math.Round(Math.Min(performanceCounter.NextValue(), 100.0), CpuUsageDoublePrecision);
 
+        /*
         if (!_settingsService.SelectedMode.Equals("Auto"))
         {
             ModeSwitch(_settingsService.SelectedMode);
@@ -291,6 +294,7 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
             await AutomaticModeControl(activeCores, _totalCores, runningAverage);
             runningAverage = CpuUsage;
         }
+        */
         
         // Where does the switching occur?
         // What is this line for?
