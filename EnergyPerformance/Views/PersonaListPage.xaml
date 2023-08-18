@@ -49,9 +49,9 @@
 
 
                             <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <AppBarButton Icon="Play"  Height="45" Width="40"  Click="PlayButtonClicked"/>
-                                <AppBarButton Icon="Pause"  Height="45" Width="40" Click="PauseButtonClicked"/>
-                                <AppBarButton Icon="Delete"  Height="45" Width="40"  Click="DeleteButtonClicked"/>
+                                <AppBarButton Icon="Play"  Height="45" Width="40"  Click="PlayButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
+                                <AppBarButton Icon="Pause"  Height="45" Width="40" Click="PauseButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
+                                <AppBarButton Icon="Delete"  Height="45" Width="40"  Click="DeleteButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
                             </StackPanel>
 
                         </Grid>

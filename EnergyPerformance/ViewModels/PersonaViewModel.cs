@@ -66,6 +66,25 @@ public partial class PersonaViewModel : ObservableRecipient
         }
     }
 
+    public void Delete(string _appName)
+    {
+        var index = applicationList.IndexOf(_appName);
+        applicationList.RemoveAt(index);
+        personasAndRatings.RemoveAt(index);
+
+        _model.DeletePersona(_appName);
+    }
+
+    public void Enable(string _appName)
+    {
+        //_model.EnablePersona(_appName);
+    }
+
+    public void Disable(string _appName)
+    {
+        //_model.DisableEnabledPersona();
+    }
+
 }
 
 // Class for Application Object - Inherits from INotifyPropertyChanged - Notifies the View that a change has occured
