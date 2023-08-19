@@ -171,22 +171,15 @@ namespace Core
 	int Controller::CreateAffinityMask(int eCores, int pCores)
 	{
 		// 2-ecores effiency mode
-		if (eCoreCount < 2) {
+		if (eCores > eCoreCount || pCores > pCoreCount) {
 			return -1;
 		}
 
-		int eCoreUser = 2;
-		int coreOffset = eCoreUser + hyperthreadCores;
+		int pCoreMask = AffinityMaskGenerator(pCores);
+		int eCoreMask = AffinityMaskGenerator(eCores) << pCoreCount;
+		int affinityMask = pCoreMask + eCoreMask;
 
-		affinityOffset = AffinityMaskGenerator(hyperthreadCores);
-		int tmpAffinity = AffinityMaskGenerator(coreOffset);
-		int eCoreAffinity = tmpAffinity - affinityOffset;
-		//cout << eCoreAffinity << endl;
-		coreMapArr.push_back(eCoreAffinity);
-
-		tmpAffinity = coreMapArr[0];
-		coreMapArr.clear();
-		return tmpAffinity;
+		return affinityMask;
 	}
 
 	void Controller::MoveAllAppsToSomeEfficiencyCores()
