@@ -87,6 +87,10 @@ public class PersonaModel
     public void CreationEventHandler(object? sender, EventArgs e) 
     {
         var executablePath = _processMonitorService.CreatedProcess;
+
+        // This line enables the persona without needing the user to click "Enable"
+        EnablePersona(executablePath);
+
         App.MainWindow.DispatcherQueue.TryEnqueue(() =>
         {
             if (executablePath != null)
@@ -103,15 +107,16 @@ public class PersonaModel
     /// <param name="e"></param>
     public void DeletionEventHandler(object? sender, EventArgs e)
     {
-        var personaName = _processMonitorService.DeletedProcess;
-        if (IsEnabled && PersonaEnabled != null && personaName != null)
+        var executablePath = _processMonitorService.DeletedProcess;
+
+        if (IsEnabled && PersonaEnabled != null && executablePath != null)
         {
             DisableEnabledPersona();
             App.MainWindow.DispatcherQueue.TryEnqueue(() =>
             {
-                if (personaName != null)
+                if (executablePath != null)
                 {
-                    PersonaNotification.DisabledPersonaNotification(personaName);
+                    PersonaNotification.DisabledPersonaNotification(executablePath);
                 }
             });
         }
@@ -172,11 +177,12 @@ public class PersonaModel
                 persona.CpuSetting = ConvertRatingToCpuSetting(energyRating);
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
                 persona.EnergyRating = energyRating;
-
                 // If persona is enabled, reapply the affinity mask
                 if (PersonaEnabled != null && IsEnabled && 
                     PersonaEnabled.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
                 {
+                    App.GetService<DebugModel>().AddMessage($"Updating persona {personaName}");
+                    App.GetService<DebugModel>().AddMessage($"CPU Settings {persona.CpuSetting}");
                     _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
                 }
                 
@@ -217,7 +223,6 @@ public class PersonaModel
 
             // pass the settings to CPU and GPU
             _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
-            EnableGpuSetting(persona.GpuSetting);
 
             Debug.WriteLine($"Persona for {personaName} enabled");
             return true;
@@ -237,14 +242,13 @@ public class PersonaModel
         if (PersonaEnabled != null)
         {
             var personaName = PersonaEnabled.Path;
-            Debug.WriteLine($"Disabling persona for {personaName}");
 
+            App.GetService<DebugModel>().AddMessage($"Diabling persona {personaName}");
             if (PersonaEnabled == null)
             {
                 return false;
             }
             _cpuInfo.DisableCpuSetting(personaName, PersonaEnabled.CpuSetting);
-            DisableGpuSetting(PersonaEnabled.GpuSetting);
 
             PersonaEnabled = null;
             IsEnabled = false;
@@ -252,15 +256,6 @@ public class PersonaModel
             return true;
         }
         return false;
-    }
-
-    // we might want to move these methods into their own classes
-    private void EnableGpuSetting(int gpuSetting)
-    {
-    }
-
-    private void DisableGpuSetting(int gpuSetting)
-    {
     }
 
     // The conversion works as follows: the value of the slider is between 1 and 3 where
