@@ -56,6 +56,7 @@ public class GpuTrackerService : BackgroundService
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         DetectRequiredSensors();
+
         while (await _periodicTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
         {
             await DoAsync();
@@ -64,11 +65,13 @@ public class GpuTrackerService : BackgroundService
 
     private async Task DoAsync()
     {
-        foreach (IHardware hardware in computer.Hardware)
+        await Task.Run(() =>
         {
-            hardware.Update();
-        }
-        
+            foreach (IHardware hardware in computer.Hardware)
+            {
+                hardware.Update();
+            }
+        });
         GpuUsage = gpuSensor.Value ?? lastUsage;
         lastUsage = GpuUsage;
 
