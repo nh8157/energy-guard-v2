@@ -275,13 +275,13 @@ public class PersonaModel
         }
 
         // Interpolate between one core and the total number of efficiency cores
-        if (energyRating <= 2)
+        if (energyRating >= 2)
         {
-            var setEfficiencyCores = (int)Math.Round(Lerp(1, numEfficiencyCores, energyRating-1));
+            var setEfficiencyCores = (int)Math.Round(Lerp(1, numEfficiencyCores, 3-energyRating));
             return (setEfficiencyCores, 0);
         }
 
-        var setPerformanceCores = (int)Math.Round(Lerp(0, numPerformanceCores, energyRating-2));
+        var setPerformanceCores = (int)Math.Round(Lerp(0, numPerformanceCores, 2-energyRating));
         return (numEfficiencyCores, setPerformanceCores);
     }
 
