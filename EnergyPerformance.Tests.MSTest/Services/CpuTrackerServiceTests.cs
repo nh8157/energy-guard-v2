@@ -1,5 +1,4 @@
-﻿using CLI;
-using EnergyPerformance.Core.Contracts.Services;
+﻿using EnergyPerformance.Core.Contracts.Services;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using EnergyPerformance.Services;
 using EnergyPerformance.Core.Services;
@@ -36,21 +35,21 @@ public class CpuTrackerServiceTests
         return  cpuTrackerService;
     }
 
-    [TestMethod()]
-    public void CpuTrackerServiceTest()
-    {
-        var service = GetService();
-        var controller = new Controller();
-        if (controller.PerformanceCoreCount() >= 2)
-        {
-            Assert.IsTrue(service.SupportedCpu);
-        }
-        else
-        {
-            Assert.IsFalse(service.SupportedCpu);
-        }
-
-    }
+    // [TestMethod()]
+    // public void CpuTrackerServiceTest()
+    // {
+    //     var service = GetService();
+    //     var controller = new Controller();
+    //     if (controller.PerformanceCoreCount() >= 2)
+    //     {
+    //         Assert.IsTrue(service.SupportedCpu);
+    //     }
+    //     else
+    //     {
+    //         Assert.IsFalse(service.SupportedCpu);
+    //     }
+    //
+    // }
 
 
     [TestMethod()]

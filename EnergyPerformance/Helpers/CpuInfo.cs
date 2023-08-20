@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using CLI;
+using EnergyPerformance.Services;
+
 //using EnergyPerformance.Temporary;
 
 namespace EnergyPerformance.Helpers;
@@ -37,9 +38,9 @@ public class CpuInfo
     /// </summary>
     public Dictionary<string, double> ProcessesCpuUsage { get; set; }
 
-    public CpuInfo()
+    public CpuInfo(Controller controller)
     {
-        CpuController = new Controller();
+        CpuController = controller;
         ProcessesCpuUsage = new Dictionary<string, double>();
         IsSupported = CheckProcessorIsSupported();
         CpuUsage = 0;

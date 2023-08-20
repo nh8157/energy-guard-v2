@@ -5,7 +5,6 @@ using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using OxyPlot;
-using CLI;
 using System.Diagnostics;
 
 namespace EnergyPerformance.ViewModels;

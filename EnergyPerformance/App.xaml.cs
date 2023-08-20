@@ -96,6 +96,12 @@ public partial class App : Application
 
             // Initializing HttpClientFactory
             services.AddHttpClient();
+            
+            // Initializing PipeClient
+            services.AddSingleton<PipeClient>(new PipeClient("EnergyPerformancePipe"));
+            
+            // CPU Controller
+            services.AddSingleton<Controller>();
 
             // --- Registering background services and their dependencies
             services.AddHostedService<PeriodicDataSaverService>();
