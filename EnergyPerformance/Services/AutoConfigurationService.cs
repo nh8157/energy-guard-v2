@@ -6,8 +6,8 @@ public class AutoConfigurationService
 {
     private int _left;
     private int _right;
-    private string _executable; // Application being auto-configured
-    private List<float> _personaEnergyRates; // Enery rates in the persona customization slider
+    private string? _executable; // Application being auto-configured
+    private readonly List<float> _personaEnergyRates; // Enery rates in the persona customization slider
     private int stabilityCheckCount = 0; // The number of times the stability check has been inquired to the user.
 
     private const int delayInMinutes = 3; // Minutes till the next stability check
@@ -33,7 +33,7 @@ public class AutoConfigurationService
         var mid = _left + ((_right - _left) / 2);
 
         await App.GetService<PersonaModel>().UpdatePersona(_executable, _personaEnergyRates[mid]);
-        await Task.Delay(TimeSpan.FromSeconds(5));
+        await Task.Delay(TimeSpan.FromSeconds(delayInMinutes));
 
         PersonaNotification.StabilityCheckNotification(_executable, ++stabilityCheckCount);
     }
@@ -65,7 +65,7 @@ public class AutoConfigurationService
             {
                 _right = mid - 1;
             }
-            await Task.Delay(TimeSpan.FromSeconds(5));
+            await Task.Delay(TimeSpan.FromSeconds(delayInMinutes));
             PersonaNotification.StabilityCheckNotification(_executable, ++stabilityCheckCount);
         }
         else
