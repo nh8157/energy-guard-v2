@@ -181,8 +181,6 @@ public class PersonaModel
                 if (PersonaEnabled != null && IsEnabled && 
                     PersonaEnabled.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
                 {
-                    App.GetService<DebugModel>().AddMessage($"Updating persona {personaName}");
-                    App.GetService<DebugModel>().AddMessage($"CPU Settings {persona.CpuSetting}");
                     _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
                 }
                 
@@ -243,7 +241,6 @@ public class PersonaModel
         {
             var personaName = PersonaEnabled.Path;
 
-            App.GetService<DebugModel>().AddMessage($"Diabling persona {personaName}");
             if (PersonaEnabled == null)
             {
                 return false;
@@ -305,17 +302,17 @@ public class PersonaModel
 
         if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == 0)
         {
-            return 1;
+            return 2;
         }
 
         if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == numPerformanceCores)
         {
-            return 3;
+            return 1;
         }
 
         if (setEfficiencyCores == 1 && setPerformanceCores == 0)
         {
-            return 2;
+            return 3;
         }
 
         var efficiencyRating = InverseLerp(1, numEfficiencyCores, setEfficiencyCores);
