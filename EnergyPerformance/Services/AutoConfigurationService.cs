@@ -33,7 +33,7 @@ public class AutoConfigurationService
         var mid = _left + ((_right - _left) / 2);
 
         await App.GetService<PersonaModel>().UpdatePersona(_executable, _personaEnergyRates[mid]);
-        await Task.Delay(TimeSpan.FromSeconds(delayInMinutes));
+        await Task.Delay(TimeSpan.FromMinutes(delayInMinutes));
 
         PersonaNotification.StabilityCheckNotification(_executable, ++stabilityCheckCount);
     }
@@ -65,7 +65,7 @@ public class AutoConfigurationService
             {
                 _right = mid - 1;
             }
-            await Task.Delay(TimeSpan.FromSeconds(delayInMinutes));
+            await Task.Delay(TimeSpan.FromMinutes(delayInMinutes));
             PersonaNotification.StabilityCheckNotification(_executable, ++stabilityCheckCount);
         }
         else
