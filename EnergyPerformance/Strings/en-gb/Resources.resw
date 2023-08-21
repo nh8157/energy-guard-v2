@@ -183,50 +183,6 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
   &lt;/actions&gt;
 &lt;/toast&gt;</value>
   </data>
-  <data name="CasualModeNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Casual Mode&lt;/text&gt;
-      &lt;text&gt;Your device has been switched to casual mode to save power.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/casual_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
-  <data name="AutoControlEnabledNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Auto Control&lt;/text&gt;
-      &lt;text&gt;Your device will now automatically switch modes to save power.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/auto_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
-  <data name="WorkModeNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Work Mode&lt;/text&gt;
-      &lt;text&gt;Your device has been switched to work mode to save power.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/work_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
-  <data name="PerformanceModeNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Gaming Mode&lt;/text&gt;
-      &lt;text&gt;Your device has been switched to performance mode, normal device settings are now being used.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/performance_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
   <data name="CurrencyCode" xml:space="preserve">
     <value>GBP</value>
   </data>
@@ -260,21 +216,11 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
   <data name="HomeCpuUsageProgressRingLabel.Text" xml:space="preserve">
     <value>CPU Usage</value>
   </data>
-  <data name="HomeLastWeekCard.Header" xml:space="preserve">
-    <value>Last Week</value>
-  </data>
   <data name="HomePowerUseTitle.Text" xml:space="preserve">
     <value>Currently using:</value>
   </data>
   <data name="HomeProfileBar.Header" xml:space="preserve">
     <value>Profile</value>
-  </data>
-  <data name="HomeWorkAppBarButton.Label" xml:space="preserve">
-    <value>Work</value>
-  </data>
-  <data name="HomeWorkTooltip.Content" xml:space="preserve">
-    <value>Limit system resources to save power.
-Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="PercentSymbol.Text" xml:space="preserve">
     <value>%</value>
