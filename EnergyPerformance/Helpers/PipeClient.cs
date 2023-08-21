@@ -6,7 +6,6 @@ namespace EnergyPerformance.Helpers;
 public class PipeClient
 {
     private string _pipeName;
-    private NamedPipeClientStream _pipeClient;
     
     public PipeClient(string pipeName)
     {
@@ -15,32 +14,36 @@ public class PipeClient
     
     public void SendMessage(string message)
     {
-        using (_pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut))
-        {
-            _pipeClient.Connect();
-            var writer = new StreamWriter(_pipeClient);
-            writer.WriteLine(message);
-            writer.Flush();
-            writer.Close();
-        }
+        using var pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.Out);
+        pipeClient.Connect();
+        var writer = new StreamWriter(pipeClient);
+        writer.Write(message);
+        writer.Flush();
+        writer.Close();
     }
     
     public string? ReceiveMessage()
     {
-        using (_pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut))
-        {
-            _pipeClient.Connect();
-            var reader = new StreamReader(_pipeClient);
-            var response = reader.ReadLine();
-            reader.Close();
-            return response;
-        }
+        using var pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.In);
+        pipeClient.Connect();
+        var reader = new StreamReader(pipeClient);
+        var response = reader.ReadLine();
+        reader.Close();
+        return response;
     }
     
-    public string SendAndReceiveMessage(string message)
+    public string? SendAndReceiveMessage(string message)
     {
-        SendMessage(message);
-        return ReceiveMessage();
+        using var pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut);
+        pipeClient.Connect();
+        var writer = new StreamWriter(pipeClient);
+        writer.Write(message);
+        writer.Flush();
+        var reader = new StreamReader(pipeClient);
+        var response = reader.ReadLine();
+        writer.Close();
+        reader.Close();
+        return response;
     }
     
 }

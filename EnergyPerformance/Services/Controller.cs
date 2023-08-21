@@ -1,4 +1,5 @@
-﻿using EnergyPerformance.Helpers;
+﻿using System.Diagnostics;
+using EnergyPerformance.Helpers;
 
 namespace EnergyPerformance.Services;
 
@@ -66,6 +67,7 @@ public sealed class Controller
     {
         var command = "PerformanceCoreCount";
         var response = _pipeClient.SendAndReceiveMessage(command);
+        Debug.WriteLine(response);
         return int.Parse(response);
     }
 }

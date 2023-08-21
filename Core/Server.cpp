@@ -46,7 +46,7 @@ int main()
         if (isConnected) 
         {
             std::cout << "Client connected." << std::endl;
-            while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
+            while (ReadFile(hPipe, buffer, BUFFER_SIZE - 1, &dwRead, NULL) != FALSE)
             {
                 //Add terminating zero 
                 buffer[dwRead] = '\0';
@@ -93,26 +93,35 @@ int main()
                 {
                     int totalCores = controller.TotalCoreCount();
                     std::string result = std::to_string(totalCores);
+
+                    std::cout << "Sending result: " << result << std::endl;
+                    result.append("\n");
                     
-                    WriteFile(hPipe, result.c_str(), result.size(), &dwWritten, NULL);
+                    WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
                 }
                 else if (command == "EfficiencyCoreCount")
                 {
                     int efficiencyCores = controller.EfficiencyCoreCount();
                     std::string result = std::to_string(efficiencyCores);
 
-                    WriteFile(hPipe, result.c_str(), result.size(), &dwWritten, NULL);
+                    std::cout << "Sending result: " << result << std::endl;
+                    result.append("\n");
+
+                    WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
                 }
                 else if (command == "PerformanceCoreCount")
                 {
                     int performanceCores = controller.PerformanceCoreCount();
                     std::string result = std::to_string(performanceCores);
 
-                    WriteFile(hPipe, result.c_str(), result.size(), &dwWritten, NULL);
+                    std::cout << "Sending result: " << result << std::endl;
+                    result.append("\n");
+
+                    WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
                 }
                 else
                 {
-                    //Invalid command
+                    std::cout << "Invalid command." << std::endl;
                 }
             }
         } else
