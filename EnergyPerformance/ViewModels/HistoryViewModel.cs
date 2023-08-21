@@ -31,7 +31,8 @@ public partial class HistoryViewModel : ObservableObject
     private ColumnSeries<DateTimePoint> _carbonSeries;
     private string _selectedApplication;
     private DateTime _lastDate = DateTime.Today;
-    private DateTime _currentStartDate = DateTime.Today.AddDays(-6.5);
+    private DateTime _currentStartDate;
+    private DateTime _currentEndDate;
 
     public HistoryViewModel()
     {
@@ -63,7 +64,7 @@ public partial class HistoryViewModel : ObservableObject
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM/dd}: {chartPoint.PrimaryValue.ToString("F4")}",
+                $"{chartPoint.PrimaryValue.ToString("F4")} watt",
             Name = "Watt",
             Values = values,
             Fill = new SolidColorPaint(new SKColor(51, 181, 255))
@@ -72,7 +73,7 @@ public partial class HistoryViewModel : ObservableObject
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM/dd}: {chartPoint.PrimaryValue.ToString("F4")}",
+                $"\u00A3{chartPoint.PrimaryValue.ToString("F4")}",
             Name = "Pound",
             Values = costs,
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
@@ -81,10 +82,10 @@ public partial class HistoryViewModel : ObservableObject
         {
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{new DateTime((long)chartPoint.SecondaryValue):MM/dd}: {chartPoint.PrimaryValue.ToString("F4")}",
+                $"{chartPoint.PrimaryValue.ToString("F4")} g",
             Name = "CO2",
             Values = carbons,
-            Fill = new SolidColorPaint(new SKColor(143, 188, 143))
+            Fill = new SolidColorPaint(new SKColor(144, 238, 144))
         };
         _historySeries.ChartPointPointerDown += OnPointerDown;
         _costSeries.ChartPointPointerDown += OnCostPointerDown;
@@ -131,7 +132,9 @@ public partial class HistoryViewModel : ObservableObject
         {
             Labeler = value => new DateTime((long) value).ToString("MM/dd"),
             UnitWidth = TimeSpan.FromDays(1).Ticks, 
-            MinStep = TimeSpan.FromDays(1).Ticks
+            MinStep = TimeSpan.FromDays(1).Ticks,
+            
+
         }
     };
 
@@ -183,6 +186,7 @@ public partial class HistoryViewModel : ObservableObject
     {
         // Get the current date
         DateTime currentDate = DateTime.Now.Date;
+        DayOfWeek dayOfWeek = currentDate.DayOfWeek;
 
         // Calculate the start date for the last seven days
         DateTime startDate = currentDate.AddDays(-6.5); // Subtract 6 days to get the start date
@@ -190,9 +194,46 @@ public partial class HistoryViewModel : ObservableObject
         // Calculate the end date (today)
         DateTime endDate = currentDate.AddDays(0.5);
 
+        switch (dayOfWeek)
+        {
+        case DayOfWeek.Sunday:
+            startDate = currentDate.AddDays(-6.5);
+            endDate = currentDate.AddDays(0.5);
+            break;
+
+        case DayOfWeek.Monday:
+            startDate = currentDate.AddDays(-0.5);
+            endDate = currentDate.AddDays(6.5);
+            break;
+        case DayOfWeek.Tuesday:
+            startDate = currentDate.AddDays(-1.5);
+            endDate = currentDate.AddDays(5.5);
+            break;
+
+        case DayOfWeek.Wednesday:
+            startDate = currentDate.AddDays(-2.5);
+            endDate = currentDate.AddDays(4.5);
+            break;
+        case DayOfWeek.Thursday:
+            startDate = currentDate.AddDays(-3.5);
+            endDate = currentDate.AddDays(3.5);
+            break;
+        case DayOfWeek.Friday:
+            startDate = currentDate.AddDays(-4.5);
+            endDate = currentDate.AddDays(2.5);
+            break;
+
+        case DayOfWeek.Saturday:
+            startDate = currentDate.AddDays(-5.5);
+            endDate = currentDate.AddDays(1.5);
+            break;
+        }
+
         // Get the ticks for the start and end dates
         long startTicks = startDate.Ticks;
         long endTicks = endDate.Ticks;
+        _currentStartDate = startDate;
+        _currentEndDate = endDate;
 
         // Update the X-axis limits to display data for the last seven days
         var axis = XAxes[0];
@@ -234,7 +275,7 @@ public partial class HistoryViewModel : ObservableObject
         // Calculate the end date (today)
         DateTime endDate = _currentStartDate.AddDays(14);
 
-        if (endDate.CompareTo(DateTime.Today.AddDays(1)) > 0)
+        if (endDate.CompareTo(_currentEndDate.AddDays(1)) > 0)
         {
             return;
         }
@@ -266,4 +307,5 @@ public partial class HistoryViewModel : ObservableObject
             }
         }
     }
+
 }

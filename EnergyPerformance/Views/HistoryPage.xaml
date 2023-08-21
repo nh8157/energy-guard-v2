@@ -42,13 +42,14 @@
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76C;" FontSize="18" VerticalAlignment="Center" />
             </Button>
         </Grid>
+
         <lvc:CartesianChart
             x:Name="LvcChart"
             Grid.Row="1"
             Series="{Binding HistorySeries}"
             XAxes="{Binding XAxes}"
             YAxes="{Binding YAxes}"
-            ZoomMode="None"
+            ZoomMode="None"       
             Margin="0,0,0,20">
         </lvc:CartesianChart>
     </Grid>
