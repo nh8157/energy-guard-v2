@@ -300,16 +300,19 @@ public class PersonaModel
             throw new ArgumentException("Performance core setting must be between 0 and the number of performance cores");
         }
 
+        // energy rating is 2
         if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == 0)
         {
             return 2;
         }
 
+        // energy rating is 1
         if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == numPerformanceCores)
         {
             return 1;
         }
 
+        // energy rating is 3
         if (setEfficiencyCores == 1 && setPerformanceCores == 0)
         {
             return 3;
