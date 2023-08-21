@@ -27,8 +27,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     private readonly PowerInfo _powerInfo;
     private readonly CpuInfo _cpuInfo;
     private readonly GpuInfo _gpuInfo;
-
-    private DebugModel Debug => App.GetService<DebugModel>();
     
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
@@ -88,9 +86,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
                 // read hardware sensors which report power values
                 if ((sensor.Name.Contains("Package") || sensor.Name.Contains("Power")) && sensor.SensorType.Equals(SensorType.Power))
                 {
-                    Debug.AddMessage($"Hardware: {hardware.Name}");
-                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
-
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     sensors.Add(sensor);
                 }
@@ -98,9 +93,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
                 // read CPU sensors which report power values
                 if (sensor.Name.Contains("Package") && sensor.SensorType.Equals(SensorType.Power) && hardware.HardwareType.Equals(HardwareType.Cpu))
                 {
-                    Debug.AddMessage($"Hardware: {hardware.Name}");
-                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
-
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     cpuSensors.Add(sensor);
                 }
@@ -108,9 +100,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
                 // read GPU sensors which report power values
                 if (sensor.Name.Contains("GPU Package") && sensor.SensorType.Equals(SensorType.Power))
                 {
-                    Debug.AddMessage($"Hardware: {hardware.Name}");
-                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
-
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     gpuSensors.Add(sensor);
                 }

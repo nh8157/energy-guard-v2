@@ -126,12 +126,6 @@
   <data name="Shell_Main.Content" xml:space="preserve">
     <value>System Monitor</value>
   </data>
-  <data name="Shell_EnergyUsage.Content" xml:space="preserve">
-    <value>Energy Usage</value>
-  </data>
-  <data name="Shell_Tips.Content" xml:space="preserve">
-    <value>Tips</value>
-  </data>
   <data name="Shell_Debug.Content" xml:space="preserve">
     <value>Debug Messages</value>
   </data>
@@ -254,28 +248,8 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
   <data name="EnergyUsage_Unit" xml:space="preserve">
     <value>kWh</value>
   </data>
-  <data name="HomeAutoAppBarButton.Label" xml:space="preserve">
-    <value>Auto</value>
-  </data>
-  <data name="HomeAutoTooltip.Content" xml:space="preserve">
-    <value>Automatically control system resources to save power.</value>
-  </data>
-  <data name="HomeCasualAppBarButton.Label" xml:space="preserve">
-    <value>Casual</value>
-  </data>
-  <data name="HomeCasualTooltip.Content" xml:space="preserve">
-    <value>Heavily limit system resources to save power.
-Best for: Casual Browsing, Watching Videos</value>
-  </data>
   <data name="HomeCpuUsageProgressRingLabel.Text" xml:space="preserve">
     <value>CPU Usage</value>
-  </data>
-  <data name="HomePerformanceAppBarButton.Label" xml:space="preserve">
-    <value>Speed</value>
-  </data>
-  <data name="HomePerformanceTooltip.Content" xml:space="preserve">
-    <value>Use all available system resources.
-Best for: Gaming, Video Editing</value>
   </data>
   <data name="HomePowerUseTitle.Text" xml:space="preserve">
     <value>Currently using:</value>
@@ -354,7 +328,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
     <value>System Monitor</value>
   </data>
   <data name="HistoryEnergy.Content" xml:space="preserve">
-    <value>History Energy</value>
+    <value>Energy</value>
   </data>
   <data name="CarbonEmissionTitle.Text" xml:space="preserve">
     <value>Currently emitting:</value>

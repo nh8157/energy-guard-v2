@@ -66,17 +66,14 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         if (await DatabaseIsActive())
         {
             _energyUsage = await ReadUsageDataFromDatabase();
-            App.GetService<DebugModel>().AddMessage($"retrieved {_energyUsage.Diaries.Count().ToString()} diaries from databased");
         }
         else
         {
-            App.GetService<DebugModel>().AddMessage("Empty Database");
         }
         _isInitialized = true;
     }
@@ -92,7 +89,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
         }
         return sqlite_conn;
     }
@@ -107,7 +103,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
         }
         return sqlite_conn;
     }
@@ -133,7 +128,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return string.Empty;
         }
     }
@@ -161,7 +155,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return string.Empty;
         }
     }
@@ -194,7 +187,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
         }
     }
 
@@ -227,7 +219,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
         }
     }
 
@@ -270,7 +261,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
         }
     }
 
@@ -298,11 +288,9 @@ public class DatabaseService : IDatabaseService
                     await UpdateBudgetAndCostPerKwh(currentDate, data.CostPerKwh, data.WeeklyBudget);
                 }
             }
-            App.GetService<DebugModel>().AddMessage("Usage Data Saved To DB");
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
         }
     }
 
@@ -348,7 +336,6 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         reader.Close();
@@ -379,7 +366,6 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         reader.Close();
@@ -412,7 +398,6 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         reader.Close();
@@ -432,7 +417,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return new EnergyUsageDiary();
         }
     }
@@ -462,7 +446,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return new List<EnergyUsageDiary>();
         }
     }
@@ -488,7 +471,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return (0, 0);
         }
     }

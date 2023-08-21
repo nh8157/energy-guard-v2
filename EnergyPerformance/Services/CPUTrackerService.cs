@@ -33,8 +33,6 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
 
     public const int Duration = 30;
 
-    private DebugModel Debug => App.GetService<DebugModel>();
-
     public bool SupportedCpu => _cpuInfo.IsSupported;
 
     public int CurrentMode => currentMode;
@@ -53,10 +51,8 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         runningAverage = 0; runningAverageCounter = 0;
         eCoresActive = 0; pCoresActive = 0;
         _cpuInfo = cpuInfo;
-        Debug.AddMessage("CPU Supported: " + _cpuInfo.IsSupported);
         totalPerformanceCounter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total");
         _totalCores = _cpuInfo.CpuController.TotalCoreCount();
-        Debug.AddMessage("Total Cores: " + _totalCores);
         currentMode = 2;
 
     }
@@ -67,7 +63,6 @@ public class CpuTrackerService : BackgroundService, ICpuTrackerService
         {
             await DoAsync();
         }
-        Debug.AddMessage("Stopped executing CPUTrackerService async method");
     }
 
     /// <summary>
