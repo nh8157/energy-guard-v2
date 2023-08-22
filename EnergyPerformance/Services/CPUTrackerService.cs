@@ -32,8 +32,6 @@ public class CpuTrackerService : BackgroundService
         _cpuInfo = cpuInfo;
         totalPerformanceCounter = new PerformanceCounter("Processor Information", "% Processor Utility", "_Total");
         _totalCores = _cpuInfo.CpuController.TotalCoreCount();
-        Debug.AddMessage("Total Cores: " + _totalCores);
-
     }
 
     protected async override Task ExecuteAsync(CancellationToken token)
