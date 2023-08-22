@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CLI;
+using EnergyPerformance.Models;
 //using EnergyPerformance.Temporary;
 
 namespace EnergyPerformance.Helpers;
@@ -67,7 +68,8 @@ public class CpuInfo
     public void EnableCpuSetting(string path, (int, int) cpuSetting)
     {
         var filename = Path.GetFileName(path);
-        CpuController.MoveAppToHybridCores(filename, cpuSetting.Item1, cpuSetting.Item2);
+        var res = CpuController.MoveAppToHybridCores(filename, cpuSetting.Item1, cpuSetting.Item2);
+        App.GetService<DebugModel>().AddMessage($"CPU setting for {path} is {res}");
     }
 
     public void DisableCpuSetting(string path, (int, int) cpuSetting)

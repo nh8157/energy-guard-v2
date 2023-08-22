@@ -87,6 +87,10 @@ public class PersonaModel
     public void CreationEventHandler(object? sender, EventArgs e) 
     {
         var executablePath = _processMonitorService.CreatedProcess;
+
+        // This line enables the persona without needing the user to click "Enable"
+        EnablePersona(executablePath);
+
         App.MainWindow.DispatcherQueue.TryEnqueue(() =>
         {
             if (executablePath != null)
@@ -103,15 +107,16 @@ public class PersonaModel
     /// <param name="e"></param>
     public void DeletionEventHandler(object? sender, EventArgs e)
     {
-        var personaName = _processMonitorService.DeletedProcess;
-        if (IsEnabled && PersonaEnabled != null && personaName != null)
+        var executablePath = _processMonitorService.DeletedProcess;
+
+        if (IsEnabled && PersonaEnabled != null && executablePath != null)
         {
             DisableEnabledPersona();
             App.MainWindow.DispatcherQueue.TryEnqueue(() =>
             {
-                if (personaName != null)
+                if (executablePath != null)
                 {
-                    PersonaNotification.DisabledPersonaNotification(personaName);
+                    PersonaNotification.DisabledPersonaNotification(executablePath);
                 }
             });
         }
@@ -172,7 +177,6 @@ public class PersonaModel
                 persona.CpuSetting = ConvertRatingToCpuSetting(energyRating);
                 persona.GpuSetting = ConvertRatingToGpuSetting(energyRating);
                 persona.EnergyRating = energyRating;
-
                 // If persona is enabled, reapply the affinity mask
                 if (PersonaEnabled != null && IsEnabled && 
                     PersonaEnabled.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase))
@@ -217,7 +221,6 @@ public class PersonaModel
 
             // pass the settings to CPU and GPU
             _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
-            EnableGpuSetting(persona.GpuSetting);
 
             Debug.WriteLine($"Persona for {personaName} enabled");
             return true;
@@ -237,14 +240,12 @@ public class PersonaModel
         if (PersonaEnabled != null)
         {
             var personaName = PersonaEnabled.Path;
-            Debug.WriteLine($"Disabling persona for {personaName}");
 
             if (PersonaEnabled == null)
             {
                 return false;
             }
             _cpuInfo.DisableCpuSetting(personaName, PersonaEnabled.CpuSetting);
-            DisableGpuSetting(PersonaEnabled.GpuSetting);
 
             PersonaEnabled = null;
             IsEnabled = false;
@@ -252,15 +253,6 @@ public class PersonaModel
             return true;
         }
         return false;
-    }
-
-    // we might want to move these methods into their own classes
-    private void EnableGpuSetting(int gpuSetting)
-    {
-    }
-
-    private void DisableGpuSetting(int gpuSetting)
-    {
     }
 
     // The conversion works as follows: the value of the slider is between 1 and 3 where
@@ -280,13 +272,13 @@ public class PersonaModel
         }
 
         // Interpolate between one core and the total number of efficiency cores
-        if (energyRating <= 2)
+        if (energyRating >= 2)
         {
-            var setEfficiencyCores = (int)Math.Round(Lerp(1, numEfficiencyCores, energyRating-1));
+            var setEfficiencyCores = (int)Math.Round(Lerp(1, numEfficiencyCores, 3-energyRating));
             return (setEfficiencyCores, 0);
         }
 
-        var setPerformanceCores = (int)Math.Round(Lerp(0, numPerformanceCores, energyRating-2));
+        var setPerformanceCores = (int)Math.Round(Lerp(0, numPerformanceCores, 2-energyRating));
         return (numEfficiencyCores, setPerformanceCores);
     }
 
@@ -308,19 +300,22 @@ public class PersonaModel
             throw new ArgumentException("Performance core setting must be between 0 and the number of performance cores");
         }
 
+        // energy rating is 2
         if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == 0)
+        {
+            return 2;
+        }
+
+        // energy rating is 1
+        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == numPerformanceCores)
         {
             return 1;
         }
 
-        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == numPerformanceCores)
-        {
-            return 3;
-        }
-
+        // energy rating is 3
         if (setEfficiencyCores == 1 && setPerformanceCores == 0)
         {
-            return 2;
+            return 3;
         }
 
         var efficiencyRating = InverseLerp(1, numEfficiencyCores, setEfficiencyCores);
