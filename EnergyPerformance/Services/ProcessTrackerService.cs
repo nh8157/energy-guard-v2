@@ -57,7 +57,7 @@ public class ProcessTrackerService : BackgroundService
         var processes = this.personaModel.ReadPersonaAndRating();
         
         // Create a performance counter for each already running process in the persona list
-        foreach (var (path, rating) in processes)
+        foreach (var (path, _) in processes)
         {
             var processName = Path.GetFileName(path);
             var process = Process.GetProcessesByName(processName).FirstOrDefault();
