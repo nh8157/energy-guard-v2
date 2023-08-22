@@ -94,8 +94,7 @@
 
             <labs:SettingsExpander x:Uid="SettingsAboutExpander">
                 <labs:SettingsExpander.HeaderIcon>
-                    <BitmapIcon ShowAsMonochrome="False"
-                                    UriSource="ms-appx:///Assets/app_icon.png" />
+                    <ImageIcon Source="ms-appx:///Assets/app_icon.png" />
                 </labs:SettingsExpander.HeaderIcon>
                 <TextBlock win:IsTextSelectionEnabled="True"
                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
