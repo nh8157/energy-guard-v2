@@ -83,9 +83,10 @@ int main()
                     std::string pCores = strtok_s(NULL, " ", &context);
                     
                     bool result = controller.MoveAppToHybridCores(widecstr, std::stoi(eCores), std::stoi(pCores));
+                    std::string result_str = result ? "true" : "false";
 
                     //Send result back to client
-                    WriteFile(hPipe, result ? "true" : "false", sizeof(result), &dwWritten, NULL);
+                    WriteFile(hPipe, result_str.c_str(), result_str.length(), &dwWritten, NULL);
                 }
                 else if (command == "MoveAllAppsToHybridCores")
                 {
