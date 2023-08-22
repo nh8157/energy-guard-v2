@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Models;
 using LiveChartsCore;
@@ -45,6 +46,14 @@ public partial class MonitorDetailViewModel : ObservableObject
             carbons.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
         }
         var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
+        var perAppUsageLogs = _model.GetPerAppUsageLogs(ReceivedParameter);
+
+        Debug.WriteLine(perAppUsageLogs.Count + "+++++++++++++++");
+        foreach(var perApp in perAppUsageLogs)
+        {
+            Debug.WriteLine(perApp.Item1.ToString()+"_______________________________");
+        }
+
         foreach (var log in logs)
         {
             hourly[log.Date.Hour].Value += log.PowerUsed;
@@ -133,6 +142,19 @@ public partial class MonitorDetailViewModel : ObservableObject
         }
     };
 
+    public Axis[] PerAppXAxes
+    {
+        get; set;
+
+    } =
+    {
+        new Axis
+        {
+            Labels = new[] { "A", "B", "C", "D", "E", "F", "G" },
+            ForceStepToMin = true
+        }
+    };
+
     public ISeries[] SeriesHourly
     {
         get; set;
@@ -171,6 +193,7 @@ public partial class MonitorDetailViewModel : ObservableObject
 
             // The MinStep property forces the separator to be greater than 1 day.
             MinStep = TimeSpan.FromHours(1).Ticks,
+            ForceStepToMin= true
            
         }
     };
@@ -199,6 +222,7 @@ public partial class MonitorDetailViewModel : ObservableObject
 
             // The MinStep property forces the separator to be greater than 1 day.
             MinStep = TimeSpan.FromHours(1).Ticks,
+            ForceStepToMin= true
         }
     };
 
