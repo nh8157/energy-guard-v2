@@ -40,7 +40,6 @@ public class LocationService : BackgroundService
         do
         {
             await DoAsync();
-            App.GetService<DebugModel>().AddMessage(Postcode);
         }
         while (await _periodicTimer.WaitForNextTickAsync(token) && !token.IsCancellationRequested);
     }
@@ -86,7 +85,6 @@ public class LocationService : BackgroundService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         else
