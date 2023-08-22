@@ -29,6 +29,7 @@
     <Content Remove="Assets\flash.png" />
   </ItemGroup>
   <ItemGroup>
+	<None Remove="Binaries\Core.exe" />
 	<None Remove="Views\AddPersonaPage.xaml" />
     <None Remove="Views\CustomisePersonaPage.xaml" />
     <None Remove="Views\ProcessesPage.xaml" />
@@ -119,6 +120,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>dno_region_numbers</TargetPath>
     </ContentWithTargetPath>
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Binaries\Core.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">

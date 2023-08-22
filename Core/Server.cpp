@@ -17,6 +17,15 @@ int main()
     DWORD dwRead, dwWritten;
     Core::Controller controller = Core::Controller();
 
+    SECURITY_ATTRIBUTES sa;
+    sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+    sa.bInheritHandle = TRUE;        
+
+    // Create a security descriptor that allows any user to write to the pipe
+    sa.lpSecurityDescriptor = (PSECURITY_DESCRIPTOR)malloc(SECURITY_DESCRIPTOR_MIN_LENGTH);
+    InitializeSecurityDescriptor(sa.lpSecurityDescriptor,SECURITY_DESCRIPTOR_REVISION);
+    SetSecurityDescriptorDacl(sa.lpSecurityDescriptor, TRUE,(PACL)NULL, FALSE);
+
     while(true)
     {
         hPipe = CreateNamedPipe(
@@ -27,7 +36,7 @@ int main()
             BUFFER_SIZE,
             BUFFER_SIZE,
             NMPWAIT_USE_DEFAULT_WAIT,
-            NULL
+            &sa
         );
         
         if(hPipe == INVALID_HANDLE_VALUE)

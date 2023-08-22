@@ -66,6 +66,25 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        // Execute the affinity mask setter application as administrator
+        var pathToExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Binaries", "Core.exe");
+        var startInfo = new ProcessStartInfo(pathToExe)
+        {
+            Verb = "runas",
+            UseShellExecute = true,
+            CreateNoWindow = true
+        };
+        
+        try {
+            Process.Start(startInfo);
+        } catch (System.ComponentModel.Win32Exception ex) {
+            if (ex.NativeErrorCode == 1223) // The operation was canceled by the user.
+            {
+                Console.WriteLine("Elevation request was cancelled by the user.");
+                return;
+            }
+        }
+        
         InitializeComponent();
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
