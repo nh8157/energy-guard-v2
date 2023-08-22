@@ -30,12 +30,6 @@ public sealed partial class CustomisePersonaPage : Page
         InitializeComponent();
     }
 
-    // Function to set the persona slider value to the default setting (2, in this case)
-    private void RestoreDefault(object sender, RoutedEventArgs e)
-    {
-        PersonaSlider.Value = DEFAULT;
-    }
-
     // Function to apply persona to the selected application
     // Grabs the index of the application in the list
     // Sets the corresponding energy value and image path accordingly in the view model
@@ -46,6 +40,7 @@ public sealed partial class CustomisePersonaPage : Page
         if (selectedIndex != -1)
         {
             var item = ViewModel.PersonasAndRatings[selectedIndex];
+            ViewModel.Update(selectedIndex, (float)PersonaSlider.Value);
             item.EnergyValue = (float)PersonaSlider.Value;
             item.EnergyRating = item.UpdateEnergyRating((int)PersonaSlider.Value);
             Frame.Navigate(typeof(PersonaListPage));

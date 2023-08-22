@@ -23,12 +23,14 @@ public partial class MainViewModel : ObservableRecipient
     private readonly EnergyUsageModel _model;
     private readonly ILocalSettingsService _settingsService;
     private readonly CpuInfo _cpuInfo;
+    private readonly GpuInfo _gpuInfo;
     private readonly PowerInfo _powerInfo;
     private readonly IAppNotificationService _notificationService;
 
     // must be a supported CPU and and auto control setting must be enabled in order to allow profile switching
     public bool AutoControl => _settingsService.AutoControlSetting && _cpuInfo.IsSupported;
     public double CpuUsage => _cpuInfo.CpuUsage;
+    public double GpuUsage => _gpuInfo.GpuUsage;
     public double Power => _powerInfo.Power;
 
     /// <summary>
@@ -56,13 +58,14 @@ public partial class MainViewModel : ObservableRecipient
     /// Sets the hardware info containers, services and model.
     /// Attaches event handlers for the hardware info containers and services.
     /// </summary>
-    public MainViewModel(PowerInfo powerInfo, CpuInfo cpu
+    public MainViewModel(PowerInfo powerInfo, CpuInfo cpu, GpuInfo gpu
     , ILocalSettingsService settingsService, IAppNotificationService notificationService, EnergyUsageModel model)
     {
         // set hardware info containers
         _powerInfo = powerInfo;
         _cpuInfo = cpu;
-        
+        _gpuInfo = gpu;
+
         // set services
         _settingsService = settingsService;
         _notificationService = notificationService;
@@ -73,6 +76,7 @@ public partial class MainViewModel : ObservableRecipient
         // attach event handlers
         _powerInfo.PowerUsageChanged += Power_PropertyChanged;
         _cpuInfo.CpuUsageChanged += CpuUsage_PropertyChanged;
+        _gpuInfo.GpuUsageChanged += GpuUsage_PropertyChanged;
         _settingsService.AutoControlEventHandler += AutoControl_PropertyChanged;
 
         // set percentage value for circular progress bar monitoring the current budget
@@ -151,4 +155,16 @@ public partial class MainViewModel : ObservableRecipient
         return;
     }
 
+    
+    /// <summary>
+    /// Updates the GPU usage property when the GPU usage changes.
+    /// </summary>
+    private void GpuUsage_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(_gpuInfo.GpuUsage))
+        {
+            OnPropertyChanged(nameof(GpuUsage));
+        }
+        return;
+    }
 }

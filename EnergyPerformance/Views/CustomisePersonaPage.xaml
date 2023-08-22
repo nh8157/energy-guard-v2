@@ -38,8 +38,7 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
-                            <Button x:Uid="RestoreDefaultButton" Click="RestoreDefault" Width="150" Height="40" FontSize="15" Margin="120, 0, 20, 0"/>
-                            <Button x:Uid="ApplyPersonaButton" Click="ApplyPersona" Width="150" Height="40" FontSize="15" Margin="0, 0, 20, 0"/>
+                            <Button x:Uid="ApplyPersonaButton" Click="ApplyPersona" Width="150" Height="40" FontSize="15" Margin="300, 0, 20, 0"/>
                             <Button x:Uid="GoBackButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="NavigateToListPage"/>
                         </StackPanel>
                     </StackPanel>

@@ -22,10 +22,11 @@ public class PageService : IPageService
         Configure<SettingsViewModel, SettingsPage>();
         Configure<SystemMonitorViewModel, SystemMonitorPage>();
         Configure<MonitorDetailViewModel, MonitorDetailPage>();
-        Configure<HistoryViewModel, HistoryPage>();
+        Configure<TestMonitorViewModel, TestMonitorPage>();
         Configure<CarbonEmissionViewModel, CarbonEmissionPage>();
         Configure<DebugViewModel, DebugPage>();
         Configure<PersonaViewModel, PersonaListPage>();
+        Configure<HistoryViewModel, HistoryPage>();
     }
 
     public Type GetPageType(string key)

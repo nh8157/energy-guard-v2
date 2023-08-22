@@ -19,9 +19,15 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
 {
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(1000));
     public List<ISensor> sensors;
+    public List<ISensor> cpuSensors;
+    public List<ISensor> gpuSensors;
     private readonly Computer computer;
     private readonly EnergyUsageModel _model;
+
     private readonly PowerInfo _powerInfo;
+    private readonly CpuInfo _cpuInfo;
+    private readonly GpuInfo _gpuInfo;
+    
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
 
@@ -31,39 +37,24 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         private set => _powerInfo.Power = value;
     }
 
+    // We want to also track the power usage of the CPU and GPU separately, so we can display them in the View.
+    public double CpuPower { get; private set; }
+    public double GpuPower { get; private set; }
 
-    /// <summary>
-    /// Visitor class used to update the hardware components of the system.
-    /// </summary>
-    /// <see href="https://github.com/LibreHardwareMonitor/LibreHardwareMonitor">Reference to LibreHardwareMonitor</see>
-    public class UpdateVisitor : IVisitor
-    {
-        public void VisitComputer(IComputer computer)
-        {
-            computer.Traverse(this);
-        }
-        public void VisitHardware(IHardware hardware)
-        {
-            hardware.Update();
-            foreach (IHardware subHardware in hardware.SubHardware) subHardware.Accept(this);
-        }
-        public void VisitSensor(ISensor sensor)
-        {
-        }
-        public void VisitParameter(IParameter parameter)
-        {
-        }
-    }
-
+    
     /// <summary>
     /// Constructor for the PowerMonitorService class.
     /// </summary>
     /// <param name="model"><see cref="EnergyUsageModel"/> to contain data for the accumulated power usage of the system</param>
     /// <param name="powerInfo"><see cref="PowerInfo"/> to contain live power data for the system, for the view.</param>
-    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo)
+    /// <param name="cpuInfo"><see cref="CpuInfo"/> to contain live CPU data for the system, for the view.</param>
+    /// <param name="gpuInfo"><see cref="GpuInfo"/> to contain live GPU data for the system, for the view.</param>
+    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, CpuInfo cpuInfo, GpuInfo gpuInfo)
     {
         _model = model;
         _powerInfo = powerInfo;
+        _cpuInfo = cpuInfo;
+        _gpuInfo = gpuInfo;
         // configure computer object to monitor hardware components
         computer = new Computer
         {
@@ -76,6 +67,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
             IsStorageEnabled = true
         };
         sensors = new List<ISensor>();
+        cpuSensors = new List<ISensor>();
+        gpuSensors = new List<ISensor>();
     }
 
     /// <summary>
@@ -93,11 +86,22 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
                 // read hardware sensors which report power values
                 if ((sensor.Name.Contains("Package") || sensor.Name.Contains("Power")) && sensor.SensorType.Equals(SensorType.Power))
                 {
-                    Debug.WriteLine("Hardware: {0}", hardware.Name);
-                    Debug.WriteLine("\t\tSensor: {0}, value: {1}", sensor.Name, sensor.Value);
-
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     sensors.Add(sensor);
+                }
+
+                // read CPU sensors which report power values
+                if (sensor.Name.Contains("Package") && sensor.SensorType.Equals(SensorType.Power) && hardware.HardwareType.Equals(HardwareType.Cpu))
+                {
+                    // Sensor objects which report power values are added to a list so that they can be referenced later.
+                    cpuSensors.Add(sensor);
+                }
+
+                // read GPU sensors which report power values
+                if (sensor.Name.Contains("GPU Package") && sensor.SensorType.Equals(SensorType.Power))
+                {
+                    // Sensor objects which report power values are added to a list so that they can be referenced later.
+                    gpuSensors.Add(sensor);
                 }
             }
         }
@@ -124,28 +128,38 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// </summary>
     private async Task DoAsync()
     {
-        // Call the update hardware method to update sensor data
-        foreach (IHardware hardware in computer.Hardware)
+        // Run the hardware update and power computation in a separate thread to improve performance
+        await Task.Run(() =>
         {
-            hardware.Update();
-        }
-        // use a local variable to track the accumulated power values from the sensors,
-        // using the Power property instead will notify listeners each time the value is updated.
-        double power = 0;
-        // Get the latest value from all available sensors which read power values
-        foreach (ISensor sensor in sensors)
-        {
-            power += sensor.Value ?? 0; // return 0 if null;
-        }
+            foreach (IHardware hardware in computer.Hardware)
+            {
+                hardware.Update();
+            }
+            // GPU power usage
+            double gpuPower = 0;
+            foreach (ISensor sensor in gpuSensors)
+            {
+                gpuPower += sensor.Value ?? 0;
+            }
 
-        Power = power; // update the front end power value only with the value read from sensors
+            GpuPower = gpuPower;
+
+            // CPU power usage
+            double cpuPower = 0;
+            foreach (ISensor sensor in cpuSensors)
+            {
+                cpuPower += sensor.Value ?? 0;
+            }
+            CpuPower = cpuPower;
+
+        });
+
+        Power = CpuPower + GpuPower;
+
         var currentDateTime = DateTimeOffset.Now;
-        // methods to update the daily and hourly power usage
 
-        // TODO: record carbon emissions
-        UpdateDailyUsage(currentDateTime, Power);
-        UpdateHourlyUsage(currentDateTime, Power);
-        await Task.CompletedTask;
+        UpdateDailyUsage(currentDateTime);
+        UpdateHourlyUsage(currentDateTime);
     }
 
     /// <summary>
@@ -154,44 +168,61 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// <param name="currentDateTime">DateTimeOffset object</param>
     /// <param name="power">Contains the current power value used to update the model</param>
     /// <returns></returns>
-    private void UpdateDailyUsage(DateTimeOffset currentDateTime, double power)
+    private void UpdateDailyUsage(DateTimeOffset currentDateTime)
     {
-        if (power < 0)
+        if (Power < 0)
         {
-            power = 0;
+            Power = 0;
+            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            {
+                _model.AccumulatedWattsPerApp[process] = 0;
+            }
         }
         // accumulate watts if same day
         if (currentDateTime.DateTime.Date == _model.CurrentDay.DateTime.Date)
         {
-            _model.AccumulatedWatts += power;
+            _model.AccumulatedWatts += Power;
+            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            {
+                var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
+                var gpuUsage = _gpuInfo.ProcessesGpuUsage.GetValueOrDefault(process);
+                var accWatts = _model.AccumulatedWattsPerApp.GetValueOrDefault(process);
+                _model.AccumulatedWattsPerApp[process] = accWatts + cpuUsage/100 * CpuPower + gpuUsage/100 * GpuPower;
+            }
         }
         // set date to the new day, and reset acc. watts the power just measured
         else
         {
             _model.CurrentDay = currentDateTime;
-            _model.AccumulatedWatts = power;
+            _model.AccumulatedWatts = Power;
+            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            {
+                var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
+                var gpuUsage = _gpuInfo.ProcessesGpuUsage.GetValueOrDefault(process);
+                _model.AccumulatedWattsPerApp[process] = cpuUsage/100 * CpuPower + gpuUsage/100 * GpuPower;
+            }
         }
     }
 
     /// <summary>
     /// Method to update the hourly power usage in the model.
     /// </summary>
-    private void UpdateHourlyUsage(DateTimeOffset currentDateTime, double power)
+    private void UpdateHourlyUsage(DateTimeOffset currentDateTime)
     {
-        if (power < 0)
+        if (Power < 0)
         {
-            power = 0;
+            Power = 0;
         }
         // accumulate watts if the same hour
         if (currentDateTime.DateTime.Hour == _model.CurrentHour.DateTime.Hour)
         {
-            _model.AccumulatedWattsHourly += power;
+            _model.AccumulatedWattsHourly += Power;
         }
         // set time to the current time, and reset acc. watts to the power just measured
         else
         {
             _model.CurrentHour = currentDateTime;
-            _model.AccumulatedWattsHourly = power;
+            _model.AccumulatedWattsHourly = Power;
         }
     }
 }

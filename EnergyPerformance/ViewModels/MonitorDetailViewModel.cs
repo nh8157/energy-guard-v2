@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Models;
 using LiveChartsCore;
@@ -9,6 +9,7 @@ using LiveChartsCore.SkiaSharpView.Painting;
 using SkiaSharp;
 
 namespace EnergyPerformance.ViewModels;
+
 
 public partial class MonitorDetailViewModel : ObservableObject
 {
@@ -85,7 +86,7 @@ public partial class MonitorDetailViewModel : ObservableObject
                 $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
             Name = "CO2",
             Values = carbons,
-            Fill = new SolidColorPaint(new SKColor(143, 188, 143))
+            Fill = new SolidColorPaint(new SKColor(144, 238, 144))
         };
         SeriesHourly = new ISeries[]
         {
@@ -170,6 +171,7 @@ public partial class MonitorDetailViewModel : ObservableObject
 
             // The MinStep property forces the separator to be greater than 1 day.
             MinStep = TimeSpan.FromHours(1).Ticks,
+           
         }
     };
 

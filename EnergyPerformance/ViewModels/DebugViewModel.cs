@@ -14,6 +14,5 @@ public class DebugViewModel : ObservableRecipient
     {
         Model = model;
         Messages = model.Messages;
-        model.AddMessage("Test");
     }
 }

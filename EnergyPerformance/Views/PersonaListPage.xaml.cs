@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Windows.Media.AppRecording;
+using WinRT;
 
 namespace EnergyPerformance.Views;
 
@@ -32,16 +33,32 @@ public sealed partial class PersonaListPage : Page
         Frame.Navigate(typeof(CustomisePersonaPage), PersonaList.SelectedIndex);    
     }
 
-    // Function that is called when the Edit Persona button is clicked
-    // Navigates to the Customise Persona Page
-    // Note - No parameter is passed, as we want to add a new persona
-    private void NavigateToEditPage (object sender, RoutedEventArgs e)
-    {
-        Frame.Navigate(typeof(CustomisePersonaPage));
-    }
-
     private void NavigateToAddPage(object sender, RoutedEventArgs e)
     {
         Frame.Navigate(typeof(AddPersonaPage));
+    }
+
+    private void DeleteButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender.As<AppBarButton>();
+        var appName = button.Tag.ToString();
+
+        ViewModel.Delete(appName);
+    }
+
+    private void PlayButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender.As<AppBarButton>();
+        var appName = button.Tag.ToString();
+        
+        ViewModel.Enable(appName);
+    }
+
+    private void PauseButtonClicked(object sender, RoutedEventArgs e)
+    {
+        var button = sender.As<AppBarButton>();
+        var appName = button.Tag.ToString();
+        
+        ViewModel.Disable();
     }
 }
