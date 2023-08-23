@@ -27,8 +27,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     private readonly PowerInfo _powerInfo;
     private readonly CpuInfo _cpuInfo;
     private readonly GpuInfo _gpuInfo;
-
-    private DebugModel Debug => App.GetService<DebugModel>();
     
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
@@ -88,29 +86,20 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
                 // read hardware sensors which report power values
                 if ((sensor.Name.Contains("Package") || sensor.Name.Contains("Power")) && sensor.SensorType.Equals(SensorType.Power))
                 {
-                    Debug.AddMessage($"Hardware: {hardware.Name}");
-                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
-
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     sensors.Add(sensor);
                 }
-                
+
                 // read CPU sensors which report power values
                 if (sensor.Name.Contains("Package") && sensor.SensorType.Equals(SensorType.Power) && hardware.HardwareType.Equals(HardwareType.Cpu))
                 {
-                    Debug.AddMessage($"Hardware: {hardware.Name}");
-                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
-
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     cpuSensors.Add(sensor);
                 }
-                
+
                 // read GPU sensors which report power values
                 if (sensor.Name.Contains("GPU Package") && sensor.SensorType.Equals(SensorType.Power))
                 {
-                    Debug.AddMessage($"Hardware: {hardware.Name}");
-                    Debug.AddMessage($"Sensor: {sensor.Name}, value: {sensor.Value}");
-
                     // Sensor objects which report power values are added to a list so that they can be referenced later.
                     gpuSensors.Add(sensor);
                 }
@@ -139,47 +128,38 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// </summary>
     private async Task DoAsync()
     {
-        // Call the update hardware method to update sensor data
-        foreach (IHardware hardware in computer.Hardware)
+        // Run the hardware update and power computation in a separate thread to improve performance
+        await Task.Run(() =>
         {
-            hardware.Update();
-        }
-        // use a local variable to track the accumulated power values from the sensors,
-        // using the Power property instead will notify listeners each time the value is updated.
-        double power = 0;
-        // Get the latest value from all available sensors which read power values
-        foreach (ISensor sensor in sensors)
-        {
-            power += sensor.Value ?? 0; // return 0 if null;
-        }
+            foreach (IHardware hardware in computer.Hardware)
+            {
+                hardware.Update();
+            }
+            // GPU power usage
+            double gpuPower = 0;
+            foreach (ISensor sensor in gpuSensors)
+            {
+                gpuPower += sensor.Value ?? 0;
+            }
 
-        Power = power; // update the front end power value only with the value read from sensors
+            GpuPower = gpuPower;
 
-        // GPU power usage
-        double gpuPower = 0;
-        foreach (ISensor sensor in gpuSensors)
-        {
-            gpuPower += sensor.Value ?? 0;
-        }
-        
-        GpuPower = gpuPower;
-        
-        // CPU power usage
-        double cpuPower = 0;
-        foreach (ISensor sensor in cpuSensors)
-        {
-            cpuPower += sensor.Value ?? 0;
-        }
-        CpuPower = cpuPower;
-        
-        // methods to update the daily and hourly power usage
+            // CPU power usage
+            double cpuPower = 0;
+            foreach (ISensor sensor in cpuSensors)
+            {
+                cpuPower += sensor.Value ?? 0;
+            }
+            CpuPower = cpuPower;
+
+        });
+
+        Power = CpuPower + GpuPower;
+
         var currentDateTime = DateTimeOffset.Now;
-        // methods to update the daily and hourly power usage
 
-        // TODO: record carbon emissions
         UpdateDailyUsage(currentDateTime);
         UpdateHourlyUsage(currentDateTime);
-        await Task.CompletedTask;
     }
 
     /// <summary>

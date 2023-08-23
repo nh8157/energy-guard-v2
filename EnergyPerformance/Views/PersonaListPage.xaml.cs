@@ -9,6 +9,7 @@ using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Media;
 using Windows.Media.AppRecording;
+using WinRT;
 
 namespace EnergyPerformance.Views;
 
@@ -39,16 +40,25 @@ public sealed partial class PersonaListPage : Page
 
     private void DeleteButtonClicked(object sender, RoutedEventArgs e)
     {
-        // Functionality to Add
+        var button = sender.As<AppBarButton>();
+        var appName = button.Tag.ToString();
+
+        ViewModel.Delete(appName);
     }
 
     private void PlayButtonClicked(object sender, RoutedEventArgs e)
     {
-        // Functionality to Add
+        var button = sender.As<AppBarButton>();
+        var appName = button.Tag.ToString();
+        
+        ViewModel.Enable(appName);
     }
 
     private void PauseButtonClicked(object sender, RoutedEventArgs e)
     {
-        // Functionality to Add
+        var button = sender.As<AppBarButton>();
+        var appName = button.Tag.ToString();
+        
+        ViewModel.Disable();
     }
 }

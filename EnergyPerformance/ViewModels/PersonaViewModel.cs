@@ -71,6 +71,26 @@ public partial class PersonaViewModel : ObservableRecipient
         item.EnergyValue = value;
         item.EnergyRating = item.UpdateEnergyRating((int)value);
     }
+
+    public async void Delete(string _appName)
+    {
+        var index = applicationList.IndexOf(_appName);
+        applicationList.RemoveAt(index);
+        personasAndRatings.RemoveAt(index);
+
+       await _model.DeletePersona(_appName);
+    }
+
+    public void Enable(string _appName)
+    {
+        _model.EnablePersona(_appName);
+    }
+
+    public void Disable()
+    {
+        _model.DisableEnabledPersona();
+    }
+
 }
 
 // Class for Application Object - Inherits from INotifyPropertyChanged - Notifies the View that a change has occured

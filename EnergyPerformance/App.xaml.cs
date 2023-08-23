@@ -160,25 +160,33 @@ public partial class App : Application
             // Views and ViewModels
             services.AddTransient<CarbonEmissionPage>();
             services.AddTransient<CarbonEmissionViewModel>();
+
+            services.AddTransient<SettingsPage>();
             services.AddTransient<SettingsViewModel>();
+
             services.AddTransient<DebugViewModel>();
             services.AddTransient<DebugPage>();
-            services.AddTransient<SettingsPage>();
+
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
+
             services.AddTransient<PersonaViewModel>();
             services.AddTransient<PersonaListPage>();
             services.AddTransient<CustomisePersonaPage>();
-            services.AddTransient<PersonaCustomisationViewModel>();
             services.AddTransient<AddPersonaPage>();
+
             services.AddTransient<SystemMonitorViewModel>();
             services.AddTransient<SystemMonitorPage>();
+
             services.AddTransient<MonitorDetailViewModel>();
             services.AddTransient<MonitorDetailPage>();
+
             services.AddTransient<HistoryViewModel>();
             services.AddTransient<HistoryPage>();
+
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
+
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
 
