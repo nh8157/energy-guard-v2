@@ -59,7 +59,7 @@ class CarbonIntensityUpdateService : BackgroundService
         {
             var url = string.Format(_ukUrl, Postcode.Split(" ")[0]);
 
-            JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(httpClient, url) ??
+            var jsonResponse = await ApiProcessor<dynamic>.Load(httpClient, url) ??
                 throw new InvalidOperationException("Cannot deserialize object");
 
             var jsonData = jsonResponse.GetProperty("data");
