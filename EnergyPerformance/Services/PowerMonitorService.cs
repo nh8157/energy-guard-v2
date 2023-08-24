@@ -193,12 +193,18 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         if (currentDateTime.DateTime.Date == _model.CurrentDay.DateTime.Date)
         {
             _model.AccumulatedWatts += Power;
-            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            foreach (var (process, _) in _cpuInfo.ProcessesCpuUsage)
             {
                 var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
+                var accWatts = _model.AccumulatedWattsPerApp.GetValueOrDefault(process);
+                _model.AccumulatedWattsPerApp[process] = accWatts + cpuUsage/100 * CpuPower;
+            }
+
+            foreach (var (process, _) in _gpuInfo.ProcessesGpuUsage)
+            {
                 var gpuUsage = _gpuInfo.ProcessesGpuUsage.GetValueOrDefault(process);
                 var accWatts = _model.AccumulatedWattsPerApp.GetValueOrDefault(process);
-                _model.AccumulatedWattsPerApp[process] = accWatts + cpuUsage/100 * CpuPower + gpuUsage/100 * GpuPower;
+                _model.AccumulatedWattsPerApp[process] = accWatts + gpuUsage/100 * GpuPower;
             }
         }
         // set date to the new day, and reset acc. watts the power just measured
@@ -206,7 +212,7 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         {
             _model.CurrentDay = currentDateTime;
             _model.AccumulatedWatts = Power;
-            foreach (var (process, _) in _model.AccumulatedWattsPerApp)
+            foreach (var (process, _) in _cpuInfo.ProcessesCpuUsage)
             {
                 var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
                 var gpuUsage = _gpuInfo.ProcessesGpuUsage.GetValueOrDefault(process);

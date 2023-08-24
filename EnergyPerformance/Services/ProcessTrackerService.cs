@@ -60,12 +60,17 @@ public class ProcessTrackerService : BackgroundService
         foreach (var (path, _) in processes)
         {
             var processName = Path.GetFileName(path);
+            if (processName.Contains(".exe"))
+                processName = processName.Remove(processName.Length - ".exe".Length);
+            
             var process = Process.GetProcessesByName(processName).FirstOrDefault();
+
+            App.GetService<DebugModel>().AddMessage($"Added tracker for {processName}");
             if (process == null)
             {
+                App.GetService<DebugModel>().AddMessage("Process name is null");
                 continue;
             }
-            
             AddProcess(process);
         }
     }
@@ -112,16 +117,20 @@ public class ProcessTrackerService : BackgroundService
         {
             await Task.Run(() =>
             {
+                // App.GetService<DebugModel>().AddMessage($"Calculating per app usage {processCpuCounters.Keys.Count()}");
+
                 foreach (var (process, counter) in processCpuCounters)
                 {
                     cpuInfo.ProcessesCpuUsage[process.ProcessName] =
                         Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
+                    // App.GetService<DebugModel>().AddMessage($"Cpu usage of {process} is {cpuInfo.ProcessesCpuUsage[process.ProcessName]}");
                 }
 
                 foreach (var (process, counter) in processGpuCounters)
                 {
                     gpuInfo.ProcessesGpuUsage[process.ProcessName] =
                         Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
+                    // App.GetService<DebugModel>().AddMessage($"Gpu usage of {process} is {gpuInfo.ProcessesGpuUsage[process.ProcessName]}");
                 }
             });
         } catch (Exception e)
