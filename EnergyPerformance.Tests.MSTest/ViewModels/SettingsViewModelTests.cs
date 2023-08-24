@@ -48,7 +48,7 @@ public class SettingsViewModelTests
         var model = GetModel();
         var localSettingsService = new LocalSettingsService(_fileService.Object, localSettingsOptions);
         var cpuInfo = new CpuInfo();
-        var cpuTrackerService = new CpuTrackerService(localSettingsService, _notificationService.Object, cpuInfo);
+        var cpuTrackerService = new CpuTrackerService(cpuInfo);
         var themeService = new ThemeSelectorService(localSettingsService);
         var viewModel = new SettingsViewModel(themeService, cpuInfo, localSettingsService, model);
         return viewModel;

@@ -39,7 +39,7 @@ public class MainViewModelTests
         databaseService.Setup(d => d.LoadUsageData()).ReturnsAsync(data);
         var energyUsageModel = new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), databaseService.Object);
         await energyUsageModel.InitializeAsync();
-        var model = new MainViewModel(new PowerInfo(), new CpuInfo(), _localSettingsService.Object,
+        var model = new MainViewModel(new PowerInfo(), new CpuInfo(), new GpuInfo(), _localSettingsService.Object,
             _appNotificationService.Object, energyUsageModel);
         Assert.IsNotNull(model.CostPreviousWeek);
         Assert.AreEqual(model.CostPreviousWeek, energyUsageModel.GetCostForPreviousWeek());
@@ -51,7 +51,7 @@ public class MainViewModelTests
     public async Task TestSelectMode()
     {
         var settingsService = new LocalSettingsService(new Mock<IFileService>().Object, Options.Create(new LocalSettingsOptions()));
-        var model = new MainViewModel(new PowerInfo(), new CpuInfo(), settingsService,
+        var model = new MainViewModel(new PowerInfo(), new CpuInfo(), new GpuInfo(), settingsService,
             _appNotificationService.Object, new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), new DatabaseService("testDB.db")));
         await model.SelectAutoControl();
         Assert.AreEqual(settingsService.SelectedMode, model.SelectedMode);
@@ -70,7 +70,7 @@ public class MainViewModelTests
     public void TestPowerInfoChange(double value)
     {
         var powerInfo = new PowerInfo();
-        var model = new MainViewModel(powerInfo, new CpuInfo(), _localSettingsService.Object,
+        var model = new MainViewModel(powerInfo, new CpuInfo(), new GpuInfo(),  _localSettingsService.Object,
             _appNotificationService.Object, new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), new DatabaseService("testDB.db")));
         powerInfo.Power = value;
         Assert.AreEqual(model.Power, value);
@@ -83,7 +83,7 @@ public class MainViewModelTests
     public void TestCpuUsageChange(double value)
     {
         var cpuInfo = new CpuInfo();
-        var model = new MainViewModel(new PowerInfo(), cpuInfo, _localSettingsService.Object,
+        var model = new MainViewModel(new PowerInfo(), cpuInfo, new GpuInfo(), _localSettingsService.Object,
             _appNotificationService.Object, new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), new DatabaseService("testDB.db")));
         cpuInfo.CpuUsage = value;
         Assert.AreEqual(model.CpuUsage, value);
@@ -97,7 +97,7 @@ public class MainViewModelTests
     {
         var cpuInfo = new CpuInfo();
         var settingsService = new LocalSettingsService(new Mock<IFileService>().Object, Options.Create(new LocalSettingsOptions()));
-        var model = new MainViewModel(new PowerInfo(), cpuInfo, settingsService,
+        var model = new MainViewModel(new PowerInfo(), cpuInfo, new GpuInfo(), settingsService,
             _appNotificationService.Object, new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), new DatabaseService("testDB.db")));
         cpuInfo.IsSupported = value1;
         settingsService.AutoControlSetting = value2;

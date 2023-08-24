@@ -31,8 +31,7 @@ public class CpuTrackerServiceTests
 
     public CpuTrackerService GetService()
     {
-        var localSettingsService = new LocalSettingsService(_fileService, localSettingsOptions);
-        var cpuTrackerService = new CpuTrackerService(localSettingsService, _notificationService.Object, new CpuInfo());
+        var cpuTrackerService = new CpuTrackerService(new CpuInfo());
         return  cpuTrackerService;
     }
 
@@ -51,77 +50,5 @@ public class CpuTrackerServiceTests
         }
 
     }
-
-
-    [TestMethod()]
-    [DataRow(25, 0)]
-    [DataRow(60, 1)]
-    [DataRow(90, 2)]
-    public async Task AutoControlTest(double value, double actual)
-    {
-        var service = GetService();
-        for (var i = 0; i <= CpuTrackerService.Duration+1; i++)
-        {
-            await service.AutomaticModeControl(0, totalCores, value);
-        }
-        Assert.AreEqual(service.CurrentMode, actual);
-    }
-
-    [TestMethod()]
-    [DataRow(23, 40)]
-    [DataRow(16, 60)]
-    [DataRow(9, 100)]
-    public async Task CasualModeToWorkModeTest(double value1, double value2)
-    {
-        var service = GetService();
-        await service.AutomaticModeControl(0, totalCores, value1);
-        Assert.AreEqual(service.CurrentMode, 0);
-        await service.AutomaticModeControl(4, totalCores, value2);
-        Assert.AreEqual(service.CurrentMode, 1);
-    }
-
-
-    [TestMethod()]
-    [DataRow(34, 54)]
-    [DataRow(68, 78)]
-    [DataRow(55, 100)]
-    public async Task WorkModeToPerformanceModeTest(double value1, double value2)
-    {
-        var service = GetService();
-        await service.AutomaticModeControl(0, totalCores, value1);
-        Assert.AreEqual(service.CurrentMode, 1);
-        await service.AutomaticModeControl(8, totalCores, value2);
-        Assert.AreEqual(service.CurrentMode, 2);
-    }
-
-
-    [TestMethod()]
-    [DataRow(78, 31)]
-    [DataRow(96, 48)]
-    [DataRow(100, 36)]
-    public async Task PerformanceModeToWorkModeTest(double value1, double value2)
-    {
-        var service = GetService();
-        await service.AutomaticModeControl(0, totalCores, value1);
-        Assert.AreEqual(service.CurrentMode, 2);
-        await service.AutomaticModeControl(0, totalCores, value2);
-        Assert.AreEqual(service.CurrentMode, 1);
-    }
-
-
-    [TestMethod()]
-    [DataRow(56, 8)]
-    [DataRow(67, 6)]
-    [DataRow(31, 3)]
-    public async Task WorkModeToCasualModeTest(double value1, double value2)
-    {
-        var service = GetService();
-        await service.AutomaticModeControl(0, totalCores, value1);
-        Assert.AreEqual(service.CurrentMode, 1);
-        await service.AutomaticModeControl(8, totalCores, value2);
-        Assert.AreEqual(service.CurrentMode, 0);
-    }
-
-
 
 }

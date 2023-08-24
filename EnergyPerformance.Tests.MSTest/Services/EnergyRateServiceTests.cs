@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using EnergyPerformance.Contracts.Services;
@@ -19,15 +20,18 @@ namespace EnergyPerformance.Tests.MSTest.Services;
 [TestClass()]
 public class EnergyRateServiceTests
 {
+    private static Mock<IHttpClientFactory> _httpClientFactory;
+
     [ClassInitialize]
     public static void ClassInitialze(TestContext context)
     {
-        Debug.WriteLine("Initialize");
+        _httpClientFactory = new Mock<IHttpClientFactory>();
+        _httpClientFactory.Setup(h => h.CreateClient(It.IsAny<string>())).Returns(new HttpClient());
     }
 
     public EnergyRateService GetService()
     {
-        return new EnergyRateService(new LocationInfo(), new EnergyRateInfo());
+        return new EnergyRateService(new LocationInfo(), new EnergyRateInfo(), _httpClientFactory.Object);
     }
 
     [TestMethod]
@@ -48,7 +52,7 @@ public class EnergyRateServiceTests
         locationInfo.Setup(l => l.Country).Returns(value1);
         locationInfo.Setup(l => l.Postcode).Returns(value2);
         var energyRateInfo = new EnergyRateInfo();
-        var service = new EnergyRateService(locationInfo.Object, energyRateInfo);
+        var service = new EnergyRateService(locationInfo.Object, energyRateInfo, _httpClientFactory.Object);
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         await service.StartAsync(token);

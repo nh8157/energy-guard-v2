@@ -9,15 +9,18 @@ namespace EnergyPerformance.Tests.MSTest.Services;
 [TestClass()]
 public class LocationServiceTests
 {
+    private static Mock<IHttpClientFactory> _httpClientFactory;
+
     [ClassInitialize]
     public static void ClassInitialze(TestContext context)
     {
-        Debug.WriteLine("Class initialize");
+        _httpClientFactory = new Mock<IHttpClientFactory>();
+        _httpClientFactory.Setup(h => h.CreateClient(It.IsAny<string>())).Returns(new HttpClient());
     }
 
     public LocationService GetService()
     {
-        return new LocationService(new LocationInfo());
+        return new LocationService(new LocationInfo(), _httpClientFactory.Object);
     }
 
     [TestMethod]
@@ -34,7 +37,7 @@ public class LocationServiceTests
         var methodWrapper = new Mock<LocationServiceMethodFactory>();
         methodWrapper.Setup(m => m.RequestAccessAsync()).ReturnsAsync(GeolocationAccessStatus.Allowed);
         var locationInfo = new LocationInfo();
-        var locationService = new LocationService(locationInfo);
+        var locationService = new LocationService(locationInfo, _httpClientFactory.Object);
         locationService.MethodsWrapper = methodWrapper.Object;
         var cts = new CancellationTokenSource();
         var token = cts.Token;
@@ -50,7 +53,7 @@ public class LocationServiceTests
         var methodWrapper = new Mock<LocationServiceMethodFactory>();
         methodWrapper.Setup(m => m.RequestAccessAsync()).ReturnsAsync(GeolocationAccessStatus.Denied);
         var locationInfo = new LocationInfo();
-        var locationService = new LocationService(locationInfo);
+        var locationService = new LocationService(locationInfo, _httpClientFactory.Object);
         locationService.MethodsWrapper = methodWrapper.Object;
         var cts = new CancellationTokenSource();
         var token = cts.Token;

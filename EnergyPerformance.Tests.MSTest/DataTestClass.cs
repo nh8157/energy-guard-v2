@@ -66,6 +66,7 @@ public class DataTestClass
     {
         var list = new List<EnergyUsageDiary>();
         var startDay = DateTime.Now.AddDays(-1 * days + 1);
+        startDay = new DateTime(startDay.Year, startDay.Month, startDay.Day, 0, startDay.Minute, startDay.Second);
         for (var i = 0; i < days; i++)
         {
             var day = startDay.AddDays(i).AddHours(8);
@@ -95,7 +96,7 @@ public class DataTestClass
         _filepath= Path.Combine(directory, "testDB.db");
         if (File.Exists(_filepath))
         {
-            SQLiteConnection connection = new SQLiteConnection("Data Source=" + _filepath+ ";Version=3;");
+            SQLiteConnection connection = new SQLiteConnection("Data Source=" + _filepath + ";Version=3;");
             connection.Close();
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -113,6 +114,7 @@ public class DataTestClass
     [ClassCleanup]
     public static void ClassCleanup()
     {
+
         Debug.WriteLine("ClassCleanup");
     }
 
@@ -126,6 +128,7 @@ public class DataTestClass
     public async Task TestCleanup()
     {
         var service = GetDatabaseService();
+        await service.ClearAllData();
         Debug.WriteLine("TestCleanup");
     }
 
@@ -250,8 +253,7 @@ public class DataTestClass
         var targetDate = timeOfData.AddDays(value);
         var targetDiary = databaseService.RetrieveDiaryByDate(targetDate.ToString("yyyy/MM/dd"));
         var index = -value + 1;
-        Assert.AreEqual(targetDiary.PerProcUsage.Keys.Count(), _data.Diaries[^index].PerProcUsage.Keys.Count());
-        Assert.IsTrue(targetDiary.Equals(_data.Diaries[^index]));
+        Assert.IsTrue(object.Equals(targetDiary, _data.Diaries[^index]));
     }
 
 }

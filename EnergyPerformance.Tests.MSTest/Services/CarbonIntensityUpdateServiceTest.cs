@@ -19,15 +19,18 @@ namespace EnergyPerformance.Tests.MSTest.Services;
 [TestClass()]
 public class CarbonIntensityUpdateServiceTest
 {
+    private static Mock<IHttpClientFactory> _httpClientFactory;
+
     [ClassInitialize]
     public static void ClassInitialze(TestContext context)
     {
-        Debug.WriteLine("Initialize");
+        _httpClientFactory = new Mock<IHttpClientFactory>();
+        _httpClientFactory.Setup(h => h.CreateClient(It.IsAny<string>())).Returns(new HttpClient());
     }
 
     public CarbonIntensityUpdateService GetService()
     {
-        return new CarbonIntensityUpdateService(new CarbonIntensityInfo(), new LocationInfo());
+        return new CarbonIntensityUpdateService(new CarbonIntensityInfo(), new LocationInfo(), _httpClientFactory.Object);
     }
 
     [TestMethod]
@@ -46,7 +49,7 @@ public class CarbonIntensityUpdateServiceTest
         locationInfo.Setup(l => l.Country).Returns(value1);
         locationInfo.Setup(l => l.Postcode).Returns(value2);
         var carbonIntensityInfo = new CarbonIntensityInfo();
-        var service = new CarbonIntensityUpdateService(carbonIntensityInfo, locationInfo.Object);
+        var service = new CarbonIntensityUpdateService(carbonIntensityInfo, locationInfo.Object, _httpClientFactory.Object);
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         await service.StartAsync(token);

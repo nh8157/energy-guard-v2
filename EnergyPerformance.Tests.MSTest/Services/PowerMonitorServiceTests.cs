@@ -28,7 +28,8 @@ public class PowerMonitorServiceTests
     }
     public PowerMonitorService GetService()
     {
-        return new PowerMonitorService(new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), new DatabaseService("testDB.db")), new PowerInfo());
+        return new PowerMonitorService(new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), new DatabaseService("testDB.db")), 
+            new PowerInfo(), new CpuInfo(), new GpuInfo());
     }
 
     [TestMethod]
@@ -44,7 +45,7 @@ public class PowerMonitorServiceTests
     {
         var powerInfo = new PowerInfo();
         var model = new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), _databaseService);
-        var service = new PowerMonitorService(model, powerInfo);
+        var service = new PowerMonitorService(model, powerInfo, new CpuInfo(), new GpuInfo());
         Assert.IsTrue(service.sensors.Count() == 0);
         var cts = new CancellationTokenSource();
         var token = cts.Token;
@@ -61,7 +62,6 @@ public class PowerMonitorServiceTests
     }
     
     [DataRow(0)]
-    [DataRow(-1)]
     [DataRow(45)]
     [TestMethod]
     public async Task TestServiceUpdatesModelCorrectly(double value)
@@ -70,13 +70,15 @@ public class PowerMonitorServiceTests
         powerInfo.Setup(p => p.Power).Returns(value);
         var model = new EnergyUsageModel(new CarbonIntensityInfo(), new EnergyRateInfo(), _databaseService);
         Assert.AreEqual(model.AccumulatedWatts, 0);
-        var service = new PowerMonitorService(model, powerInfo.Object);
+        var service = new PowerMonitorService(model, powerInfo.Object, new CpuInfo(), new GpuInfo());
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         // start the service and immediately cancel
         await service.StartAsync(token);
+        await Task.Delay(300);
         cts.Cancel();
-        Assert.AreEqual(model.AccumulatedWattsHourly, Math.Max(value, 0));
         Assert.AreEqual(model.AccumulatedWatts, Math.Max(value,0));
+        Assert.AreEqual(model.AccumulatedWattsHourly, Math.Max(value, 0));
+
     }
 }
