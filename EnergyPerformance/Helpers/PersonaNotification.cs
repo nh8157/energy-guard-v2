@@ -48,19 +48,19 @@ internal class PersonaNotification
     {
         new ToastContentBuilder()
             .AddText($"Auto-configuration of Persona for {executable.ToLower()} has started.\n\n" +
-                $"We'll inquire 5 times about app stability every 3 minutes during usage.")
+                $"We'll inquire about the application's smoothness five (5) times every three (3) minutes during usage.")
             .AddButton(new ToastButtonDismiss("Dismiss"))
             .Show();
     }
 
     /// <summary>
-    /// Asks user if current application is stable.
+    /// Asks user if current application is running smoothly.
     /// <param name="executable">The executable application.</param>
     /// </summary>
-    public static void StabilityCheckNotification(string executable, int stabilityCheckCount)
+    public static void SmoothnessCheckNotification(string executable, int smoothnessCheckCount)
     {
         new ToastContentBuilder()
-            .AddText($"[{stabilityCheckCount}/5] Is the performance of {executable.ToLower()} stable?")
+            .AddText($"[{smoothnessCheckCount}/5] Is {executable.ToLower()} running smoothly?")
             .AddButton(new ToastButton()
                 .SetContent("Yes")
                 .AddArgument("action", $"moveTowardsPerformance&{executable}"))

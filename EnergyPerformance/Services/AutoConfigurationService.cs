@@ -6,11 +6,11 @@ public class AutoConfigurationService
 {
     private int _left;
     private int _right;
-    private string _executable; // Application being auto-configured
-    private List<float> _personaEnergyRates; // Enery rates in the persona customization slider
-    private int stabilityCheckCount = 0; // The number of times the stability check has been inquired to the user.
+    private string _executable = ""; // Application being auto-configured
+    private readonly List<float> _personaEnergyRates; // Enery rates in the persona customization slider
+    private int smoothnessCheckCount = 0; // The number of times the smoothness check has been inquired to the user.
 
-    private const int delayInMinutes = 3; // Minutes till the next stability check
+    private const int delayInMinutes = 3; // Minutes till the next smoothness check
 
     public AutoConfigurationService()
     {
@@ -33,19 +33,19 @@ public class AutoConfigurationService
         var mid = _left + ((_right - _left) / 2);
 
         await App.GetService<PersonaModel>().UpdatePersona(_executable, _personaEnergyRates[mid]);
-        await Task.Delay(TimeSpan.FromSeconds(5));
+        await Task.Delay(TimeSpan.FromMinutes(delayInMinutes));
 
-        PersonaNotification.StabilityCheckNotification(_executable, ++stabilityCheckCount);
+        PersonaNotification.SmoothnessCheckNotification(_executable, ++smoothnessCheckCount);
     }
 
 
     /// <summary>
     /// Auto-configure the target application's Persona rate using Binary Search.
     /// </summary>
-    /// <param name="isCurrentConfigurationStable">
-    /// True for stable current configuration, False otherwise.
+    /// <param name="isApplicationRunningSmoothly">
+    /// True if application is running smoothly, False otherwise.
     /// </param>
-    public async void AutoConfigure(bool isCurrentConfigurationStable)
+    public async void AutoConfigure(bool isApplicationRunningSmoothly)
     {
         if (_left < _right)
         {
@@ -54,10 +54,10 @@ public class AutoConfigurationService
 
             await App.GetService<PersonaModel>().UpdatePersona(_executable, _personaEnergyRates[mid]);
 
-            // If the user indicates that the current configuration is stable,
+            // If the user indicates that the application is running smoothly,
             // then move towards a more performant energy rate
             // else move towards a more efficient energy rate
-            if (isCurrentConfigurationStable)
+            if (isApplicationRunningSmoothly)
             {
                 _left = mid + 1;
             }
@@ -65,15 +65,15 @@ public class AutoConfigurationService
             {
                 _right = mid - 1;
             }
-            await Task.Delay(TimeSpan.FromSeconds(5));
-            PersonaNotification.StabilityCheckNotification(_executable, ++stabilityCheckCount);
+            await Task.Delay(TimeSpan.FromMinutes(delayInMinutes));
+            PersonaNotification.SmoothnessCheckNotification(_executable, ++smoothnessCheckCount);
         }
         else
         {
-            // If the user indicates that the current configuration is stable,
+            // If the user indicates that the application is running smoothly,
             // then notify user that auto-configuration was success
             // else notify user that auto-configuration failed
-            if (isCurrentConfigurationStable)
+            if (isApplicationRunningSmoothly)
             {
                 PersonaNotification.AutoConfigurationSuccessNotification(_executable);
             }
@@ -81,7 +81,7 @@ public class AutoConfigurationService
             {
                 PersonaNotification.FailedAutoConfigurationNotification(_executable);
             }
-            stabilityCheckCount = 0;
+            smoothnessCheckCount = 0;
         }
     }
 }

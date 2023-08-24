@@ -45,13 +45,13 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
-                            <Image Grid.Column="1" Height="35" Width="105" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left"/>
+                            <Image Grid.Column="1" Height="33" Width="100" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left"/>
 
 
                             <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <AppBarButton Icon="Play"  Height="45" Width="40"  Click="PlayButtonClicked"/>
-                                <AppBarButton Icon="Pause"  Height="45" Width="40" Click="PauseButtonClicked"/>
-                                <AppBarButton Icon="Delete"  Height="45" Width="40"  Click="DeleteButtonClicked"/>
+                                <AppBarButton Icon="Play"  Height="45" Width="40"  Click="PlayButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
+                                <AppBarButton Icon="Pause"  Height="45" Width="40" Click="PauseButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
+                                <AppBarButton Icon="Delete"  Height="45" Width="40"  Click="DeleteButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
                             </StackPanel>
 
                         </Grid>

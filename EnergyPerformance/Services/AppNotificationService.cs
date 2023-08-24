@@ -39,11 +39,11 @@ public class AppNotificationService : IAppNotificationService
     /// <param name="sender"></param>
     /// <param name="args">Contains the custom action of a toast notification and may also include the persona name.</param>
     /// </summary>
-    public async void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
+    public void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
     {
         // Can perform custom actions here based on arguments specified in notification payload.
         // E.g. a button within the notification can be used to perform a specific action which can be defined here.
-        App.MainWindow.DispatcherQueue.TryEnqueue(async delegate
+        App.MainWindow.DispatcherQueue.TryEnqueue( delegate
         {
             // Extract custom action from argument
             var customAction = args.Argument.Split('=')[1];
