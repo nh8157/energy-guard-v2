@@ -12,6 +12,7 @@ public class LocationService : BackgroundService
 {
     private const string _locationUrl = "https://geocode.maps.co/reverse?lat={0}&lon={1}";
     private const int duration = 1;
+    private readonly Geolocator _geolocator;
     private readonly LocationInfo _locationInfo;
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(duration));
     private readonly IHttpClientFactory _httpClientFactory;
