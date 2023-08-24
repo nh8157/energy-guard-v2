@@ -1,4 +1,4 @@
-﻿<Page
+<Page
     x:Class="EnergyPerformance.Views.ShellPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -36,12 +36,25 @@
             DisplayModeChanged="NavigationViewControl_DisplayModeChanged"
             Header="{x:Bind ((ContentControl)ViewModel.Selected).Content, Mode=OneWay}" TabFocusNavigation="Cycle">
             <NavigationView.MenuItems>
-                <NavigationViewItem Icon="Home" x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MainViewModel">
+                <NavigationViewItem x:Uid="Shell_Main" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MainViewModel">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/screen-icon.png"></BitmapIcon>
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
-                <NavigationViewItem Icon="Calendar" x:Uid="Shell_EnergyUsage" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.EnergyUsageViewModel">
+
+                <NavigationViewItem Icon="Calendar" x:Uid="HistoryEnergy" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.HistoryViewModel">
                 </NavigationViewItem>
-                <NavigationViewItem Icon="Zoom" x:Uid="Shell_Debug" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.DebugViewModel">
+
+                <NavigationViewItem x:Uid="PersonaCustomisation" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.PersonaViewModel">
+                    <NavigationViewItem.Icon>
+                        <BitmapIcon UriSource="ms-appx:///Assets/spanner-icon.png"></BitmapIcon>
+                    </NavigationViewItem.Icon>
                 </NavigationViewItem>
+
+                <NavigationViewItem x:Name="MonitorDetailNavItem" Visibility="Collapsed" helpers:NavigationHelper.NavigateTo="EnergyPerformance.ViewModels.MonitorDetailViewModel">
+                </NavigationViewItem>
+
+
             </NavigationView.MenuItems>
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

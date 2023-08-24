@@ -9,11 +9,17 @@ using EnergyPerformance.Notifications;
 using EnergyPerformance.Services;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
+
+using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
 using System.Windows;
+using Windows.UI.Notifications;
+using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Navigation;
+
 namespace EnergyPerformance;
 
 /// <summary>
@@ -61,7 +67,6 @@ public partial class App : Application
     public App()
     {
         InitializeComponent();
-        Trace.Listeners.Add(new ConsoleTraceListener());
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
         UseContentRoot(AppContext.BaseDirectory).
@@ -85,24 +90,29 @@ public partial class App : Application
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
             services.AddTransient<INavigationViewService, NavigationViewService>();
 
-
             services.AddSingleton<IActivationService, ActivationService>();
             services.AddSingleton<IPageService, PageService>();
             services.AddSingleton<INavigationService, NavigationService>();
-            
-            
+
+            // Initializing HttpClientFactory
+            services.AddHttpClient();
 
             // --- Registering background services and their dependencies
             services.AddHostedService<PeriodicDataSaverService>();
 
             services.AddSingleton<CpuInfo>(); // container for live CPU usage data
             services.AddHostedService<CpuTrackerService>();
+            
+            services.AddSingleton<GpuInfo>(); // container for live GPU usage data
+            services.AddHostedService<GpuTrackerService>();
+
+            services.AddHostedService<ProcessTrackerService>();
 
             services.AddSingleton<PowerInfo>(); // container for live Power usage data
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
-            services.AddHostedService<LocationService>();
+            services.AddSingleton<LocationService>();
 
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
@@ -112,7 +122,6 @@ public partial class App : Application
 
             services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---
-
 
             // Core Services
             services.AddSingleton<IFileService, FileService>();
@@ -124,14 +133,35 @@ public partial class App : Application
             services.AddSingleton<PersonaModel>();
 
             // Views and ViewModels
+            services.AddTransient<CarbonEmissionPage>();
+            services.AddTransient<CarbonEmissionViewModel>();
+
+            services.AddTransient<SettingsPage>();
             services.AddTransient<SettingsViewModel>();
+
             services.AddTransient<DebugViewModel>();
             services.AddTransient<DebugPage>();
-            services.AddTransient<SettingsPage>();
+
             services.AddTransient<EnergyUsageViewModel>();
             services.AddTransient<EnergyUsagePage>();
+
+            services.AddTransient<PersonaViewModel>();
+            services.AddTransient<PersonaListPage>();
+            services.AddTransient<CustomisePersonaPage>();
+            services.AddTransient<AddPersonaPage>();
+
+            services.AddTransient<SystemMonitorViewModel>();
+            services.AddTransient<SystemMonitorPage>();
+
+            services.AddTransient<MonitorDetailViewModel>();
+            services.AddTransient<MonitorDetailPage>();
+
+            services.AddTransient<HistoryViewModel>();
+            services.AddTransient<HistoryPage>();
+
             services.AddTransient<MainViewModel>();
             services.AddTransient<MainPage>();
+
             services.AddTransient<ShellPage>();
             services.AddTransient<ShellViewModel>();
 
@@ -139,8 +169,9 @@ public partial class App : Application
             services.Configure<LocalSettingsOptions>(context.Configuration.GetSection(nameof(LocalSettingsOptions)));
         }).
         Build();
+     
         Debug.WriteLine("Starting application");
-        App.GetService<IAppNotificationService>().Initialize();
+        
         MainWindow.Closed += async (sender, args) =>
         {
             Debug.WriteLine("MainWindow.Closed");
@@ -154,6 +185,13 @@ public partial class App : Application
     // not needed for application, simply here to show sequence of shutdown events
     private async void CurrentDomain_ProcessExit(object? sender, EventArgs e) {
         Debug.WriteLine("AppDomain.CurrentDomain.ProcessExit");
+
+        // Persona clean up
+        App.GetService<PersonaModel>().DisableEnabledPersona();
+
+        // Notification clean up
+        ToastNotificationManager.History.Clear();
+
         await Task.CompletedTask;
     }
 
@@ -201,5 +239,7 @@ public partial class App : Application
         // call StartAsync() on IHostedServices registered to the Host
         await Host.StartAsync();
 
+        App.GetService<IAppNotificationService>().Initialize();
     }
+
 }

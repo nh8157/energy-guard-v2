@@ -1,0 +1,38 @@
+﻿<Page
+    x:Class="EnergyPerformance.Views.TestMonitorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:lvc="using:LiveChartsCore.SkiaSharpView.WinUI"
+    xmlns:vms="using:EnergyPerformance.ViewModels"
+    xmlns:helpers="using:EnergyPerformance.Helpers"
+    mc:Ignorable="d">
+    <Page.Resources>
+    </Page.Resources>
+    
+    <Page.DataContext>
+        <vms:TestMonitorViewModel/>
+    </Page.DataContext>
+
+    <Grid x:Name="ContentArea">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal">
+            <Button Command="{Binding GoToPage1Command}" Margin="0,0,20,0">This Week</Button>
+            <Button Command="{Binding SeeAllCommand}" Margin="0,0,20,0">All Data</Button>
+            <Button Command="{Binding CostCommand}" Margin="0,0,20,0">Cost Model</Button>
+            <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="40" Width="200" ItemsSource="{x:Bind ViewModel.Applications}" Margin="10, 0, 0, 0"/>
+        </StackPanel>
+        <lvc:CartesianChart
+            Grid.Row="1"
+            Series="{Binding Series}"
+            XAxes="{Binding XAxes}"
+            ZoomMode="X"
+            Margin="0,0,0,20">
+        </lvc:CartesianChart>
+    </Grid>
+
+</Page>

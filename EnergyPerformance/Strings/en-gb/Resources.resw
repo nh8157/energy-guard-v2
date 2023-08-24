@@ -124,16 +124,19 @@
     <value>EnergyGuard</value>
   </data>
   <data name="Shell_Main.Content" xml:space="preserve">
-    <value>Home</value>
+    <value>System Monitor</value>
   </data>
-  <data name="Shell_EnergyUsage.Content" xml:space="preserve">
-    <value>Energy Usage</value>
+  <data name="CarbonEmission.Content" xml:space="preserve">
+    <value>Carbon Emission</value>
+  </data>
+  <data name="PowerConsumption.Content" xml:space="preserve">
+    <value>System Monitor</value>
+  </data>
+  <data name="HistoryEnergy.Content" xml:space="preserve">
+    <value>Energy</value>
   </data>
   <data name="Shell_Debug.Content" xml:space="preserve">
-      <value>Debug Messages</value>
-  </data>
-  <data name="Shell_Tips.Content" xml:space="preserve">
-    <value>Tips</value>
+    <value>Debug Messages</value>
   </data>
   <data name="Settings_Personalization.Text" xml:space="preserve">
     <value>Personalisation</value>
@@ -180,50 +183,6 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
   &lt;/actions&gt;
 &lt;/toast&gt;</value>
   </data>
-  <data name="CasualModeNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Casual Mode&lt;/text&gt;
-      &lt;text&gt;Your device has been switched to casual mode to save power.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/casual_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
-  <data name="AutoControlEnabledNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Auto Control&lt;/text&gt;
-      &lt;text&gt;Your device will now automatically switch modes to save power.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/auto_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
-  <data name="WorkModeNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Work Mode&lt;/text&gt;
-      &lt;text&gt;Your device has been switched to work mode to save power.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/work_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
-  <data name="PerformanceModeNotification" xml:space="preserve">
-    <value>&lt;toast launch="action=ToastClick"&gt;
-  &lt;visual&gt;
-    &lt;binding template="ToastGeneric"&gt;
-      &lt;text&gt;Switched to Gaming Mode&lt;/text&gt;
-      &lt;text&gt;Your device has been switched to performance mode, normal device settings are now being used.&lt;/text&gt;
-      &lt;image placement="appLogoOverride" hint-crop="circle" src="{0}Assets/performance_icon.png"/&gt;
-    &lt;/binding&gt;
-  &lt;/visual&gt;
-&lt;/toast&gt;</value>
-  </data>
   <data name="CurrencyCode" xml:space="preserve">
     <value>GBP</value>
   </data>
@@ -254,50 +213,14 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
   <data name="EnergyUsage_Unit" xml:space="preserve">
     <value>kWh</value>
   </data>
-  <data name="HomeAutoAppBarButton.Label" xml:space="preserve">
-    <value>Auto</value>
-  </data>
-  <data name="HomeAutoTooltip.Content" xml:space="preserve">
-    <value>Automatically control system resources to save power.</value>
-  </data>
-  <data name="HomeBudgetProgressRingLabel.Text" xml:space="preserve">
-    <value>of budget used</value>
-  </data>
-  <data name="HomeCasualAppBarButton.Label" xml:space="preserve">
-    <value>Casual</value>
-  </data>
-  <data name="HomeCasualTooltip.Content" xml:space="preserve">
-    <value>Heavily limit system resources to save power.
-Best for: Casual Browsing, Watching Videos</value>
-  </data>
   <data name="HomeCpuUsageProgressRingLabel.Text" xml:space="preserve">
     <value>CPU Usage</value>
-  </data>
-  <data name="HomeLastWeekCard.Header" xml:space="preserve">
-    <value>Last Week</value>
-  </data>
-  <data name="HomePerformanceAppBarButton.Label" xml:space="preserve">
-    <value>Speed</value>
-  </data>
-  <data name="HomePerformanceTooltip.Content" xml:space="preserve">
-    <value>Use all available system resources.
-Best for: Gaming, Video Editing</value>
   </data>
   <data name="HomePowerUseTitle.Text" xml:space="preserve">
     <value>Currently using:</value>
   </data>
   <data name="HomeProfileBar.Header" xml:space="preserve">
     <value>Profile</value>
-  </data>
-  <data name="HomeThisWeekCard.Header" xml:space="preserve">
-    <value>This Week</value>
-  </data>
-  <data name="HomeWorkAppBarButton.Label" xml:space="preserve">
-    <value>Work</value>
-  </data>
-  <data name="HomeWorkTooltip.Content" xml:space="preserve">
-    <value>Limit system resources to save power.
-Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="PercentSymbol.Text" xml:space="preserve">
     <value>%</value>
@@ -324,7 +247,7 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
     <value>Set the cost per kWh from your electricity supplier</value>
   </data>
   <data name="SettingsPage_LicensesLink.Content" xml:space="preserve">
-    <value>Licenses</value>
+    <value>Licences</value>
   </data>
   <data name="SettingsPage_LicensesLink.NavigateUri" xml:space="preserve">
     <value>https://github.com/guardsense/EG/blob/main/licenses.txt</value>
@@ -352,5 +275,95 @@ Best for: Heavy Browsing, Excel, PowerPoint</value>
   </data>
   <data name="SettingsPage_DescriptionLink.NavigateUri" xml:space="preserve">
     <value>https://github.com/guardsense/EG/blob/main/description.md</value>
+  </data>
+  <data name="HomeGpuUsageProgressRingLabel.Text" xml:space="preserve">
+    <value>GPU Usage</value>
+  </data>
+  <data name="CarbonEmissionTitle.Text" xml:space="preserve">
+    <value>Currently emitting:</value>
+  </data>
+  <data name="EmissionsSymbol.Text" xml:space="preserve">
+    <value>gm(s)</value>
+  </data>
+  <data name="CPUCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>CPU Emissions</value>
+  </data>
+  <data name="GPUCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>GPU Emissions</value>
+  </data>
+  <data name="TotalCarbonEmissionLabel.Text" xml:space="preserve">
+    <value>Total Emissions</value>
+  </data>
+  <data name="PersonaCustomisation.Content" xml:space="preserve">
+    <value>Persona Customisation</value>
+  </data>
+  <data name="CustomisePersonaLabel.Text" xml:space="preserve">
+    <value>Customising Persona for:</value>
+  </data>
+  <data name="BalancedLabel.Text" xml:space="preserve">
+    <value>Balanced</value>
+  </data>
+  <data name="EfficiencyLabel.Text" xml:space="preserve">
+    <value>Efficiency</value>
+  </data>
+  <data name="PerformanceLabel.Text" xml:space="preserve">
+    <value>Performance</value>
+  </data>
+  <data name="ApplicationNameHeader.Text" xml:space="preserve">
+    <value>Application Name</value>
+  </data>
+  <data name="EnergyRatingHeader.Text" xml:space="preserve">
+    <value>Energy Rating</value>
+  </data>
+  <data name="AddPersonaButton.Content" xml:space="preserve">
+    <value>Add Persona</value>
+  </data>
+  <data name="ApplyPersonaButton.Content" xml:space="preserve">
+    <value>Apply Persona</value>
+  </data>
+  <data name="AppSelection.PlaceholderText" xml:space="preserve">
+    <value>Select Application</value>
+  </data>
+  <data name="ModelSelection.PlaceholderText" xml:space="preserve">
+    <value>Energy Usage</value>
+  </data>
+  <data name="GoBackButton.Content" xml:space="preserve">
+    <value>Go Back</value>
+  </data>
+  <data name="ClosePopup.Content" xml:space="preserve">
+    <value>Close Popup</value>
+  </data>
+  <data name="RestoreDefaultButton.Content" xml:space="preserve">
+    <value>Restore to Default</value>
+  </data>
+  <data name="EditPersonaButton.Content" xml:space="preserve">
+    <value>Edit Persona</value>
+  </data>
+  <data name="AddPersonaLabel.Text" xml:space="preserve">
+    <value>Creating Persona for:</value>
+  </data>
+  <data name="BrowseButton.Content" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="ViewCarbonEmissionsButton.Content" xml:space="preserve">
+    <value>View Carbon Emissions</value>
+  </data>
+  <data name="ViewPowerButton.Content" xml:space="preserve">
+    <value>View Power Usage</value>
+  </data>
+  <data name="BudgetProgressLabel.Text" xml:space="preserve">
+    <value>Budget Used</value>
+  </data>
+  <data name="CarbonEmissionCard.Text" xml:space="preserve">
+    <value>Total Carbon Emissions</value>
+  </data>
+  <data name="BudgetProgressBarLabel.Text" xml:space="preserve">
+    <value>of Budget Used</value>
+  </data>
+  <data name="HomeThisWeek.Text" xml:space="preserve">
+    <value>This Week</value>
+  </data>
+  <data name="EmissionsLabel.Text" xml:space="preserve">
+    <value>Emissions</value>
   </data>
 </root>

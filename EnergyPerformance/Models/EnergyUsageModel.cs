@@ -1,5 +1,4 @@
-﻿using System.Data.SQLite;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Core.Helpers;
@@ -24,6 +23,19 @@ public class EnergyUsageModel
     private EnergyUsageData _energyUsage;
     private readonly IDatabaseService _databaseService;
 
+    public DateTime SelectedDate 
+    {
+        get; set;
+    }
+
+    public String SelectedModel
+    {
+        get; set;
+    }
+
+    /// <summary>
+    /// Encodes whether the energy rate is fetched live
+    /// </summary>
     public bool IsLiveCost
     {
         get; set;
@@ -38,12 +50,6 @@ public class EnergyUsageModel
         get; set;
     }
 
-    public EnergyUsageData EnergyUsage
-    {
-        get => _energyUsage;
-        private set => _energyUsage = value;
-    }
-
     public double CarbonIntensity
     {
         get => _carbonIntensityInfo.CarbonIntensity;
@@ -55,7 +61,6 @@ public class EnergyUsageModel
     /// <summary>
     /// The cost per kWh for the user. Returns data loaded from file or default value if file is not found or corrupted.
     /// </summary>
-
     public double CostPerKwh
     {
         get
@@ -131,11 +136,12 @@ public class EnergyUsageModel
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(CarbonIntensityInfo carbonIntensityInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
+    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, LocationInfo locationInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;
         IsLiveCost = true;
+        SelectedModel = "Energy Usage";
         AccumulatedWatts = 0;
         AccumulatedWattsHourly = 0;
         AccumulatedWattsPerApp = new Dictionary<string, double>();
@@ -254,7 +260,9 @@ public class EnergyUsageModel
         var dailyLogs = new List<EnergyUsageLog>();
 
         foreach (var diary in _energyUsage.Diaries)
+        {
             dailyLogs.Add(diary.DailyUsage);
+        }
 
         return dailyLogs;
     }
@@ -262,15 +270,33 @@ public class EnergyUsageModel
     /// <summary>
     /// Returns the hourly energy usage logs from the model.
     /// </summary>
-    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs()
+    public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date)
     {
-        var hourlyLogs = new List<EnergyUsageLog>();
 
-        foreach (var diary in _energyUsage.Diaries)
-            foreach (var log in diary.HourlyUsage)
-                hourlyLogs.Add(log);
+        if (date != null)
+            foreach (var diary in _energyUsage.Diaries)
+            {
+                if (diary.DailyUsage.Date.Date == date.Date)
+                    return diary.HourlyUsage;
+            }
+                
 
-        return hourlyLogs;
+        return new List<EnergyUsageLog>();
+    }
+
+    /// <summary>
+    /// Returns all applications' energy log on a given day
+    /// </summary>
+    /// <param name="date"></param>
+    /// <returns></returns>
+    public List<(string, EnergyUsageLog)> GetPerAppUsageLogs(DateTime? date)
+    {
+        if (date != null)
+            foreach (var diary in _energyUsage.Diaries)
+                if (diary.Date == date)
+                    return diary.PerProcUsage.Select(x => (x.Key, x.Value)).ToList();
+
+        return new List<(string, EnergyUsageLog)>();
     }
 
     /// <summary>
@@ -420,7 +446,5 @@ public class EnergyUsageModel
             lastDiary.PerProcUsage[proc] = new EnergyUsageLog(current, (float)GetEnergyUsed(proc), (float)GetDailyCost(proc), (float)GetDailyCarbonEmission(proc));
 
         Debug.WriteLine("Model updated.");
-
     }
-
 }

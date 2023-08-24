@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Microsoft.Extensions.Hosting;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
@@ -10,12 +10,11 @@ using EnergyPerformance.Wrapper;
 namespace EnergyPerformance.Services;
 public class LocationService : BackgroundService
 {
-    private readonly LocationInfo _locationInfo;
-    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(1));
     private const string _locationUrl = "https://geocode.maps.co/reverse?lat={0}&lon={1}";
-    private readonly HttpClient _client;
-    private readonly Geolocator _geolocator;
-
+    private const int duration = 1;
+    private readonly LocationInfo _locationInfo;
+    private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromHours(duration));
+    private readonly IHttpClientFactory _httpClientFactory;
     
     public GeolocationAccessStatus GeolocationAccessStatus
     {
@@ -39,13 +38,12 @@ public class LocationService : BackgroundService
         get; set;
     }
 
-
-    public LocationService(LocationInfo locationInfo)
+    public LocationService(LocationInfo locationInfo, IHttpClientFactory httpClientFactory)
     {
         _locationInfo = locationInfo;
-        _client = new HttpClient();
         _geolocator = new Geolocator();
         MethodsWrapper = new LocationServiceMethodFactory();
+        _httpClientFactory = httpClientFactory;
     }
 
 
@@ -72,15 +70,32 @@ public class LocationService : BackgroundService
                 var latitude = pos.Coordinate.Point.Position.Latitude;
                 var longitude  = pos.Coordinate.Point.Position.Longitude;
 
-                string url = string.Format(_locationUrl, latitude, longitude);
-                JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(_client, url)??
-                    throw new InvalidOperationException("Cannot deserialize json object"); 
-                Country = jsonResponse.GetProperty("address").GetProperty("country").ToString();
-                Postcode = jsonResponse.GetProperty("address").GetProperty("postcode").ToString();
+                HttpClient client = _httpClientFactory.CreateClient();
+
+                var url = string.Format(_locationUrl, latitude, longitude);
+                JsonElement jsonResponse = await ApiProcessor<dynamic>.Load(client, url) ??
+                    throw new InvalidOperationException("Cannot deserialize json object");
+
+                try
+                {
+                    Country = jsonResponse.GetProperty("address").GetProperty("country").ToString();
+                }
+                catch (KeyNotFoundException)
+                {
+                    Country = "Unknown";
+                }
+
+                try
+                {
+                    Postcode = jsonResponse.GetProperty("address").GetProperty("postcode").ToString();
+                }
+                catch (KeyNotFoundException)
+                {
+                    Postcode = "Unknown";
+                }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.ToString());
             }
         }
         else

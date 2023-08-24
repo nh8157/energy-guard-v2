@@ -17,7 +17,7 @@ public class EnergyRateService: BackgroundService
     private const string _dnoUrl = "https://www.energynetworks.org/operator-finder/operator-finder.php?postcode={0}";
     private const string _countryCodesFileName = "country_codes";
 
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     private readonly string _eurostatYear = "2022";
     private readonly string _voltage = "HV";
@@ -25,11 +25,12 @@ public class EnergyRateService: BackgroundService
     private string Country => _locationInfo.Country;
     private string Postcode => _locationInfo.Postcode;
 
-    public EnergyRateService(LocationInfo locationInfo, EnergyRateInfo energyRateInfo)
+    public EnergyRateService(LocationInfo locationInfo, EnergyRateInfo energyRateInfo, IHttpClientFactory httpClientFactory)
     {
         _locationInfo = locationInfo;
         _energyRateInfo = energyRateInfo;
-        _httpClient = new HttpClient();
+
+        _httpClientFactory = httpClientFactory;
     }
 
     protected async override Task ExecuteAsync(CancellationToken token)
@@ -82,7 +83,8 @@ public class EnergyRateService: BackgroundService
         var url = string.Format(_ukUrl, dno, _voltage, dateNow, dateNow);
 
         // fetching and deserializing the data from remote API
-        var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(_httpClient, url) ??
+        HttpClient httpClient = _httpClientFactory.CreateClient();
+        var energyCostsApi = await ApiProcessor<EnergyCostsModel>.Load(httpClient, url) ??
         throw new Exception("EnergyCosts API is not available.");
 
         return energyCostsApi.GetEnergyRateUK() / 100;
@@ -102,7 +104,8 @@ public class EnergyRateService: BackgroundService
     {
         var url = string.Format(_euUrl, _eurostatYear);
 
-        var eurostatApi = await ApiProcessor<EurostatModel>.Load(_httpClient, url) ??
+        var httpClient = _httpClientFactory.CreateClient();
+        var eurostatApi = await ApiProcessor<EurostatModel>.Load(httpClient, url) ??
         throw new Exception("Eurostat API is not available.");
         return eurostatApi.GetEnergyRate(countryCode);
     }
@@ -134,7 +137,8 @@ public class EnergyRateService: BackgroundService
     {
         var url = string.Format(_dnoUrl, postcode);
 
-        var energyNetworkApi = await ApiProcessor<EnergyNetworksModel>.Load(_httpClient, url) ??
+        var httpClient = _httpClientFactory.CreateClient();
+        var energyNetworkApi = await ApiProcessor<EnergyNetworksModel>.Load(httpClient, url) ??
         throw new Exception("Energy Networks API is not available.");
 
         return int.Parse(energyNetworkApi.DnoCode);

@@ -1,0 +1,30 @@
+﻿<Page
+    x:Class="EnergyPerformance.Views.SystemMonitorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" d:DataContext="{d:DesignInstance Type=viewmodels:SystemMonitorViewModel}"
+    xmlns:oxy="using:OxyPlot" xmlns:viewmodels="using:EnergyPerformance.ViewModels" xmlns:labs="using:CommunityToolkit.Labs.WinUI"
+    xmlns:helpers="using:EnergyPerformance.Helpers"
+    mc:Ignorable="d">
+    <Page.Resources>
+        <helpers:EnergyUsageLocalizedStringConverter x:Key="LocalizedStringConverter" />
+    </Page.Resources>
+    <Grid x:Name="ContentArea">
+        <StackPanel Orientation="Vertical" >
+            <!--<labs:SettingsCard x:Uid="EnergyUsageInfoBar">-->
+                <!--<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                    <Button Content="{x:Bind ViewModel.CurrentMode, Mode=OneWay, Converter={StaticResource LocalizedStringConverter}}" Command="{x:Bind ViewModel.SwitchCostEnergyModelCommand}" Margin="5 0"/>
+                    <Button Content="{x:Bind ViewModel.CurrentTimeSpan, Mode=OneWay, Converter={StaticResource LocalizedStringConverter}}" Command="{x:Bind ViewModel.SwitchTimeSpanCommand}"  Margin="5 0"/>
+                </StackPanel>
+            </labs:SettingsCard>-->
+            <Grid Margin="0 20">
+
+                <oxy:PlotView Model="{x:Bind ViewModel.Model, Mode=OneWay}" Background="Transparent" MinHeight="600">
+                </oxy:PlotView>
+
+            </Grid>
+        </StackPanel>
+    </Grid>
+
+</Page>

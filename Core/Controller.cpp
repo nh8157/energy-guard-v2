@@ -88,7 +88,7 @@ namespace Core
 
 
 
-	DWORD FindAndBind(const wchar_t* target, int selectedAffinity) {
+	bool FindAndBind(const wchar_t* target, int selectedAffinity) {
 		PROCESSENTRY32 entry;
 		entry.dwSize = sizeof(PROCESSENTRY32);
 		BOOL found = FALSE;
@@ -111,7 +111,7 @@ namespace Core
 					}
 					else {
 						cout << " ERROR -- Retry bind" << endl;
-						system("pause");
+						//system("pause");
 					}
 					CloseHandle(hProcess);
 				}
@@ -127,7 +127,7 @@ namespace Core
 		}
 		cout << "\n" << endl;
 		CloseHandle(snapshot);
-		return 0;
+		return found == TRUE;
 	}
 
 
@@ -168,6 +168,23 @@ namespace Core
 		ProcessesSnapShot(eCoreMask);
 	}
 
+	int Controller::CreateAffinityMask(int eCores, int pCores)
+	{
+		// check if the p core and e core count passed in is larger than the number of p core or e core
+		if (eCores > eCoreCount || pCores > pCoreCount) {
+			return -1;
+		}
+
+		// create affinity mask for performance cores
+		int pCoreMask = AffinityMaskGenerator(pCores);
+		// create affinity mask for efficiency cores, shift the mask to higher order bits
+		int eCoreMask = AffinityMaskGenerator(eCores) << pCoreCount;
+		// combine the p core affinity mask and the e core affinity mask
+		int affinityMask = pCoreMask + eCoreMask;
+
+		return affinityMask;
+	}
+
 	void Controller::MoveAllAppsToSomeEfficiencyCores()
 	{
 		// 2-ecores effiency mode
@@ -175,46 +192,29 @@ namespace Core
 			return;
 		}
 
-		int eCoreUser = 2;
-		int coreOffset = eCoreUser + hyperthreadCores;
-
-		affinityOffset = AffinityMaskGenerator(hyperthreadCores);
-		int tmpAffinity = AffinityMaskGenerator(coreOffset);
-		int eCoreAffinity = tmpAffinity - affinityOffset;
-		//cout << eCoreAffinity << endl;
-		coreMapArr.push_back(eCoreAffinity);
-		ProcessesSnapShot(coreMapArr[0]);
-		coreMapArr.clear();
+		int affinity = CreateAffinityMask(eCoreCount, 0);
+		ProcessesSnapShot(affinity);
 	}
 
+	bool Controller::MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores)
+	{
+		if ((eCores <= 0 && pCores <= 0)|| eCores > eCoreCount || pCores % 2 == 1 || pCores > pCoreCount) {
+			return false;
+		}
 
-
+		int affinity = CreateAffinityMask(eCores, pCores);
+		return FindAndBind(target, affinity);
+	}
+	
 	void Controller::MoveAllAppsToHybridCores(int eCores, int pCores)
 	{
-		// Both selections must be within their respective core counts
-		// P-Core selection must be even according to code provided by Intel
-		if ((eCores <= 0 && pCores <= 0)|| eCores > eCoreCount || pCores % 2 == 1 || pCores > pCoreCount) {
+		int affinity = CreateAffinityMask(eCores, pCores);
+		if (affinity == -1) {
 			return;
-		}
-
-		int hThreadAffinity = AffinityMaskGenerator(pCores);
-
-		int coreOffset = eCores + hyperthreadCores;
-
-		affinityOffset = AffinityMaskGenerator(hyperthreadCores);
-		int tmpAffinity = AffinityMaskGenerator(coreOffset);
-		int eCoreAffinity = tmpAffinity - affinityOffset;
-		if (pCores > 0 && pCores % 2 == 0) {
-			int hybridAffinity = eCoreAffinity + hThreadAffinity;
-			coreMapArr.push_back(hybridAffinity);
-		}
-		else {
-			coreMapArr.push_back(eCoreAffinity);
 		}
 		
 		// Move apps to selected cores
-		ProcessesSnapShot(coreMapArr[0]);
-		coreMapArr.clear();
+		ProcessesSnapShot(affinity);
 	}
 
 	int Controller::TotalCoreCount() {

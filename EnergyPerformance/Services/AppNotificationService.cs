@@ -3,17 +3,19 @@ using System.Web;
 
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
-
+using EnergyPerformance.Models;
+using EnergyPerformance.Services;
 using Microsoft.Windows.AppNotifications;
 
 namespace EnergyPerformance.Notifications;
 
 /// <summary>
-/// Service to show notifications to the user
+/// Notification service.
 /// </summary>
 public class AppNotificationService : IAppNotificationService
 {
     private readonly INavigationService _navigationService;
+    private readonly AutoConfigurationService autoConfigurationService = new();
 
     public AppNotificationService(INavigationService navigationService)
     {
@@ -27,22 +29,61 @@ public class AppNotificationService : IAppNotificationService
 
     public void Initialize()
     {
-        AppNotificationManager.Default.NotificationInvoked += OnNotificationInvoked;
-
-        AppNotificationManager.Default.Register();
+        var notificationManager = AppNotificationManager.Default;
+        notificationManager.NotificationInvoked += OnNotificationInvoked;
+        notificationManager.Register();
     }
 
     /// <summary>
     /// Invoked when a notification is activated by the user.
+    /// <param name="sender"></param>
+    /// <param name="args">Contains the custom action of a toast notification and may also include the persona name.</param>
     /// </summary>
     public void OnNotificationInvoked(AppNotificationManager sender, AppNotificationActivatedEventArgs args)
     {
         // Can perform custom actions here based on arguments specified in notification payload.
         // E.g. a button within the notification can be used to perform a specific action which can be defined here.
-        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        App.MainWindow.DispatcherQueue.TryEnqueue( delegate
         {
-            // Bring app to foreground.
-            App.MainWindow.BringToFront();
+            // Extract custom action from argument
+            var customAction = args.Argument.Split('=')[1];
+            var executablePath = "";
+
+            // If executable path is included in the agrument
+            // then divide custom action and executable path
+            if (args.Argument.Contains('&'))
+            {
+                // Extract executable path
+                executablePath = customAction.Split('&')[1];
+
+                // Extract the custom action
+                customAction = customAction.Split('&')[0];
+            }
+
+            switch (customAction)
+            {
+                case "enableLaunchedAppPersona":
+                    App.GetService<PersonaModel>().EnablePersona(executablePath);
+                    
+                    break;
+                case "autoConfigurePersona":
+                    PersonaNotification.AutoConfigurePersonaNotification(executablePath);
+
+                    break;
+                case "startAutoConfiguration":
+                    PersonaNotification.StartAutoConfigurationNotification(executablePath);
+                    autoConfigurationService.Start(executablePath);
+
+                    break;
+                case "moveTowardsPerformance":
+                    autoConfigurationService.AutoConfigure(true);
+
+                    break;
+                case "moveTowardsEfficiency":
+                    autoConfigurationService.AutoConfigure(false);
+
+                    break;
+            }
         });
     }
 
@@ -73,7 +114,6 @@ public class AppNotificationService : IAppNotificationService
         await AppNotificationManager.Default.RemoveAllAsync();
         AppNotificationManager.Default.Show(appNotification);
     }
-
 
     public NameValueCollection ParseArguments(string arguments)
     {

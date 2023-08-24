@@ -82,17 +82,14 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.ToString());
             }
         }
         if (await MethodWrapper.DatabaseIsActive(CreateConnection()))
         {
             _energyUsage = await ReadUsageDataFromDatabase();
-            Debug.WriteLine($"retrieved {_energyUsage.Diaries.Count().ToString()} diaries from database");
         }
         else
         {
-            Debug.WriteLine("Empty Database");
         }
         _isInitialized = true;
     }
@@ -108,7 +105,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
         }
         return sqlite_conn;
     }
@@ -123,7 +119,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
         }
         return sqlite_conn;
     }
@@ -149,7 +144,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
             return string.Empty;
         }
     }
@@ -177,7 +171,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
             return string.Empty;
         }
     }
@@ -210,7 +203,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -243,7 +235,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -288,7 +279,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -320,7 +310,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            Debug.WriteLine(ex.ToString());
         }
     }
 
@@ -366,7 +355,6 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         reader.Close();
@@ -397,7 +385,6 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         reader.Close();
@@ -430,7 +417,6 @@ public class DatabaseService : IDatabaseService
             }
             catch (Exception ex)
             {
-                App.GetService<DebugModel>().AddMessage(ex.ToString());
             }
         }
         reader.Close();
@@ -450,7 +436,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return new EnergyUsageDiary();
         }
     }
@@ -480,7 +465,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return new List<EnergyUsageDiary>();
         }
     }
@@ -506,7 +490,6 @@ public class DatabaseService : IDatabaseService
         }
         catch (Exception ex)
         {
-            App.GetService<DebugModel>().AddMessage(ex.ToString());
             return (0, 0);
         }
     }
