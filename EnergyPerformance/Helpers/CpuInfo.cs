@@ -69,7 +69,6 @@ public class CpuInfo
     {
         var filename = Path.GetFileName(path);
         var res = CpuController.MoveAppToHybridCores(filename, cpuSetting.Item1, cpuSetting.Item2);
-        App.GetService<DebugModel>().AddMessage($"CPU setting for {path} is {res}");
     }
 
     public void DisableCpuSetting(string path, (int, int) cpuSetting)

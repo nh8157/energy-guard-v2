@@ -26,7 +26,7 @@ public class ProcessMonitorService
     public event EventHandler? CreationEventHandler;
     public event EventHandler? DeletionEventHandler;
 
-    public string? CreatedProcess
+    public string CreatedProcess
     {
         get
         {
@@ -36,7 +36,7 @@ public class ProcessMonitorService
                 _createdProcesses.RemoveAt(0);
                 return proc;
             }
-            return null;
+            return "";
         }
     }
 
@@ -63,7 +63,7 @@ public class ProcessMonitorService
         _deletedProcesses = new List<string>();
     }
 
-    public bool AddWatcher(string name)
+    public void AddWatcher(string name)
     {
         if (!_creationWatcher.ContainsKey(name) && !_deletionWatcher.ContainsKey(name))
         {
@@ -78,19 +78,14 @@ public class ProcessMonitorService
             creationWatcher.EventArrived += GetCreationWatcherHandler(name);
             deletionWatcher.EventArrived += GetDeletionWatcherHandler(name);
 
-            creationWatcher.Start();
-
             _creationWatcher[name] = creationWatcher;
             _deletionWatcher[name] = deletionWatcher;
 
-            Debug.WriteLine($"Watcher for {name} created");
-
-            return true;
+            Debug.WriteLine($"Watchers for {name} are created");
         }
-        return false;
     }
 
-    public bool RemoveWatcher(string name)
+    public void RemoveWatcher(string name)
     {
         if (_creationWatcher.ContainsKey(name) && _deletionWatcher.ContainsKey(name))
         {
@@ -101,10 +96,47 @@ public class ProcessMonitorService
             _deletedProcesses.RemoveAll(proc => proc == name);
 
             Debug.WriteLine($"Watcher for {name} has been stopped");
-
-            return true;
         }
-        return false;
+    }
+
+    public void StartCreationWatcher(string name)
+    {
+        if (_creationWatcher.ContainsKey(name))
+        {
+            _creationWatcher[name].Start();
+            return;
+        }
+        throw new ArgumentException($"{name} does not have a creation watcher");
+    }
+
+    public void StopCreationWatcher(string name)
+    {
+        if (_creationWatcher.ContainsKey(name))
+        {
+            _creationWatcher[name].Stop();
+            return;
+        }
+        throw new ArgumentException($"{name} does not have a creation watcher");
+    }
+
+    public void StartDeletionWatcher(string name)
+    {
+        if (_deletionWatcher.ContainsKey(name))
+        {
+            _deletionWatcher[name].Start();
+            return;
+        }
+        throw new ArgumentException($"{name} does not have a deletion watcher");
+    }
+
+    public void StopDeletionWatcher(string name)
+    {
+        if (_deletionWatcher.ContainsKey(name))
+        {
+            _deletionWatcher[name].Stop();
+            return;
+        }
+        throw new ArgumentException($"{name} does not have a deletion watcher");
     }
 
     private EventArrivedEventHandler GetCreationWatcherHandler(string name)

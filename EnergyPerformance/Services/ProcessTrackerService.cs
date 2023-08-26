@@ -10,12 +10,10 @@ public class ProcessTrackerService : BackgroundService
 {
     // Execute every 5 seconds
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(10000));
-    private readonly Dictionary<Process, PerformanceCounter> processCpuCounters = new();
-    private readonly Dictionary<Process, PerformanceCounter> processGpuCounters = new();
     private readonly CpuInfo cpuInfo;
     private readonly GpuInfo gpuInfo;
-    private readonly PersonaModel personaModel;
-    
+    private Dictionary<Process, PerformanceCounter> processCpuCounters = new();
+    private Dictionary<Process, PerformanceCounter> processGpuCounters = new();
 
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -42,37 +40,16 @@ public class ProcessTrackerService : BackgroundService
             new PerformanceCounter("GPU Engine", "Utilization Percentage", gpuInstanceName));
     }
     
-    public void RemoveProcess(Process process)
+    public void RemoveProcess(string process)
     {
-        processCpuCounters.Remove(process);
-        processGpuCounters.Remove(process);
+        processCpuCounters = processCpuCounters.Where(kv => kv.Key.ProcessName != process).ToDictionary(kv => kv.Key, kv => kv.Value);
+        processGpuCounters = processGpuCounters.Where(kv => kv.Key.ProcessName != process).ToDictionary(kv => kv.Key, kv => kv.Value);
     }
 
-    public ProcessTrackerService(CpuInfo cpuInfo, GpuInfo gpuInfo, PersonaModel personaModel)
+    public ProcessTrackerService(CpuInfo cpuInfo, GpuInfo gpuInfo)
     {
         this.cpuInfo = cpuInfo;
         this.gpuInfo = gpuInfo;
-        this.personaModel = personaModel;
-
-        var processes = this.personaModel.ReadPersonaAndRating();
-        
-        // Create a performance counter for each already running process in the persona list
-        foreach (var (path, _) in processes)
-        {
-            var processName = Path.GetFileName(path);
-            if (processName.Contains(".exe"))
-                processName = processName.Remove(processName.Length - ".exe".Length);
-            
-            var process = Process.GetProcessesByName(processName).FirstOrDefault();
-
-            App.GetService<DebugModel>().AddMessage($"Added tracker for {processName}");
-            if (process == null)
-            {
-                App.GetService<DebugModel>().AddMessage("Process name is null");
-                continue;
-            }
-            AddProcess(process);
-        }
     }
 
     private string GetCpuInstanceNameForProcess(Process process)
@@ -117,8 +94,6 @@ public class ProcessTrackerService : BackgroundService
         {
             await Task.Run(() =>
             {
-                // App.GetService<DebugModel>().AddMessage($"Calculating per app usage {processCpuCounters.Keys.Count()}");
-
                 foreach (var (process, counter) in processCpuCounters)
                 {
                     cpuInfo.ProcessesCpuUsage[process.ProcessName] =

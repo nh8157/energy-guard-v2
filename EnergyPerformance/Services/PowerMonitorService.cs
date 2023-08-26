@@ -189,8 +189,6 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
                 var cpuUsage = _cpuInfo.ProcessesCpuUsage.GetValueOrDefault(process);
                 var accWatts = _model.AccumulatedWattsPerApp.GetValueOrDefault(process);
                 _model.AccumulatedWattsPerApp[process] = accWatts + cpuUsage/100 * CpuPower;
-
-                App.GetService<DebugModel>().AddMessage($"Power usage of {process} is {_model.AccumulatedWattsPerApp[process]}");
             }
 
             // calculate an app's GPU power
