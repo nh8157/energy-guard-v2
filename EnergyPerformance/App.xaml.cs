@@ -117,6 +117,9 @@ public partial class App : Application
             services.AddSingleton<EnergyRateInfo>();
             services.AddHostedService<EnergyRateService>();
 
+            services.AddSingleton<ProcessTrackerInfo>();
+            services.AddHostedService<ProcessTrackerService>();
+
             services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---
 
@@ -124,7 +127,6 @@ public partial class App : Application
             services.AddSingleton<IFileService, FileService>();
             services.AddSingleton<EnergyUsageFileService>();
             services.AddSingleton<PersonaFileService>();
-            services.AddSingleton<ProcessTrackerService>();
 
             // Models
             services.AddSingleton<EnergyUsageModel>();

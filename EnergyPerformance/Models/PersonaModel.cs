@@ -21,7 +21,7 @@ public class PersonaModel
     
     private readonly PersonaFileService _personaFileService;
     private readonly ProcessMonitorService _processMonitorService;
-    private readonly ProcessTrackerService _processTrackerService;
+    private readonly ProcessTrackerInfo _processTrackerInfo;
     private readonly CpuInfo _cpuInfo;
 
     /// <summary>
@@ -47,12 +47,12 @@ public class PersonaModel
         set; get;
     }
 
-    public PersonaModel(CpuInfo cpuInfo, PersonaFileService personaFileService, ProcessTrackerService processTrackerService)
+    public PersonaModel(CpuInfo cpuInfo, PersonaFileService personaFileService, ProcessTrackerInfo processTrackerInfo)
     {
         _personaFileService = personaFileService;
         _allPersonas = new List<PersonaEntry>();
         _processMonitorService = new ProcessMonitorService();
-        _processTrackerService = processTrackerService;
+        _processTrackerInfo = processTrackerInfo;
         _cpuInfo = cpuInfo;
         IsEnabled = false;
         PersonaEnabled = null;
@@ -80,7 +80,7 @@ public class PersonaModel
                 App.GetService<DebugModel>().AddMessage($"{processName} is running");
                 var process = GetProcess(processName);
                 // when there is any running instance of the process
-                _processTrackerService.AddProcess(process);
+                _processTrackerInfo.AddProcess(process);
                 _processMonitorService.StartDeletionWatcher(persona.Path);
             }
             else
@@ -110,7 +110,7 @@ public class PersonaModel
         {
             var process = GetProcess(processName);
             // begin tracking the consumption of the process
-            _processTrackerService.AddProcess(process);
+            _processTrackerInfo.AddProcess(process);
             
             EnablePersona(executablePath);
             App.MainWindow.DispatcherQueue.TryEnqueue(() =>
@@ -140,7 +140,7 @@ public class PersonaModel
             // all instances of the process have stopped
             if (!CheckProcessStatus(processName) && executablePath == PersonaEnabled.Path)
             {
-                _processTrackerService.RemoveProcess(processName);
+                _processTrackerInfo.RemoveProcess(processName);
                 DisableEnabledPersona();
                 App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
