@@ -37,7 +37,10 @@
             <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="35" Width="170" ItemsSource="{x:Bind ViewModel.DetailApplications}"
                   SelectedItem="{x:Bind ViewModel.DetailSelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Grid.Column="1" Margin="20,3,0,0"/>
         </Grid>
-        <lvc:CartesianChart Series="{Binding Series}" Grid.Row="2"/>
+        <lvc:CartesianChart 
+            Series="{Binding Series}"
+            YAxes="{Binding PerAppAxis}"
+            Grid.Row="2"/>
         
 
         <lvc:CartesianChart

@@ -1,4 +1,7 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection.Emit;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Models;
 using LiveChartsCore;
@@ -45,6 +48,17 @@ public partial class MonitorDetailViewModel : ObservableObject
             carbons.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
         }
         var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
+        var perAppLog = _model.GetPerAppUsageLogs(ReceivedParameter);
+        string[] stringArray = new string[8];
+        var index = 0;
+        Debug.WriteLine(perAppLog.Count+"----------");
+        foreach(var papp in perAppLog)
+        {
+            Debug.WriteLine("++++++++++++"+papp.Item1);
+            stringArray[index++] = papp.Item1;
+        }
+
+
         foreach (var log in logs)
         {
             hourly[log.Date.Hour].Value += log.PowerUsed;
@@ -100,7 +114,13 @@ public partial class MonitorDetailViewModel : ObservableObject
         {
             _carbonSeries
         };
-
+        PerAppAxis = new Axis[]
+        {
+            new Axis
+            {
+                Labels = stringArray
+            }
+        };
         GotoPage();
     }
 
@@ -146,6 +166,10 @@ public partial class MonitorDetailViewModel : ObservableObject
     {
         get; set;
     }
+
+    public Axis[] PerAppAxis
+    {
+    get; set; }
 
     public Axis[] XAxes
     {
