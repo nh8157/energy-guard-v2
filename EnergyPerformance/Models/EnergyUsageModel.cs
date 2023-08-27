@@ -272,14 +272,12 @@ public class EnergyUsageModel
     /// </summary>
     public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date)
     {
-
-        if (date != null)
-            foreach (var diary in _energyUsage.Diaries)
-            {
-                if (diary.DailyUsage.Date.Date == date.Date)
-                    return diary.HourlyUsage;
-            }
-                
+      
+        foreach (var diary in _energyUsage.Diaries)
+        {
+            if (diary.Date.Date == date.Date)
+                return diary.HourlyUsage;
+        }          
 
         return new List<EnergyUsageLog>();
     }
@@ -289,12 +287,11 @@ public class EnergyUsageModel
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>
-    public List<(string, EnergyUsageLog)> GetPerAppUsageLogs(DateTime? date)
+    public List<(string, EnergyUsageLog)> GetPerAppUsageLogs(DateTime date)
     {
-        if (date != null)
-            foreach (var diary in _energyUsage.Diaries)
-                if (diary.Date == date)
-                    return diary.PerProcUsage.Select(x => (x.Key, x.Value)).ToList();
+        foreach (var diary in _energyUsage.Diaries)
+            if (diary.Date.Date == date.Date)
+                return diary.PerProcUsage.Select(x => (x.Key, x.Value)).ToList();
 
         return new List<(string, EnergyUsageLog)>();
     }
