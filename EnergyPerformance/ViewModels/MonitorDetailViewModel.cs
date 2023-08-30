@@ -61,7 +61,6 @@ public partial class MonitorDetailViewModel : ObservableObject
         foreach (var papp in perAppLog)
         {
             if (index > 8) break;
-            //rowEnergyUSage.Add((float)Math.Round(papp.Item2.PowerUsed, 6));
             if (papp.Item2.PowerUsed != 0.0f)
             {
                 rowEnergyUsage.Add(papp.Item2.PowerUsed +1);
@@ -118,10 +117,8 @@ public partial class MonitorDetailViewModel : ObservableObject
         _rowSeries = new RowSeries<float>
         {
             Values = rowEnergyUsage,
-            //Values = new List<float> { 8,1,2,3,4,1.2f},
             Stroke = null,
             DataLabelsPaint = new SolidColorPaint(new SKColor(45,45, 45)),
-            //DataLabelsSize = 10,
             DataLabelsPosition = DataLabelsPosition.End,
             DataLabelsTranslate = new LvcPoint(-1, 0),
             DataLabelsFormatter = point => $"{""}",
@@ -135,10 +132,8 @@ public partial class MonitorDetailViewModel : ObservableObject
         _rowCostSeries = new RowSeries<float>
         {
             Values = rowCost,
-            //Values = new List<float> { 8,1,2,3,4,1.2f},
             Stroke = null,
             DataLabelsPaint = new SolidColorPaint(new SKColor(45, 45, 45)),
-            //DataLabelsSize = 10,
             DataLabelsPosition = DataLabelsPosition.End,
             DataLabelsTranslate = new LvcPoint(-1, 0),
             DataLabelsFormatter = point => $"{""}",
@@ -151,10 +146,8 @@ public partial class MonitorDetailViewModel : ObservableObject
         _rowCarbonSeries = new RowSeries<float>
         {
             Values = rowCarbonUsage,
-            //Values = new List<float> { 8,1,2,3,4,1.2f},
             Stroke = null,
             DataLabelsPaint = new SolidColorPaint(new SKColor(45, 45, 45)),
-            //DataLabelsSize = 10,
             DataLabelsPosition = DataLabelsPosition.End,
             DataLabelsTranslate = new LvcPoint(-1, 0),
             DataLabelsFormatter = point => $"{""}",
