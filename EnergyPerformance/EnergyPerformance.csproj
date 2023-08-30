@@ -124,7 +124,7 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Binaries\Core.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
 

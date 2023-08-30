@@ -66,7 +66,7 @@ public sealed class Controller
     public int PerformanceCoreCount()
     {
         var command = "PerformanceCoreCount";
-        var response = _pipeClient.SendAndReceiveMessage(command);
+        var response = _pipeClient.SendAndReceiveMessage(command                                                                                                                                 );
         Debug.WriteLine(response);
         return int.Parse(response);
     }

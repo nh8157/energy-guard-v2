@@ -48,97 +48,104 @@ int main()
         char* context = nullptr;
 
         std::cout << "Waiting for client..." << std::endl;
-        ConnectNamedPipe(hPipe, NULL);
-        DWORD error = GetLastError();
-        bool isConnected = error != ERROR_PIPE_CONNECTED;
-        
-        if (isConnected) 
+        BOOL isConnected = ConnectNamedPipe(hPipe, NULL);
+        if (!isConnected)
         {
-            std::cout << "Client connected." << std::endl;
-            while (ReadFile(hPipe, buffer, BUFFER_SIZE - 1, &dwRead, NULL) != FALSE)
+            DWORD error = GetLastError();
+            if (error != ERROR_PIPE_CONNECTED)
             {
-                //Add terminating zero 
-                buffer[dwRead] = '\0';
-
-                //The commands in the buffer follow the format: "command arg1 arg2 arg3 ..."
-                //The first word is the command, the rest are arguments
-                std::string command = strtok_s(buffer, " ", &context);
-                std::cout << "Received command: " << command << std::endl;
-
-                if (command == "MoveAllAppsToEfficiencyCores")
-                {
-                    controller.MoveAllAppsToEfficiencyCores();
-                }
-                else if (command == "MoveAllAppsToSomeEfficiencyCores")
-                {
-                    controller.MoveAllAppsToSomeEfficiencyCores();
-                }
-                else if (command == "MoveAppToHybridCores")
-                {
-                    std::string target = strtok_s(NULL, " ", &context);
-                    std::wstring widestr = std::wstring(target.begin(), target.end());
-                    const wchar_t* widecstr = widestr.c_str();
-                    
-                    std::string eCores = strtok_s(NULL, " ", &context);
-                    std::string pCores = strtok_s(NULL, " ", &context);
-                    
-                    bool result = controller.MoveAppToHybridCores(widecstr, std::stoi(eCores), std::stoi(pCores));
-                    std::string result_str = result ? "true" : "false";
-
-                    //Send result back to client
-                    WriteFile(hPipe, result_str.c_str(), result_str.length(), &dwWritten, NULL);
-                }
-                else if (command == "MoveAllAppsToHybridCores")
-                {
-                    std::string eCores = strtok_s(NULL, " ", &context);
-                    std::string pCores = strtok_s(NULL, " ", &context);
-
-                    controller.MoveAllAppsToHybridCores(std::stoi(eCores), std::stoi(pCores));
-                }
-                else if (command == "ResetToDefaultCores")
-                {
-                    controller.ResetToDefaultCores();
-                }
-                else if (command == "TotalCoreCount")
-                {
-                    int totalCores = controller.TotalCoreCount();
-                    std::string result = std::to_string(totalCores);
-
-                    std::cout << "Sending result: " << result << std::endl;
-                    result.append("\n");
-                    
-                    WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
-                }
-                else if (command == "EfficiencyCoreCount")
-                {
-                    int efficiencyCores = controller.EfficiencyCoreCount();
-                    std::string result = std::to_string(efficiencyCores);
-
-                    std::cout << "Sending result: " << result << std::endl;
-                    result.append("\n");
-
-                    WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
-                }
-                else if (command == "PerformanceCoreCount")
-                {
-                    int performanceCores = controller.PerformanceCoreCount();
-                    std::string result = std::to_string(performanceCores);
-
-                    std::cout << "Sending result: " << result << std::endl;
-                    result.append("\n");
-
-                    WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
-                }
-                else
-                {
-                    std::cout << "Invalid command." << std::endl;
-                }
+                std::cout << "Failed to connect to pipe. Error: " << error << std::endl;
+                CloseHandle(hPipe);
+                continue;
             }
-        } else
-        {
-            std::cout << "Failed to connect to pipe." << std::endl;
         }
         
+        std::cout << "Client connected." << std::endl;
+        while (ReadFile(hPipe, buffer, BUFFER_SIZE - 1, &dwRead, NULL) != FALSE)
+        {
+            //Add terminating zero 
+            buffer[dwRead] = '\0';
+
+            //The commands in the buffer follow the format: "command arg1 arg2 arg3 ..."
+            //The first word is the command, the rest are arguments
+            std::string command = strtok_s(buffer, " ", &context);
+            std::cout << "Received command: " << command << std::endl;
+
+            if (command == "MoveAllAppsToEfficiencyCores")
+            {
+                controller.MoveAllAppsToEfficiencyCores();
+            }
+            else if (command == "MoveAllAppsToSomeEfficiencyCores")
+            {
+                controller.MoveAllAppsToSomeEfficiencyCores();
+            }
+            else if (command == "MoveAppToHybridCores")
+            {
+                std::string target = strtok_s(NULL, " ", &context);
+                std::wstring widestr = std::wstring(target.begin(), target.end());
+                const wchar_t* widecstr = widestr.c_str();
+                
+                std::string eCores = strtok_s(NULL, " ", &context);
+                std::string pCores = strtok_s(NULL, " ", &context);
+
+                std::cout << "Moving " << target << " to " << eCores << " efficiency cores and " << pCores << " performance cores." << std::endl;
+                
+                bool result = controller.MoveAppToHybridCores(widecstr, std::stoi(eCores), std::stoi(pCores));
+                std::string result_str = result ? "true" : "false";
+
+                std::cout << "Sending result: " << result_str << std::endl;
+                result_str.append("\n");
+
+                //Send result back to client
+                WriteFile(hPipe, result_str.c_str(), result_str.length(), &dwWritten, NULL);
+            }
+            else if (command == "MoveAllAppsToHybridCores")
+            {
+                std::string eCores = strtok_s(NULL, " ", &context);
+                std::string pCores = strtok_s(NULL, " ", &context);
+
+                controller.MoveAllAppsToHybridCores(std::stoi(eCores), std::stoi(pCores));
+            }
+            else if (command == "ResetToDefaultCores")
+            {
+                controller.ResetToDefaultCores();
+            }
+            else if (command == "TotalCoreCount")
+            {
+                int totalCores = controller.TotalCoreCount();
+                std::string result = std::to_string(totalCores);
+
+                std::cout << "Sending result: " << result << std::endl;
+                result.append("\n");
+                
+                WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
+            }
+            else if (command == "EfficiencyCoreCount")
+            {
+                int efficiencyCores = controller.EfficiencyCoreCount();
+                std::string result = std::to_string(efficiencyCores);
+
+                std::cout << "Sending result: " << result << std::endl;
+                result.append("\n");
+
+                WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
+            }
+            else if (command == "PerformanceCoreCount")
+            {
+                int performanceCores = controller.PerformanceCoreCount();
+                std::string result = std::to_string(performanceCores);
+
+                std::cout << "Sending result: " << result << std::endl;
+                result.append("\n");
+
+                WriteFile(hPipe, result.c_str(), result.length(), &dwWritten, NULL);
+            }
+            else
+            {
+                std::cout << "Invalid command." << std::endl;
+            }
+        }
+
         CloseHandle(hPipe);
     }
     
