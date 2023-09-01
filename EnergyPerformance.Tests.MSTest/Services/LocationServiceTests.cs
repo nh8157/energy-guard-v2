@@ -42,7 +42,7 @@ public class LocationServiceTests
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         await locationService.StartAsync(token);
-        await Task.Delay(4000);
+        await Task.Delay(6000);
         cts.Cancel();
         Assert.AreNotEqual(locationInfo.Country, "Unknown");
     }

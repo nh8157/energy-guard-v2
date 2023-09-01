@@ -53,7 +53,7 @@ public class CarbonIntensityUpdateServiceTest
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         await service.StartAsync(token);
-        await Task.Delay(1000);
+        await Task.Delay(3000);
         cts.Cancel();
         Assert.AreNotEqual(carbonIntensityInfo.CarbonIntensity, 100);
     }

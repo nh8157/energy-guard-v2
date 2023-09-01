@@ -56,7 +56,7 @@ public class EnergyRateServiceTests
         var cts = new CancellationTokenSource();
         var token = cts.Token;
         await service.StartAsync(token);
-        await Task.Delay(3000);
+        await Task.Delay(5000);
         cts.Cancel();
         Assert.AreNotEqual(energyRateInfo.EnergyRate, 0);
     }

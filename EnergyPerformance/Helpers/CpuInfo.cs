@@ -36,7 +36,7 @@ public class CpuInfo
     /// <summary>
     /// The current CPU usage of each process running on the system.
     /// </summary>
-    public Dictionary<string, double> ProcessesCpuUsage { get; set; }
+    public virtual Dictionary<string, double> ProcessesCpuUsage { get; set; }
 
     public CpuInfo()
     {
