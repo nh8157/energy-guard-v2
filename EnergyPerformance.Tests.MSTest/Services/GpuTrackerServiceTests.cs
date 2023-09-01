@@ -13,7 +13,7 @@ using Moq;
 namespace EnergyPerformance.Tests.MSTest.Services;
 
 [TestClass()]
-public class CpuTrackerServiceTests
+public class GpuTrackerServiceTests
 {
     private static IOptions<LocalSettingsOptions> localSettingsOptions;
     private static Mock<IAppNotificationService> _notificationService;
@@ -27,26 +27,21 @@ public class CpuTrackerServiceTests
     }
 
 
-    public CpuTrackerService GetService()
+    public GpuTrackerService GetService()
     {
-        var cpuTrackerService = new CpuTrackerService(new CpuInfo());
-        return  cpuTrackerService;
+        var gpuTrackerService = new GpuTrackerService(new GpuInfo(), new DebugModel());
+        return gpuTrackerService;
     }
 
     [TestMethod()]
-    public void CpuTrackerServiceTest()
+    public async Task GpuTrackerServiceTest()
     {
         var service = GetService();
-        var controller = new Controller();
-        if (controller.PerformanceCoreCount() >= 2)
-        {
-            Assert.IsTrue(service.SupportedCpu);
-        }
-        else
-        {
-            Assert.IsFalse(service.SupportedCpu);
-        }
-
+        var cts = new CancellationTokenSource();
+        var token = cts.Token;
+        await service.StartAsync(token);
+        cts.Cancel();
+        Assert.AreEqual(service.GpuUsage, 0);
     }
 
 }
