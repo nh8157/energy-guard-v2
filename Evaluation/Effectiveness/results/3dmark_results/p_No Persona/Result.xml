@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<benchmark>
+    <results>
+        <result>
+            <name/>
+            <description/>
+            <passIndex>-1</passIndex>
+            <FireStrikeCustomCombinedScore>9307</FireStrikeCustomCombinedScore>
+            <FireStrikeCustom3DMarkScore>0</FireStrikeCustom3DMarkScore>
+            <FireStrikeCustomGraphicsScore>19485</FireStrikeCustomGraphicsScore>
+            <FireStrikeCustomPhysicsScore>21098</FireStrikeCustomPhysicsScore>
+            <benchmarkRunId>d2962a49-1a1b-4d34-bb31-c6f6008f4f91</benchmarkRunId>
+        </result>
+        <result>
+            <name/>
+            <description/>
+            <passIndex>0</passIndex>
+            <FireStrikeCustomGraphicsScoreForPass>19485</FireStrikeCustomGraphicsScoreForPass>
+            <FireStrikeCustomPhysicsScoreForPass>21098</FireStrikeCustomPhysicsScoreForPass>
+            <FireStrikeCustomCombinedScoreForPass>9307</FireStrikeCustomCombinedScoreForPass>
+            <FireStrikeCustom3DMarkScoreForPass>0</FireStrikeCustom3DMarkScoreForPass>
+            <FireStrikeCustomGraphicsTest1>92.63</FireStrikeCustomGraphicsTest1>
+            <FireStrikeCustomGraphicsTest2>78.05</FireStrikeCustomGraphicsTest2>
+            <FireStrikeCustomPhysicsTest>66.98</FireStrikeCustomPhysicsTest>
+            <FireStrikeCustomCombinedTest>43.29</FireStrikeCustomCombinedTest>
+            <benchmarkRunId>d2962a49-1a1b-4d34-bb31-c6f6008f4f91</benchmarkRunId>
+        </result>
+    </results>
+</benchmark>

@@ -8,7 +8,7 @@ using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
 using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
-
+using Microsoft.UI.Xaml.Media.Animation;
 
 namespace EnergyPerformance.Services;
 
@@ -30,6 +30,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
+
+    private readonly string _path;
 
     public double Power
     {
@@ -69,6 +71,8 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         sensors = new List<ISensor>();
         cpuSensors = new List<ISensor>();
         gpuSensors = new List<ISensor>();
+
+        _path = Path.Combine(_localApplicationData, _defaultApplicationDataFolder, $"Effectiveness");
     }
 
     /// <summary>
@@ -160,6 +164,15 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
 
         UpdateDailyUsage(currentDateTime);
         UpdateHourlyUsage(currentDateTime);
+        
+        if (File.Exists(_path))
+        {
+            File.AppendAllText(_path, Power.ToString() + '\n');
+        }
+        else
+        {
+            File.WriteAllText(_path, Power.ToString() + '\n');
+        }
     }
 
     /// <summary>
