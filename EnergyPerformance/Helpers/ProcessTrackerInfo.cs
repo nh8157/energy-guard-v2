@@ -2,6 +2,12 @@
 using EnergyPerformance.Helpers;
 
 namespace EnergyPerformance.Helpers;
+
+/// <summary>
+/// This class stores the performance counters of the process being tracked
+/// The CPU counter stores the CPU utilization rate of a process
+/// The GPU counter stores the GPU utilization rate of a process
+/// </summary>
 public class ProcessTrackerInfo
 {
     private Dictionary<Process, PerformanceCounter> _processCpuCounters;
@@ -15,6 +21,11 @@ public class ProcessTrackerInfo
         _processCpuCounters = new();
         _processGpuCounters = new();
     }
+
+    /// <summary>
+    /// This method adds a process to the tracking list 
+    /// </summary>
+    /// <param name="process">An instance of the process</param>
     public void AddProcess(Process process)
     {
         var cpuInstanceName = GetCpuInstanceNameForProcess(process);
@@ -31,6 +42,11 @@ public class ProcessTrackerInfo
         _processGpuCounters.TryAdd(process, 
             new PerformanceCounter("GPU Engine", "Utilization Percentage", gpuInstanceName));
     }
+
+    /// <summary>
+    /// Removes the process from the tracking list
+    /// </summary>
+    /// <param name="process">Name of the Process</param>
     public void RemoveProcess(string process)
     {
         _processCpuCounters = _processCpuCounters.Where(kv => kv.Key.ProcessName != process).ToDictionary(kv => kv.Key, kv => kv.Value);
@@ -46,7 +62,9 @@ public class ProcessTrackerInfo
 
         var processCategory = new PerformanceCounterCategory("Process");
 
-        foreach (var currentInstance in processCategory.GetInstanceNames().Where(currentInstance => currentInstance.StartsWith(instanceName)))
+        var instances = processCategory.GetInstanceNames().Where(currentInstance => currentInstance.StartsWith(instanceName));
+
+        foreach (var currentInstance in instances)
         {
             using var processIdCounter = new PerformanceCounter("Process", "ID Process", currentInstance);
             
