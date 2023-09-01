@@ -225,7 +225,7 @@ public class DatabaseService : IDatabaseService
             }
             SQLiteCommand cmd = new SQLiteCommand("INSERT INTO program_log(date, exact_date_time, program_id, log_id ) " +
                 "VALUES (@date, @exact_date_time, @programID, @id)", conn);
-            string id = await InsertNewLog(conn, data, "P"+programID);
+            string id = await InsertNewLog(conn, data, "P" + programID);
             cmd.Parameters.AddWithValue("@date", date);
             cmd.Parameters.AddWithValue("@exact_date_time", exactDate);
             cmd.Parameters.AddWithValue("@programID", programID);
@@ -257,7 +257,7 @@ public class DatabaseService : IDatabaseService
             {
                 var procId = item.Key;
                 var procLog = item.Value;
-                await InsertProgramLog(procId,procLog);
+                await InsertProgramLog(procId, procLog);
             }
             SQLiteConnection conn = await CreateConnectionAsync();
             if (await CheckIfDiaryExists(conn, date))

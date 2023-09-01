@@ -22,3 +22,4 @@ public class DatabaseMethodFactory
         return count > 0;
     }
 }
+
