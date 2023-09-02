@@ -170,17 +170,27 @@ namespace Core
 
 	int Controller::CreateAffinityMask(int eCores, int pCores)
 	{
+		int affinityMask;
 		// check if the p core and e core count passed in is larger than the number of p core or e core
-		if (eCores > eCoreCount || pCores > pCoreCount) {
+		if (eCores <= 0 && pCores <= 0 || eCores > eCoreCount || pCores > pCoreCount) {
 			return -1;
 		}
 
-		// create affinity mask for performance cores
-		int pCoreMask = AffinityMaskGenerator(pCores);
-		// create affinity mask for efficiency cores, shift the mask to higher order bits
-		int eCoreMask = AffinityMaskGenerator(eCores) << pCoreCount;
-		// combine the p core affinity mask and the e core affinity mask
-		int affinityMask = pCoreMask + eCoreMask;
+		// assuming every p core has two threads
+		int hThreadAffinity = AffinityMaskGenerator(pCores*2);
+
+		int coreOffset = eCores + hyperthreadCores;
+
+		affinityOffset = AffinityMaskGenerator(hyperthreadCores);
+		int tmpAffinity = AffinityMaskGenerator(coreOffset);
+		int eCoreAffinity = tmpAffinity - affinityOffset;
+		if (pCores > 0) {
+			int hybridAffinity = eCoreAffinity + hThreadAffinity;
+			affinityMask = hybridAffinity;
+		}
+		else {
+			affinityMask = eCoreAffinity;
+		}
 
 		return affinityMask;
 	}
