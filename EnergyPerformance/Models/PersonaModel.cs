@@ -282,48 +282,6 @@ public class PersonaModel
         return (numEfficiencyCores, setPerformanceCores);
     }
 
-    //Perform the inverse of the above operation
-    private float ConvertSettingsToRating((int, int) cpuSetting, int gpuSetting)
-    {
-        var numEfficiencyCores = _cpuInfo.CpuController.EfficiencyCoreCount();
-        var numPerformanceCores = _cpuInfo.CpuController.PerformanceCoreCount();
-
-        var (setEfficiencyCores, setPerformanceCores) = cpuSetting;
-
-        if (setEfficiencyCores < 1 || setEfficiencyCores > numEfficiencyCores)
-        {
-            throw new ArgumentException("Efficiency core setting must be between 1 and the number of efficiency cores");
-        }
-
-        if (setPerformanceCores < 0 || setPerformanceCores > numPerformanceCores)
-        {
-            throw new ArgumentException("Performance core setting must be between 0 and the number of performance cores");
-        }
-
-        // energy rating is 2
-        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == 0)
-        {
-            return 2;
-        }
-
-        // energy rating is 1
-        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == numPerformanceCores)
-        {
-            return 1;
-        }
-
-        // energy rating is 3
-        if (setEfficiencyCores == 1 && setPerformanceCores == 0)
-        {
-            return 3;
-        }
-
-        var efficiencyRating = InverseLerp(1, numEfficiencyCores, setEfficiencyCores);
-        var performanceRating = InverseLerp(0, numPerformanceCores, setPerformanceCores);
-
-        return efficiencyRating + performanceRating + 1;
-        
-    }
     
     private int ConvertRatingToGpuSetting(float energyRating)
     {
