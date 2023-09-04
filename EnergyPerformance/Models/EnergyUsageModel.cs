@@ -49,7 +49,7 @@ public class EnergyUsageModel
     {
         get; set;
     }
-    
+
     public double CarbonIntensity
     {
         get => _carbonIntensityInfo.CarbonIntensity;
@@ -110,7 +110,7 @@ public class EnergyUsageModel
     /// <summary>
     /// The Accumulated Watts used for the current day.
     /// </summary>
-    public double AccumulatedWatts
+    public virtual double AccumulatedWatts
     {
         get; set;
     }
@@ -118,7 +118,7 @@ public class EnergyUsageModel
     /// <summary>
     /// The Accumulated Watts used for the current hour.
     /// </summary>
-    public double AccumulatedWattsHourly
+    public virtual double AccumulatedWattsHourly
     {
         get; set;
     }
@@ -136,7 +136,7 @@ public class EnergyUsageModel
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
+    public EnergyUsageModel(CarbonIntensityInfo carbonIntensityInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;

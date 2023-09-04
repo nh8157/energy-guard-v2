@@ -43,7 +43,7 @@ public class PersonaFileService
         await Task.Run(() => _fileService.Save(_applicationDataFolder, _personaFile, _personaData));
     }
 
-    public async Task<List<PersonaEntry>> ReadFileAsync()
+    public async virtual Task<List<PersonaEntry>> ReadFileAsync()
     {
         if (!_isInitialized)
         {

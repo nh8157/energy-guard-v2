@@ -22,7 +22,7 @@ public class DatabaseService : IDatabaseService
 
     public DatabaseMethodFactory MethodWrapper
     {
-        get; set;
+        get; set; 
     }
 
     public DatabaseService()
