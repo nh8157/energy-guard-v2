@@ -38,7 +38,7 @@
                   SelectedItem="{x:Bind ViewModel.DetailSelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Grid.Column="1" Margin="20,3,0,0"/>
         </Grid>
         <lvc:CartesianChart 
-            Name="rowChart"
+            Name="LvcRowChart"
             Series="{Binding Series}"
             YAxes="{Binding PerAppAxis}"
             XAxes="{Binding PerAppXAxis}"
