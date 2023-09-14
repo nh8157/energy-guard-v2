@@ -54,7 +54,7 @@
         x:Name="TrayIcon"
         x:FieldModifier="public"
         IconSource="/Assets/WindowIcon.ico"
-        ToolTipText="ToolTip"
+        ToolTipText="EnergyGuard"
         ContextFlyout="{StaticResource TrayContextFlyout}"
         LeftClickCommand="{StaticResource ShowHideWindowCommand}"
         NoLeftClickDelay="True"

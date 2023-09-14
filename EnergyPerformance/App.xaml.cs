@@ -102,8 +102,6 @@ public partial class App : Application
 
             // Services
             //services.AddSingleton<IHostedService, TaskService>();
-
-            // Why adding interface here?
             services.AddSingleton<IAppNotificationService, AppNotificationService>();
             services.AddSingleton<ILocalSettingsService, LocalSettingsService>();
             services.AddSingleton<IThemeSelectorService, ThemeSelectorService>();
@@ -123,6 +121,7 @@ public partial class App : Application
             services.AddSingleton<Controller>();
 
             // --- Registering background services and their dependencies
+
             services.AddHostedService<PeriodicDataSaverService>();
 
             services.AddSingleton<CpuInfo>(); // container for live CPU usage data
@@ -130,8 +129,6 @@ public partial class App : Application
             
             services.AddSingleton<GpuInfo>(); // container for live GPU usage data
             services.AddHostedService<GpuTrackerService>();
-
-            services.AddHostedService<ProcessTrackerService>();
 
             services.AddSingleton<PowerInfo>(); // container for live Power usage data
             services.AddHostedService<PowerMonitorService>();
@@ -144,6 +141,9 @@ public partial class App : Application
 
             services.AddSingleton<EnergyRateInfo>();
             services.AddHostedService<EnergyRateService>();
+
+            services.AddSingleton<ProcessTrackerInfo>();
+            services.AddHostedService<ProcessTrackerService>();
 
             services.AddSingleton<IDatabaseService, DatabaseService>();
             // ---

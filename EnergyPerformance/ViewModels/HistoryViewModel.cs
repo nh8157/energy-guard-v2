@@ -74,7 +74,7 @@ public partial class HistoryViewModel : ObservableObject
             //shows the text when hovering the bar
             YToolTipLabelFormatter = (chartPoint) =>
                 $"\u00A3{chartPoint.PrimaryValue.ToString("F4")}",
-            Name = "Pound",
+            Name = "Cost",
             Values = costs,
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
@@ -133,8 +133,7 @@ public partial class HistoryViewModel : ObservableObject
             Labeler = value => new DateTime((long) value).ToString("MM/dd"),
             UnitWidth = TimeSpan.FromDays(1).Ticks, 
             MinStep = TimeSpan.FromDays(1).Ticks,
-            
-
+            ForceStepToMin = true
         }
     };
 

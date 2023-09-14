@@ -24,11 +24,22 @@ public sealed partial class MonitorDetailPage : Page
     {
         var selectedValue = ViewModel.DetailSelectedApplication;
         if (selectedValue.Equals("Cost"))
+        {
             LvcChart.Series = ViewModel.SeriesCostHourly;
-        else if (selectedValue.Equals("Energy Usage"))
+            rowChart.Series = ViewModel.CostSeries;
+        }
+
+        else if (selectedValue.Equals("Energy Usage")) {
             LvcChart.Series = ViewModel.SeriesHourly;
+            rowChart.Series = ViewModel.Series;
+        }
+
         else
+        {
             LvcChart.Series = ViewModel.SeriesCarbonHourly;
+            rowChart.Series = ViewModel.CarbonSeries;
+        }
+            
     }
 
     private void NavigateToCustomisationPage(object sender, RoutedEventArgs e)
@@ -43,11 +54,19 @@ public sealed partial class MonitorDetailPage : Page
         if (selectedValue.Equals("Cost"))
         {
             LvcChart.Series = ViewModel.SeriesCostHourly;
+            LvcChart.Series = ViewModel.CostSeries;
         }
 
         else if (selectedValue.Equals("Energy Usage"))
+        {
             LvcChart.Series = ViewModel.SeriesHourly;
+            rowChart.Series = ViewModel.Series;
+        }
         else
+        {
             LvcChart.Series = ViewModel.SeriesCarbonHourly;
+            rowChart.Series = ViewModel.CarbonSeries;
+        }
+            
     }
 }

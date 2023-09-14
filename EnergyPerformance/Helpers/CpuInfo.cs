@@ -65,13 +65,13 @@ public class CpuInfo
         return true;
     }
 
-    public void EnableCpuSetting(string path, (int, int) cpuSetting)
+    public virtual void EnableCpuSetting(string path, (int, int) cpuSetting)
     {
         var filename = Path.GetFileName(path);
         CpuController.MoveAppToHybridCores(filename, cpuSetting.Item1, cpuSetting.Item2);
     }
 
-    public void DisableCpuSetting(string path, (int, int) cpuSetting)
+    public virtual void DisableCpuSetting(string path, (int, int) cpuSetting)
     {
         // Disabling is equivalent to setting affinity to all cores
         var filename = Path.GetFileName(path);

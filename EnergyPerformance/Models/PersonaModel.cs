@@ -3,6 +3,7 @@ using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
 using System.Diagnostics;
 using System.Management;
+using System.Reflection.Metadata.Ecma335;
 
 namespace EnergyPerformance.Models;
 
@@ -20,6 +21,7 @@ public class PersonaModel
     
     private readonly PersonaFileService _personaFileService;
     private readonly ProcessMonitorService _processMonitorService;
+    private readonly ProcessTrackerInfo _processTrackerInfo;
     private readonly CpuInfo _cpuInfo;
 
     /// <summary>
@@ -45,11 +47,12 @@ public class PersonaModel
         set; get;
     }
 
-    public PersonaModel(CpuInfo cpuInfo, PersonaFileService personaFileService)
+    public PersonaModel(CpuInfo cpuInfo, PersonaFileService personaFileService, ProcessTrackerInfo processTrackerInfo)
     {
         _personaFileService = personaFileService;
         _allPersonas = new List<PersonaEntry>();
         _processMonitorService = new ProcessMonitorService();
+        _processTrackerInfo = processTrackerInfo;
         _cpuInfo = cpuInfo;
         IsEnabled = false;
         PersonaEnabled = null;
@@ -71,11 +74,23 @@ public class PersonaModel
             // Add watchers for an existing persona
             _processMonitorService.AddWatcher(persona.Path);
 
-            // Compute the next available ID for a persona
-            if (persona.Id >= _nextPersonaId)
+            var processName = GetProcessName(persona.Path);
+            if (CheckProcessStatus(processName))
             {
-                _nextPersonaId = persona.Id + 1;
+                App.GetService<DebugModel>().AddMessage($"{processName} is running");
+                var process = GetProcess(processName);
+                // when there is any running instance of the process
+                _processTrackerInfo.AddProcess(process);
+                _processMonitorService.StartDeletionWatcher(persona.Path);
             }
+            else
+            {
+                // when no instance of the process is running
+                App.GetService<DebugModel>().AddMessage($"{processName} is not running");
+                _processMonitorService.StartCreationWatcher(persona.Path);
+            }
+
+            UpdatePersonaId(persona.Id);
         }
     }
 
@@ -88,16 +103,24 @@ public class PersonaModel
     {
         var executablePath = _processMonitorService.CreatedProcess;
 
-        // This line enables the persona without needing the user to click "Enable"
-        EnablePersona(executablePath);
+        var processName = GetProcessName(executablePath);
 
-        App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+        // Add the process to the tracker service
+        if (CheckProcessStatus(processName) && !IsEnabled)
         {
-            if (executablePath != null)
+            var process = GetProcess(processName);
+            // begin tracking the consumption of the process
+            _processTrackerInfo.AddProcess(process);
+            
+            EnablePersona(executablePath);
+            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
             {
-                PersonaNotification.EnablePersonaNotification(executablePath);
-            }
-        });
+                if (executablePath != null)
+                {
+                    PersonaNotification.EnablePersonaNotification(executablePath);
+                }
+            });
+        }
     }
 
     /// <summary>
@@ -111,14 +134,22 @@ public class PersonaModel
 
         if (IsEnabled && PersonaEnabled != null && executablePath != null)
         {
-            DisableEnabledPersona();
-            App.MainWindow.DispatcherQueue.TryEnqueue(() =>
+            // first check if the process is still running
+            var processName = GetProcessName(executablePath);
+
+            // all instances of the process have stopped
+            if (!CheckProcessStatus(processName) && executablePath == PersonaEnabled.Path)
             {
-                if (executablePath != null)
+                _processTrackerInfo.RemoveProcess(processName);
+                DisableEnabledPersona();
+                App.MainWindow.DispatcherQueue.TryEnqueue(() =>
                 {
-                    PersonaNotification.DisabledPersonaNotification(executablePath);
-                }
-            });
+                    if (executablePath != null)
+                    {
+                        PersonaNotification.DisabledPersonaNotification(executablePath);
+                    }
+                });
+            }
         }
         else
         {
@@ -222,10 +253,8 @@ public class PersonaModel
             // pass the settings to CPU and GPU
             _cpuInfo.EnableCpuSetting(persona.Path, persona.CpuSetting);
 
-            Debug.WriteLine($"Persona for {personaName} enabled");
             return true;
         }
-        Debug.WriteLine($"Cannot find persona for {personaName}");
         return false;
     }
 
@@ -282,51 +311,55 @@ public class PersonaModel
         return (numEfficiencyCores, setPerformanceCores);
     }
 
-    //Perform the inverse of the above operation
-    private float ConvertSettingsToRating((int, int) cpuSetting, int gpuSetting)
-    {
-        var numEfficiencyCores = _cpuInfo.CpuController.EfficiencyCoreCount();
-        var numPerformanceCores = _cpuInfo.CpuController.PerformanceCoreCount();
-
-        var (setEfficiencyCores, setPerformanceCores) = cpuSetting;
-
-        if (setEfficiencyCores < 1 || setEfficiencyCores > numEfficiencyCores)
-        {
-            throw new ArgumentException("Efficiency core setting must be between 1 and the number of efficiency cores");
-        }
-
-        if (setPerformanceCores < 0 || setPerformanceCores > numPerformanceCores)
-        {
-            throw new ArgumentException("Performance core setting must be between 0 and the number of performance cores");
-        }
-
-        // energy rating is 2
-        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == 0)
-        {
-            return 2;
-        }
-
-        // energy rating is 1
-        if (setEfficiencyCores == numEfficiencyCores && setPerformanceCores == numPerformanceCores)
-        {
-            return 1;
-        }
-
-        // energy rating is 3
-        if (setEfficiencyCores == 1 && setPerformanceCores == 0)
-        {
-            return 3;
-        }
-
-        var efficiencyRating = InverseLerp(1, numEfficiencyCores, setEfficiencyCores);
-        var performanceRating = InverseLerp(0, numPerformanceCores, setPerformanceCores);
-
-        return efficiencyRating + performanceRating + 1;
-        
-    }
     
     private int ConvertRatingToGpuSetting(float energyRating)
     {
         return 0;
+    }
+
+    /// <summary>
+    /// This method removes the .exe suffix from the path
+    /// </summary>
+    /// <param name="path">Original path name</param>
+    /// <returns>Trimmed path name</returns>
+    private string GetProcessName(string path)
+    {
+        var processName = Path.GetFileName(path);
+        if (processName.Contains(".exe"))
+            processName = processName.Remove(processName.Length - ".exe".Length);
+        return processName;
+    }
+
+    /// <summary>
+    /// Retrieves the first instance of the Process object
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
+    private Process GetProcess(string path)
+    {
+        return Process.GetProcessesByName(path).First();
+    }
+
+    /// <summary>
+    /// Checks if there is any running instance of a process
+    /// </summary>
+    /// <param name="path">The name of the process</param>
+    /// <returns>True if the process is running, false otherwise</returns>
+    private bool CheckProcessStatus(string path)
+    {
+        var proc = Process.GetProcessesByName(path).FirstOrDefault();
+        return (proc == null) ? false : true;
+    }
+
+    /// <summary>
+    /// Computes the next available ID for a persona
+    /// </summary>
+    /// <param name="id">The current ID</param>
+    private void UpdatePersonaId(int id)
+    {
+        if (id >= _nextPersonaId)
+        {
+            _nextPersonaId = id + 1;
+        }
     }
 }

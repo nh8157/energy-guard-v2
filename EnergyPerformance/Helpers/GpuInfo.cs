@@ -21,7 +21,7 @@ public class GpuInfo
     /// <summary>
     /// The current CPU usage of each process running on the system.
     /// </summary>
-    public Dictionary<string, double> ProcessesGpuUsage { get; set; }
+    public virtual Dictionary<string, double> ProcessesGpuUsage { get; set; }
     
     public GpuInfo()
     {

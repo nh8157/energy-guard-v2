@@ -49,7 +49,7 @@ public class EnergyUsageModel
     {
         get; set;
     }
-    
+
     public double CarbonIntensity
     {
         get => _carbonIntensityInfo.CarbonIntensity;
@@ -110,7 +110,7 @@ public class EnergyUsageModel
     /// <summary>
     /// The Accumulated Watts used for the current day.
     /// </summary>
-    public double AccumulatedWatts
+    public virtual double AccumulatedWatts
     {
         get; set;
     }
@@ -118,7 +118,7 @@ public class EnergyUsageModel
     /// <summary>
     /// The Accumulated Watts used for the current hour.
     /// </summary>
-    public double AccumulatedWattsHourly
+    public virtual double AccumulatedWattsHourly
     {
         get; set;
     }
@@ -136,7 +136,7 @@ public class EnergyUsageModel
     /// Full initialization is performed in the InitializeAsync method.
     /// </summary>
     /// <param name="fileService"></param>
-    public EnergyUsageModel(EnergyUsageFileService fileService, CarbonIntensityInfo carbonIntensityInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
+    public EnergyUsageModel(CarbonIntensityInfo carbonIntensityInfo, EnergyRateInfo energyRateInfo, IDatabaseService databaseService)
     {
         CurrentDay = DateTimeOffset.Now;
         CurrentHour = DateTimeOffset.Now;
@@ -272,14 +272,12 @@ public class EnergyUsageModel
     /// </summary>
     public List<EnergyUsageLog> GetHourlyEnergyUsageLogs(DateTime date)
     {
-
-        if (date != null)
-            foreach (var diary in _energyUsage.Diaries)
-            {
-                if (diary.DailyUsage.Date.Date == date.Date)
-                    return diary.HourlyUsage;
-            }
-                
+      
+        foreach (var diary in _energyUsage.Diaries)
+        {
+            if (diary.Date.Date == date.Date)
+                return diary.HourlyUsage;
+        }          
 
         return new List<EnergyUsageLog>();
     }
@@ -289,12 +287,11 @@ public class EnergyUsageModel
     /// </summary>
     /// <param name="date"></param>
     /// <returns></returns>
-    public List<(string, EnergyUsageLog)> GetPerAppUsageLogs(DateTime? date)
+    public List<(string, EnergyUsageLog)> GetPerAppUsageLogs(DateTime date)
     {
-        if (date != null)
-            foreach (var diary in _energyUsage.Diaries)
-                if (diary.Date == date)
-                    return diary.PerProcUsage.Select(x => (x.Key, x.Value)).ToList();
+        foreach (var diary in _energyUsage.Diaries)
+            if (diary.Date.Date == date.Date)
+                return diary.PerProcUsage.Select(x => (x.Key, x.Value)).ToList();
 
         return new List<(string, EnergyUsageLog)>();
     }

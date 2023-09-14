@@ -1,8 +1,12 @@
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing;
+using System.Reflection.Emit;
 using CommunityToolkit.Mvvm.ComponentModel;
 using EnergyPerformance.Models;
 using LiveChartsCore;
 using LiveChartsCore.Defaults;
+using LiveChartsCore.Drawing;
 using LiveChartsCore.Measure;
 using LiveChartsCore.SkiaSharpView;
 using LiveChartsCore.SkiaSharpView.Painting;
@@ -18,12 +22,15 @@ public partial class MonitorDetailViewModel : ObservableObject
     private readonly ColumnSeries<TimeSpanPoint> _costSeries;
     private readonly ColumnSeries<TimeSpanPoint> _carbonSeries;
     private readonly ColumnSeries<TimeSpanPoint> _hourlySeries;
+    private readonly RowSeries<float> _rowSeries;
+    private readonly RowSeries<float> _rowCostSeries;
+    private readonly RowSeries<float> _rowCarbonSeries;
     public readonly ObservableCollection<String> DetailApplications = new();
 
     private DateTime _receivedParameter;
     private string _detailSelectedApplication;
     public MonitorDetailViewModel()
-    {        
+    {
         DetailApplications.Add("Energy Usage");
         DetailApplications.Add("Cost");
         DetailApplications.Add("Carbon Emission");
@@ -37,6 +44,9 @@ public partial class MonitorDetailViewModel : ObservableObject
         var costs = new ObservableCollection<TimeSpanPoint>();
         var hourly = new ObservableCollection<TimeSpanPoint>();
         var carbons = new ObservableCollection<TimeSpanPoint>();
+        var rowEnergyUsage = new List<float>();
+        var rowCost = new List<float>();
+        var rowCarbonUsage = new List<float>();
         //the for loop represents the 24 hour period
         for (var i = 0; i <= 23; ++i)
         {
@@ -45,6 +55,22 @@ public partial class MonitorDetailViewModel : ObservableObject
             carbons.Add(new TimeSpanPoint(TimeSpan.FromHours(i), 0));
         }
         var logs = _model.GetHourlyEnergyUsageLogs(ReceivedParameter);
+        var perAppLog = _model.GetPerAppUsageLogs(ReceivedParameter);
+        string[] stringArray = new string[8];
+        var index = 0;
+        foreach (var papp in perAppLog)
+        {
+            if (index > 8) break;
+            if (papp.Item2.PowerUsed != 0.0f)
+            {
+                rowEnergyUsage.Add(papp.Item2.PowerUsed +1);
+                rowCost.Add(papp.Item2.Cost + 1);
+                rowCarbonUsage.Add(papp.Item2.CarbonEmission + 1);
+                stringArray[index++] = papp.Item1;
+            }
+        }
+
+
         foreach (var log in logs)
         {
             hourly[log.Date.Hour].Value += log.PowerUsed;
@@ -64,17 +90,17 @@ public partial class MonitorDetailViewModel : ObservableObject
         {
             //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
-            Name = "Pound",
+                $"\u00A3{chartPoint.PrimaryValue.ToString("F4")}",
+            Name = "Cost",
             Values = costs,
             Fill = new SolidColorPaint(new SKColor(250, 128, 114))
         };
-        
+
         _hourlySeries = new ColumnSeries<TimeSpanPoint>
         {
             //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
+                $"{chartPoint.PrimaryValue.ToString("F4")} watt",
             Name = "Watt",
             Values = hourly,
             Fill = new SolidColorPaint(new SKColor(51, 181, 255))
@@ -83,11 +109,56 @@ public partial class MonitorDetailViewModel : ObservableObject
         {
             //show the text when hover the bar, it shows the hour and the value
             YToolTipLabelFormatter = (chartPoint) =>
-                $"{TimeSpan.FromTicks((long)chartPoint.SecondaryValue).ToString("hh")}H - {chartPoint.PrimaryValue.ToString("F4")}",
+                $"{chartPoint.PrimaryValue.ToString("F4")} g",
             Name = "CO2",
             Values = carbons,
             Fill = new SolidColorPaint(new SKColor(144, 238, 144))
         };
+        _rowSeries = new RowSeries<float>
+        {
+            Values = rowEnergyUsage,
+            Stroke = null,
+            DataLabelsPaint = new SolidColorPaint(new SKColor(45,45, 45)),
+            DataLabelsPosition = DataLabelsPosition.End,
+            DataLabelsTranslate = new LvcPoint(-1, 0),
+            DataLabelsFormatter = point => $"{""}",
+            YToolTipLabelFormatter = (chartPoint) =>
+                  $"{chartPoint.PrimaryValue -1} watt",
+            MaxBarWidth = 28,
+            Name = "Watt",
+            Fill = new SolidColorPaint(new SKColor(51, 181, 255))
+
+        };
+        _rowCostSeries = new RowSeries<float>
+        {
+            Values = rowCost,
+            Stroke = null,
+            DataLabelsPaint = new SolidColorPaint(new SKColor(45, 45, 45)),
+            DataLabelsPosition = DataLabelsPosition.End,
+            DataLabelsTranslate = new LvcPoint(-1, 0),
+            DataLabelsFormatter = point => $"{""}",
+            YToolTipLabelFormatter = (chartPoint) =>
+                  $"\u00A3{chartPoint.PrimaryValue - 1}",
+            MaxBarWidth = 28,
+            Name = "Cost",
+            Fill = new SolidColorPaint(new SKColor(250, 128, 114))
+        };
+        _rowCarbonSeries = new RowSeries<float>
+        {
+            Values = rowCarbonUsage,
+            Stroke = null,
+            DataLabelsPaint = new SolidColorPaint(new SKColor(45, 45, 45)),
+            DataLabelsPosition = DataLabelsPosition.End,
+            DataLabelsTranslate = new LvcPoint(-1, 0),
+            DataLabelsFormatter = point => $"{""}",
+            YToolTipLabelFormatter = (chartPoint) =>
+                  $"{chartPoint.PrimaryValue - 1} g",
+            MaxBarWidth = 28,
+            Name = "CO2",
+            Fill = new SolidColorPaint(new SKColor(144, 238, 144))
+
+        };
+
         SeriesHourly = new ISeries[]
         {
             _hourlySeries
@@ -100,7 +171,34 @@ public partial class MonitorDetailViewModel : ObservableObject
         {
             _carbonSeries
         };
+        Series = new ISeries[]
+        {
+            _rowSeries
+        };
+        CostSeries = new ISeries[]
+        {
+            _rowCostSeries
+        };
+        CarbonSeries = new ISeries[]
+        {
+            _rowCarbonSeries
+        };
+        PerAppAxis = new Axis[]
+        {
+            new Axis
+            {
+                Labels = stringArray,
+                ForceStepToMin = true,
+            }
+        };
+        PerAppXAxis = new Axis[]
+        {
+            new Axis
+            {
+                IsVisible = false,
 
+            }
+        };
         GotoPage();
     }
 
@@ -121,17 +219,15 @@ public partial class MonitorDetailViewModel : ObservableObject
     public ISeries[] Series
     {
         get; set;
-    } =
+    }
+    public ISeries[] CostSeries
     {
-        new RowSeries<int>
-        {
-            Values = new List<int> { 8, 3, 4,10,11,12,13 },
-            Stroke = null,
-            DataLabelsPaint = new SolidColorPaint(new SKColor(45, 45, 45)),
-            DataLabelsSize = 14,
-            DataLabelsPosition = DataLabelsPosition.End
-        }
-    };
+        get; set;
+    }
+    public ISeries[] CarbonSeries
+    {
+        get; set;
+    }
 
     public ISeries[] SeriesHourly
     {
@@ -143,6 +239,15 @@ public partial class MonitorDetailViewModel : ObservableObject
         get; set;
     }
     public ISeries[] SeriesCarbonHourly
+    {
+        get; set;
+    }
+
+    public Axis[] PerAppAxis
+    {
+    get; set; }
+
+    public Axis[] PerAppXAxis
     {
         get; set;
     }
@@ -171,7 +276,7 @@ public partial class MonitorDetailViewModel : ObservableObject
 
             // The MinStep property forces the separator to be greater than 1 day.
             MinStep = TimeSpan.FromHours(1).Ticks,
-           
+            ForceStepToMin = true
         }
     };
 
