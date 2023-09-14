@@ -3,28 +3,37 @@
 #include <stdio.h>
 #include <string>
 #include <tchar.h>
+#include <thread>
 
 #include "Controller.h"
 
 #define g_szPipeName _TEXT("\\\\.\\Pipe\\EnergyPerformancePipe")
 #define BUFFER_SIZE 1024
 
+void handleClient(HANDLE hPipe, Core::Controller& controller);
+
 int main()
 {
     std::cout << "Starting server..." << std::endl;
     HANDLE hPipe;
-    char buffer[BUFFER_SIZE];
-    DWORD dwRead, dwWritten;
     Core::Controller controller = Core::Controller();
 
     SECURITY_ATTRIBUTES sa;
     sa.nLength = sizeof(SECURITY_ATTRIBUTES);
     sa.bInheritHandle = TRUE;        
 
-    // Create a security descriptor that allows any user to write to the pipe
     sa.lpSecurityDescriptor = (PSECURITY_DESCRIPTOR)malloc(SECURITY_DESCRIPTOR_MIN_LENGTH);
-    InitializeSecurityDescriptor(sa.lpSecurityDescriptor,SECURITY_DESCRIPTOR_REVISION);
-    SetSecurityDescriptorDacl(sa.lpSecurityDescriptor, TRUE,(PACL)NULL, FALSE);
+    if (!InitializeSecurityDescriptor(sa.lpSecurityDescriptor, SECURITY_DESCRIPTOR_REVISION))
+    {
+        std::cout << "Failed to initialize security descriptor. Error: " << GetLastError() << std::endl;
+        return -1;
+    }
+
+    if (!SetSecurityDescriptorDacl(sa.lpSecurityDescriptor, TRUE, (PACL)NULL, FALSE))
+    {
+        std::cout << "Failed to set security descriptor DACL. Error: " << GetLastError() << std::endl;
+        return -1;
+    }
 
     while(true)
     {
@@ -32,7 +41,7 @@ int main()
             g_szPipeName,
             PIPE_ACCESS_DUPLEX,
             PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
-            1,
+            PIPE_UNLIMITED_INSTANCES,
             BUFFER_SIZE,
             BUFFER_SIZE,
             NMPWAIT_USE_DEFAULT_WAIT,
@@ -41,11 +50,9 @@ int main()
         
         if(hPipe == INVALID_HANDLE_VALUE)
         {
-            std::cout << "Failed to create pipe." << std::endl;
+            std::cout << "Failed to create pipe. Error: " << GetLastError() << std::endl;
             return -1;
         }
-
-        char* context = nullptr;
 
         std::cout << "Waiting for client..." << std::endl;
         BOOL isConnected = ConnectNamedPipe(hPipe, NULL);
@@ -61,7 +68,20 @@ int main()
         }
         
         std::cout << "Client connected." << std::endl;
-        while (ReadFile(hPipe, buffer, BUFFER_SIZE - 1, &dwRead, NULL) != FALSE)
+        std::thread clientThread(handleClient, hPipe, std::ref(controller));
+        clientThread.detach();
+    }
+    
+    return 0; 
+}
+
+void handleClient(HANDLE hPipe, Core::Controller& controller)
+{
+    char* context = nullptr;
+    char buffer[BUFFER_SIZE];
+    DWORD dwRead, dwWritten;
+    
+    while (ReadFile(hPipe, buffer, BUFFER_SIZE - 1, &dwRead, NULL) != FALSE)
         {
             //Add terminating zero 
             buffer[dwRead] = '\0';
@@ -147,8 +167,4 @@ int main()
         }
 
         CloseHandle(hPipe);
-    }
-    
-    return 0; 
 }
-
