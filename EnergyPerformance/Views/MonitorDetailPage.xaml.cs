@@ -26,18 +26,18 @@ public sealed partial class MonitorDetailPage : Page
         if (selectedValue.Equals("Cost"))
         {
             LvcChart.Series = ViewModel.SeriesCostHourly;
-            rowChart.Series = ViewModel.CostSeries;
+            LvcRowChart.Series = ViewModel.CostSeries;
         }
 
         else if (selectedValue.Equals("Energy Usage")) {
             LvcChart.Series = ViewModel.SeriesHourly;
-            rowChart.Series = ViewModel.Series;
+            LvcRowChart.Series = ViewModel.Series;
         }
 
         else
         {
             LvcChart.Series = ViewModel.SeriesCarbonHourly;
-            rowChart.Series = ViewModel.CarbonSeries;
+            LvcRowChart.Series = ViewModel.CarbonSeries;
         }
             
     }
@@ -54,18 +54,18 @@ public sealed partial class MonitorDetailPage : Page
         if (selectedValue.Equals("Cost"))
         {
             LvcChart.Series = ViewModel.SeriesCostHourly;
-            LvcChart.Series = ViewModel.CostSeries;
+            LvcRowChart.Series = ViewModel.CostSeries;
         }
 
         else if (selectedValue.Equals("Energy Usage"))
         {
             LvcChart.Series = ViewModel.SeriesHourly;
-            rowChart.Series = ViewModel.Series;
+            LvcRowChart.Series = ViewModel.Series;
         }
         else
         {
             LvcChart.Series = ViewModel.SeriesCarbonHourly;
-            rowChart.Series = ViewModel.CarbonSeries;
+            LvcRowChart.Series = ViewModel.CarbonSeries;
         }
             
     }
