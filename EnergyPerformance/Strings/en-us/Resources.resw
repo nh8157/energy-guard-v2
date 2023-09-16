@@ -277,7 +277,7 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
     <value>System Monitor</value>
   </data>
   <data name="HistoryEnergy.Content" xml:space="preserve">
-    <value>Energy</value>
+    <value>History</value>
   </data>
   <data name="CarbonEmissionTitle.Text" xml:space="preserve">
     <value>Currently emitting:</value>
