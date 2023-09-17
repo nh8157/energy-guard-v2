@@ -32,10 +32,11 @@
             </Grid.ColumnDefinitions>
 
             <Button Width="40" Height="30" FontSize="15"  Click="NavigateToCustomisationPage" Grid.Column="0">
-                <SymbolIcon Symbol="Back" VerticalAlignment="Center"/>
+                <SymbolIcon Symbol="Back" ToolTipService.ToolTip="Click to Go Back to History Page" VerticalAlignment="Center"/>
             </Button>
             <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Height="35" Width="170" ItemsSource="{x:Bind ViewModel.DetailApplications}"
-                  SelectedItem="{x:Bind ViewModel.DetailSelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Grid.Column="1" Margin="20,3,0,0"/>
+                  SelectedItem="{x:Bind ViewModel.DetailSelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Grid.Column="1" Margin="20,3,0,0"
+                      ToolTipService.ToolTip="Select to View History for either Energy Usage, Cost or Carbon Emissions"/>
         </Grid>
         <lvc:CartesianChart 
             Name="LvcRowChart"
