@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using EnergyPerformance.Helpers;
-using EnergyPerformance.Models;
-using LibreHardwareMonitor.Hardware;
+﻿using EnergyPerformance.Helpers;
 using Microsoft.Extensions.Hosting;
 
 namespace EnergyPerformance.Services;
@@ -11,10 +8,8 @@ public class GpuTrackerService : BackgroundService
 {
     // Execute every second
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(1000));
-    // TODO: Support multiple GPUs
-    private ISensor gpuSensor;
     private readonly GpuInfo gpuInfo;
-    private readonly Computer computer;
+    private readonly MonitorController monitorController;
     private double lastUsage = 0;
 
     public double GpuUsage
@@ -23,40 +18,14 @@ public class GpuTrackerService : BackgroundService
         private set => gpuInfo.GpuUsage = value;
     }
 
-    public GpuTrackerService(GpuInfo gpuInfo, DebugModel debugInf)
+    public GpuTrackerService(GpuInfo gpuInfo, MonitorController monitorController)
     {
         this.gpuInfo = gpuInfo;
-        computer = new Computer
-        {
-            IsGpuEnabled = true
-        };
-    }
-    
-    /// <summary>
-    /// Method to detect sensors which report power values in the device.
-    /// </summary>
-    public void DetectRequiredSensors()
-    {
-        computer.Open();
-        computer.Accept(new UpdateVisitor());
-        foreach (IHardware hardware in computer.Hardware)
-        {
-            hardware.Update();
-            foreach (ISensor sensor in hardware.Sensors)
-            {
-                // Read GPU sensors which report percentage usage values
-                if (sensor.Name.Contains("GPU Core") && sensor.SensorType.Equals(SensorType.Load))
-                {
-                    gpuSensor = sensor;
-                }
-            }
-        }
+        this.monitorController = monitorController;
     }
     
     protected async override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        DetectRequiredSensors();
-
         while (await _periodicTimer.WaitForNextTickAsync(stoppingToken) && !stoppingToken.IsCancellationRequested)
         {
             await DoAsync();
@@ -65,14 +34,8 @@ public class GpuTrackerService : BackgroundService
 
     private async Task DoAsync()
     {
-        await Task.Run(() =>
-        {
-            foreach (IHardware hardware in computer.Hardware)
-            {
-                hardware.Update();
-            }
-        });
-        GpuUsage = gpuSensor.Value ?? lastUsage;
+        var usage = monitorController.getGpuUsage();
+        GpuUsage = usage == 0 ? lastUsage : usage;
         lastUsage = GpuUsage;
 
         await Task.CompletedTask;

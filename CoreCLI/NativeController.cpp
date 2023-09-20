@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
-#include "Controller.h"
+#include "NativeController.h"
 #include <iostream>
 
 using namespace std;
@@ -37,7 +37,7 @@ namespace Core
 		return affintyMask;
 	}
 
-	Controller::Controller()
+	NativeController::NativeController()
 	{
 		pCoreCount = 0;
 		lCoreCount = 0;
@@ -56,7 +56,7 @@ namespace Core
 	}
 
 	// detect the number of P-cores and E-cores on the system
-	void Controller::DetectCoreCount() {
+	void NativeController::DetectCoreCount() {
 		lCoreCount = 0;
 		for (EnumLogicalProcessorInformation enumInfo(RelationGroup);
 			auto pinfo = enumInfo.Current(); enumInfo.MoveNext()) {
@@ -105,7 +105,7 @@ namespace Core
 					BOOL success = SetProcessAffinityMask(hProcess, processAffinityMask);
 					SetPriorityClass(hProcess, PROCESS_MODE_BACKGROUND_END);
 					if (success == TRUE) {
-						cout << success + " Bind was successful" << endl;
+						cout << " Bind was successful" << endl;
 						found = TRUE;
 						//system("pause");
 					}
@@ -163,12 +163,12 @@ namespace Core
 
 // Remaing code added by Author for the Main Application
 
-	void Controller::MoveAllAppsToEfficiencyCores()
+	void NativeController::MoveAllAppsToEfficiencyCores()
 	{
 		ProcessesSnapShot(eCoreMask);
 	}
 
-	int Controller::CreateAffinityMask(int eCores, int pCores)
+	int NativeController::CreateAffinityMask(int eCores, int pCores)
 	{
 		int affinityMask;
 		// check if the p core and e core count passed in is larger than the number of p core or e core
@@ -195,7 +195,7 @@ namespace Core
 		return affinityMask;
 	}
 
-	void Controller::MoveAllAppsToSomeEfficiencyCores()
+	void NativeController::MoveAllAppsToSomeEfficiencyCores()
 	{
 		// 2-ecores effiency mode
 		if (eCoreCount < 2) {
@@ -206,7 +206,7 @@ namespace Core
 		ProcessesSnapShot(affinity);
 	}
 
-	bool Controller::MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores)
+	bool NativeController::MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores)
 	{
 		if ((eCores <= 0 && pCores <= 0)|| eCores > eCoreCount || pCores % 2 == 1 || pCores > pCoreCount) {
 			return false;
@@ -216,7 +216,7 @@ namespace Core
 		return FindAndBind(target, affinity);
 	}
 	
-	void Controller::MoveAllAppsToHybridCores(int eCores, int pCores)
+	void NativeController::MoveAllAppsToHybridCores(int eCores, int pCores)
 	{
 		int affinity = CreateAffinityMask(eCores, pCores);
 		if (affinity == -1) {
@@ -227,23 +227,21 @@ namespace Core
 		ProcessesSnapShot(affinity);
 	}
 
-	int Controller::TotalCoreCount() {
+	int NativeController::TotalCoreCount() {
 		return lCoreCount;
 	}
 
-	int Controller::EfficiencyCoreCount() {
+	int NativeController::EfficiencyCoreCount() {
 		return eCoreCount;
 	}
 
-	int Controller::PerformanceCoreCount() {
+	int NativeController::PerformanceCoreCount() {
 		return pCoreCount;
 	}
-
-
-	void Controller::ResetToDefaultCores()
+	
+	void NativeController::ResetToDefaultCores()
 	{
 		ProcessesSnapShot(AffinityMaskGenerator(lCoreCount));
 	}
-
-
+	
 }

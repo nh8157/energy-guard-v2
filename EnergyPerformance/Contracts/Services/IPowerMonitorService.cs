@@ -11,6 +11,4 @@ public interface IPowerMonitorService
     {
         get;
     }
-
-    public void DetectRequiredSensors();
 }

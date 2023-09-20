@@ -6,7 +6,6 @@ using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
 using EnergyPerformance.Services;
-using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
 namespace EnergyPerformance.ViewModels;

@@ -10,15 +10,11 @@ using EnergyPerformance.Services;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
 
-using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
-using System.Windows;
 using Windows.UI.Notifications;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace EnergyPerformance;
 
@@ -67,7 +63,7 @@ public partial class App : Application
     public App()
     {
         // Execute the affinity mask setter application as administrator
-        var pathToExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Binaries", "Core.exe");
+        var pathToExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Binaries", "EnergyPerformance.Elevated.exe");
         var startInfo = new ProcessStartInfo(pathToExe)
         {
             Verb = "runas",
@@ -115,10 +111,13 @@ public partial class App : Application
             services.AddHttpClient();
             
             // Initializing PipeClient
-            services.AddSingleton<PipeClient>(new PipeClient("EnergyPerformancePipe"));
+            services.AddTransient(serviceProvider => new PipeClient("EnergyPerformancePipe"));
             
             // CPU Controller
             services.AddSingleton<Controller>();
+            
+            // Monitor Controller
+            services.AddSingleton<MonitorController>();
 
             // --- Registering background services and their dependencies
 

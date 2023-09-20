@@ -1,12 +1,6 @@
-﻿using System;
-using System.IO;
-using System.Diagnostics;
-using EnergyPerformance.Contracts.Services;
+﻿using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
-using EnergyPerformance.ViewModels;
-using EnergyPerformance.Views;
-using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
 
@@ -18,15 +12,12 @@ namespace EnergyPerformance.Services;
 public class PowerMonitorService : BackgroundService, IPowerMonitorService
 {
     private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMilliseconds(1000));
-    public List<ISensor> sensors;
-    public List<ISensor> cpuSensors;
-    public List<ISensor> gpuSensors;
-    private readonly Computer computer;
     private readonly EnergyUsageModel _model;
 
     private readonly PowerInfo _powerInfo;
     private readonly CpuInfo _cpuInfo;
     private readonly GpuInfo _gpuInfo;
+    private readonly MonitorController _monitorController;
     
     private readonly string _localApplicationData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
     private const string _defaultApplicationDataFolder = "EnergyPerformance/ApplicationData";
@@ -49,63 +40,15 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// <param name="powerInfo"><see cref="PowerInfo"/> to contain live power data for the system, for the view.</param>
     /// <param name="cpuInfo"><see cref="CpuInfo"/> to contain live CPU data for the system, for the view.</param>
     /// <param name="gpuInfo"><see cref="GpuInfo"/> to contain live GPU data for the system, for the view.</param>
-    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, CpuInfo cpuInfo, GpuInfo gpuInfo)
+    public PowerMonitorService(EnergyUsageModel model, PowerInfo powerInfo, CpuInfo cpuInfo, GpuInfo gpuInfo, MonitorController monitorController)
     {
         _model = model;
         _powerInfo = powerInfo;
         _cpuInfo = cpuInfo;
         _gpuInfo = gpuInfo;
-        // configure computer object to monitor hardware components
-        computer = new Computer
-        {
-            IsCpuEnabled = true,
-            IsGpuEnabled = true,
-            IsMemoryEnabled = true,
-            IsMotherboardEnabled = true,
-            IsControllerEnabled = true,
-            IsNetworkEnabled = true,
-            IsStorageEnabled = true
-        };
-        sensors = new List<ISensor>();
-        cpuSensors = new List<ISensor>();
-        gpuSensors = new List<ISensor>();
+        _monitorController = monitorController;
     }
-
-    /// <summary>
-    /// Method to detect sensors which report power values in the device.
-    /// </summary>
-    public void DetectRequiredSensors()
-    {
-        computer.Open();
-        computer.Accept(new UpdateVisitor());
-        foreach (IHardware hardware in computer.Hardware)
-        {
-            hardware.Update();
-            foreach (ISensor sensor in hardware.Sensors)
-            {
-                // read hardware sensors which report power values
-                if ((sensor.Name.Contains("Package") || sensor.Name.Contains("Power")) && sensor.SensorType.Equals(SensorType.Power))
-                {
-                    // Sensor objects which report power values are added to a list so that they can be referenced later.
-                    sensors.Add(sensor);
-                }
-
-                // read CPU sensors which report power values
-                if (sensor.Name.Contains("Package") && sensor.SensorType.Equals(SensorType.Power) && hardware.HardwareType.Equals(HardwareType.Cpu))
-                {
-                    // Sensor objects which report power values are added to a list so that they can be referenced later.
-                    cpuSensors.Add(sensor);
-                }
-
-                // read GPU sensors which report power values
-                if (sensor.Name.Contains("GPU Package") && sensor.SensorType.Equals(SensorType.Power))
-                {
-                    // Sensor objects which report power values are added to a list so that they can be referenced later.
-                    gpuSensors.Add(sensor);
-                }
-            }
-        }
-    }
+    
 
     /// <summary>
     /// Method called when the Hosted Service is started, periodically calls the DoAsync method to 
@@ -115,12 +58,10 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// <returns></returns>
     protected async override Task ExecuteAsync(CancellationToken token)
     {
-        DetectRequiredSensors();
         while (await _periodicTimer.WaitForNextTickAsync(token) && !token.IsCancellationRequested)
         {
             await DoAsync();
         }
-        computer.Close();
     }
 
     /// <summary>
@@ -131,25 +72,12 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         // Run the hardware update and power computation in a separate thread to improve performance
         await Task.Run(() =>
         {
-            foreach (IHardware hardware in computer.Hardware)
-            {
-                hardware.Update();
-            }
             // GPU power usage
-            double gpuPower = 0;
-            foreach (ISensor sensor in gpuSensors)
-            {
-                gpuPower += sensor.Value ?? 0;
-            }
-
+            var gpuPower = _monitorController.getGpuPower();
             GpuPower = gpuPower;
 
             // CPU power usage
-            double cpuPower = 0;
-            foreach (ISensor sensor in cpuSensors)
-            {
-                cpuPower += sensor.Value ?? 0;
-            }
+            var cpuPower = _monitorController.getCpuPower();
             CpuPower = cpuPower;
 
         });

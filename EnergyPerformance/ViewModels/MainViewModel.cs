@@ -1,13 +1,9 @@
 ﻿using System.ComponentModel;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
-using EnergyPerformance.Services;
-using LibreHardwareMonitor.Hardware;
-using Microsoft.Extensions.Hosting;
 
 namespace EnergyPerformance.ViewModels;
 

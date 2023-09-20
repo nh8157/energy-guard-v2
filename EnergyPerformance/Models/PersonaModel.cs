@@ -1,9 +1,7 @@
-using EnergyPerformance.Core.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Services;
 using System.Diagnostics;
 using System.Management;
-using System.Reflection.Metadata.Ecma335;
 
 namespace EnergyPerformance.Models;
 
