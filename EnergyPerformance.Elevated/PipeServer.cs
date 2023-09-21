@@ -38,45 +38,64 @@ namespace EnergyPerformance.Elevated
             while (isRunning)
             {
                 Console.WriteLine("Waiting for connection");
-                // Create the pipe and wait for a client to connect. The pipe must support multiple connections
-                var pipeServer = new NamedPipeServerStream(pipeName, PipeDirection.InOut,
-                    NamedPipeServerStream.MaxAllowedServerInstances, PipeTransmissionMode.Message,
-                    PipeOptions.Asynchronous);
+                // Set security permissions for the pipe so that any user can connect to it
+                var pipeSecurity = new PipeSecurity();
+                pipeSecurity.AddAccessRule(new PipeAccessRule("Everyone", PipeAccessRights.FullControl, System.Security.AccessControl.AccessControlType.Allow));
                 
-                pipeServer.WaitForConnection();
-                // Once the client has connected, handle the connection asynchronously
-                HandleConnectionAsync(pipeServer);
+                var pipeServer = NamedPipeServerStreamAcl.Create(pipeName, PipeDirection.InOut, 
+                    1, PipeTransmissionMode.Message, 
+                    PipeOptions.None, 1024, 1024, pipeSecurity);
+                
+                HandleConnection(pipeServer);
             }
         }
 
-        private async Task HandleConnectionAsync(NamedPipeServerStream pipeServer)
+
+        private void HandleConnection(NamedPipeServerStream pipeServer)
         {
-            Console.WriteLine("Connection established, handling connection");
-            await Task.Run(async () =>
+            try
             {
+                pipeServer.WaitForConnection();
+                Console.WriteLine("Connection established, handling connection");
+
                 using var reader = new StreamReader(pipeServer);
                 using var writer = new StreamWriter(pipeServer);
 
-                while (await reader.ReadLineAsync() is { } message)
+                try
                 {
+                    string message = reader.ReadLine();
+
                     Console.WriteLine($"Received message: {message}");
-                    var response = await HandleMessageAsync(message);
+                    var response = HandleMessage(message);
                     if (response != null)
                     {
-                        // If a response is expected, send it to the client asynchronously
-                        await writer.WriteLineAsync(response);
+                        // If a response is expected, send it to the client
+                        writer.WriteLine(response);
+                        writer.Flush();
                     }
                     else
                     {
-                        // If no response is expected, send a failure message to the client asynchronously
-                        await writer.WriteLineAsync("failed");
+                        // If no response is expected, send a failure message to the client
+                        writer.WriteLine("failed");
+                        writer.Flush();
                     }
-                    await writer.FlushAsync();
                 }
-            });
+                catch (IOException ex)
+                {
+                    Console.WriteLine($"An error occurred while reading/writing: {ex.Message}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+            }
+            finally
+            {
+                pipeServer.Close();
+            }
         }
         
-        private async Task<string> HandleMessageAsync(string message)
+        private string? HandleMessage(string message)
         {
             if (messageHandlers.Count == 0)
             {
@@ -87,7 +106,7 @@ namespace EnergyPerformance.Elevated
             foreach (var messageHandler in messageHandlers)
             {
                 Console.WriteLine($"Trying handler {messageHandler.GetType().Name}");
-                var response = await messageHandler.HandleMessage(message);
+                var response = messageHandler.HandleMessage(message);
                 if (response != null)
                 {
                     Console.WriteLine($"Handler {messageHandler.GetType().Name} handled message with response {response}");

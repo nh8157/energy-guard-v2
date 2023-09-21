@@ -73,11 +73,11 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
         await Task.Run(() =>
         {
             // GPU power usage
-            var gpuPower = _monitorController.getGpuPower();
+            var gpuPower = _monitorController.GetGpuPower();
             GpuPower = gpuPower;
 
             // CPU power usage
-            var cpuPower = _monitorController.getCpuPower();
+            var cpuPower = _monitorController.GetCpuPower();
             CpuPower = cpuPower;
 
         });

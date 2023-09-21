@@ -17,7 +17,7 @@ public class PipeClient
         using var pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.Out);
         pipeClient.Connect();
         var writer = new StreamWriter(pipeClient);
-        writer.Write(message);
+        writer.WriteLine(message);
         writer.Flush();
         writer.Close();
     }
@@ -37,7 +37,7 @@ public class PipeClient
         using var pipeClient = new NamedPipeClientStream(".", _pipeName, PipeDirection.InOut);
         pipeClient.Connect();
         var writer = new StreamWriter(pipeClient);
-        writer.Write(message);
+        writer.WriteLine(message);
         writer.Flush();
         var reader = new StreamReader(pipeClient);
         var response = reader.ReadLine();

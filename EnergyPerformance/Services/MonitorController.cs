@@ -11,23 +11,23 @@ public class MonitorController
         _pipeClient = pipeClient;
     }
     
-    public double getCpuPower()
+    public double GetCpuPower()
     {
-        var command = "getCpuPower";
+        var command = "GetCpuPower";
         var response = _pipeClient.SendAndReceiveMessage(command) ?? "0";
         return double.Parse(response);
     }
     
-    public double getGpuPower()
+    public double GetGpuPower()
     {
-        var command = "getGpuPower";
+        var command = "GetGpuPower";
         var response = _pipeClient.SendAndReceiveMessage(command) ?? "0";
         return double.Parse(response);
     }
     
-    public double getGpuUsage()
+    public double GetGpuUsage()
     {
-        var command = "getGpuUsage";
+        var command = "GetGpuUsage";
         var response = _pipeClient.SendAndReceiveMessage(command) ?? "0";
         return double.Parse(response);
     }

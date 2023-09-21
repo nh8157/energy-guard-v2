@@ -63,7 +63,7 @@ public partial class App : Application
     public App()
     {
         // Execute the affinity mask setter application as administrator
-        var pathToExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Binaries", "EnergyPerformance.Elevated.exe");
+        var pathToExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EnergyPerformance.Elevated.exe");
         var startInfo = new ProcessStartInfo(pathToExe)
         {
             Verb = "runas",
@@ -77,8 +77,11 @@ public partial class App : Application
             if (ex.NativeErrorCode == 1223) // The operation was canceled by the user.
             {
                 Console.WriteLine("Elevation request was cancelled by the user.");
-                return;
             }
+            return;
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+            return;
         }
         
         InitializeComponent();

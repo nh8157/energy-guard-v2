@@ -102,7 +102,7 @@ public class MonitorHandler: MessageHandler
         return gpuUsageSensor.Value ?? 0;;
     }
 
-    public Task<string?> HandleMessage(string message)
+    public string? HandleMessage(string message)
     {
         // The message is a string containing the name of the function to be called.
         double? response = message switch
@@ -113,6 +113,6 @@ public class MonitorHandler: MessageHandler
             _ => null
         };
 
-        return Task.FromResult(response is not null ? response.ToString() : null);
+        return response is not null ? response.ToString() : null;
     }
 }

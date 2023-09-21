@@ -8,7 +8,7 @@ public class CpuHandler: MessageHandler
 {
     private readonly ManagedController _controller = new();
     
-    public Task<string?> HandleMessage(string message)
+    public string? HandleMessage(string message)
     {
         // The message is expected to be in the format "<command> <arg1> <arg2> ..."
         var args = message.Split(' ');
@@ -52,6 +52,6 @@ public class CpuHandler: MessageHandler
                 break;
         }
         
-        return Task.FromResult(response);
+        return response;
     }
 }

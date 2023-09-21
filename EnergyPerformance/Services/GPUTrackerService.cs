@@ -34,7 +34,7 @@ public class GpuTrackerService : BackgroundService
 
     private async Task DoAsync()
     {
-        var usage = monitorController.getGpuUsage();
+        var usage = monitorController.GetGpuUsage();
         GpuUsage = usage == 0 ? lastUsage : usage;
         lastUsage = GpuUsage;
 
