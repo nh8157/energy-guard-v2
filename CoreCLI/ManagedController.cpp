@@ -1,7 +1,10 @@
 ﻿#include "ManagedController.h"
 
+#include <iostream>
+#include <ostream>
 #include <string>
-#include <msclr/marshal_cppstd.h>
+#include <msclr\marshal.h>
+#include <msclr\marshal_cppstd.h>
 
 using namespace CLI;
 
@@ -52,9 +55,9 @@ void ManagedController::MoveAllAppsToSomeEfficiencyCores()
 
 bool ManagedController::MoveAppToHybridCores(System::String^ target, int eCores, int pCores)
 {
-    std::string targetString = msclr::interop::marshal_as<std::string>(target);
-    const wchar_t* targetWChar = reinterpret_cast<const wchar_t*>(targetString.c_str());
-    return m_NativeController->MoveAppToHybridCores(targetWChar, eCores, pCores);
+    std::wstring str = msclr::interop::marshal_as<std::wstring>(target);
+    const wchar_t* wstr = str.c_str();
+    return m_NativeController->MoveAppToHybridCores(wstr, eCores, pCores);
 }
 
 void ManagedController::MoveAllAppsToHybridCores(int eCores, int pCores)
