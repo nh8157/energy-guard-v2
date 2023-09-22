@@ -21,30 +21,30 @@
                         </TextBlock>
 
                         <StackPanel Orientation="Horizontal">
-                            <TextBox x:Uid="AppSelection" x:Name="AppSelection" Height="40" Width="300" Margin="0, 10, 20, 20" IsReadOnly="True"/>
-                            <Button x:Uid="BrowseButton" Click="BrowseClicked" Width="150" Height="40" Margin="0, 10, 0, 20"/>
+                            <TextBox x:Uid="AppSelection" x:Name="AppSelection" Height="40" Width="200" Margin="0, 10, 10, 20" IsReadOnly="True"/>
+                            <Button x:Uid="BrowseButton" Click="BrowseClicked" Width="150" Height="40" Margin="0, 10, 0, 20" ToolTipService.ToolTip="Select an Application from the File System"/>
                         </StackPanel>
                         
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical">
-                        <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
+                        <Slider x:Name="PersonaSlider" Width="Auto" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
 
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock FontSize="20" Margin="0, 0, 155, 0">
-                                <Run x:Uid="PerformanceLabel"/>
-                            </TextBlock>
-                            <TextBlock FontSize="20" Margin="0, 0, 185, 0">
-                                <Run x:Uid="BalancedLabel"/>
-                            </TextBlock>
-                            <TextBlock FontSize="20">
-                                <Run x:Uid="EfficiencyLabel"/>
-                            </TextBlock>
+                                    <Run x:Uid="PerformanceLabel"/>
+                                </TextBlock>
+                                <TextBlock FontSize="20" Margin="0, 0, 185, 0">
+                                    <Run x:Uid="BalancedLabel"/>
+                                </TextBlock>
+                                <TextBlock FontSize="20">
+                                    <Run x:Uid="EfficiencyLabel"/>
+                                </TextBlock>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
-                            <Button x:Uid="AddPersonaButton" Click="AddPersona" Width="150" Height="40" FontSize="15" Margin="300, 0, 20, 0"/>
-                            <Button x:Uid="GoBackButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="NavigateToListPage"/>
+                            <Button x:Uid="AddPersonaButton" Click="AddPersona" Width="150" Height="40" FontSize="15" Margin="0, 0, 20, 0" ToolTipService.ToolTip="Click to Add Persona to the Application"/>
+                            <Button x:Uid="GoBackButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="NavigateToListPage" ToolTipService.ToolTip="Click to Go Back to View the Persona List"/>
                         </StackPanel>
                     </StackPanel>
 

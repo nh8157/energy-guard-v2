@@ -32,13 +32,14 @@
                 <!-- Right column for Buttons -->
             </Grid.ColumnDefinitions>
             <ComboBox x:Uid="ModelSelection" x:Name="ModelSelection" Grid.Column="0" Height="35" Width="170" ItemsSource="{x:Bind ViewModel.Applications}"
-                  SelectedItem="{x:Bind ViewModel.SelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Margin="0, 5, 0, 0"/>
+                  SelectedItem="{x:Bind ViewModel.SelectedApplication, Mode=TwoWay}"  SelectionChanged="ModelSelection_SelectionChanged" Margin="0, 5, 0, 0"
+                      ToolTipService.ToolTip="Select to View History for either Energy Usage, Cost or Carbon Emissions"/>
             <!-- Middle column can be used for spacing if necessary -->
-            <Button Command="{Binding LastWeekCommand}" Grid.Column="2" HorizontalAlignment="Right" Margin="0,0,10,0">
+            <Button Command="{Binding LastWeekCommand}" Grid.Column="2" ToolTipService.ToolTip="Click to View Last Week's History" HorizontalAlignment="Right" Margin="0,0,10,0">
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76B;" FontSize="18" VerticalAlignment="Center"/>
             </Button>
        
-            <Button Command="{Binding NextWeekCommand}" Grid.Column="3" HorizontalAlignment="Right" Margin="0,0,0,0" >
+            <Button Command="{Binding NextWeekCommand}" Grid.Column="3" ToolTipService.ToolTip="Click to View Next Week's History" HorizontalAlignment="Right" Margin="0,0,0,0" >
                 <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE76C;" FontSize="18" VerticalAlignment="Center" />
             </Button>
         </Grid>

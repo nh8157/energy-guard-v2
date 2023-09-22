@@ -19,11 +19,11 @@
                         <TextBlock FontSize="20">
                             <Run x:Uid="CustomisePersonaLabel"/>
                         </TextBlock>
-                        <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" SelectionChanged="UpdateSliderValue" Margin="0, 10, 0, 20"/>
+                        <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" SelectionChanged="UpdateSliderValue" Margin="0, 10, 0, 20" ToolTipService.ToolTip="Select a Persona from the Application's Persona List"/>
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical">
-                        <Slider x:Name="PersonaSlider" Width="600" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
+                        <Slider x:Name="PersonaSlider" Width="Auto" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
 
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontSize="20" Margin="0, 0, 155, 0">
@@ -38,8 +38,8 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0, 50, 0, 0">
-                            <Button x:Uid="ApplyPersonaButton" Click="ApplyPersona" Width="150" Height="40" FontSize="15" Margin="300, 0, 20, 0"/>
-                            <Button x:Uid="GoBackButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="NavigateToListPage"/>
+                            <Button x:Uid="ApplyPersonaButton" Click="ApplyPersona" Width="150" Height="40" FontSize="15" Margin="0, 0, 20, 0" ToolTipService.ToolTip="Click to Apply Changes to the Persona"/>
+                            <Button x:Uid="GoBackButton" Width="150" Height="40" FontSize="15" Margin="0, 0, 0, 0" Click="NavigateToListPage" ToolTipService.ToolTip="Click to Go Back to View the Persona List"/>
                         </StackPanel>
                     </StackPanel>
 

@@ -17,8 +17,8 @@
     </Page.Resources>
     <GridView x:Name="ContentArea" HorizontalAlignment="Center" SelectionMode="None" Height="Auto">
         <StackPanel Orientation="Vertical">
-            
-            <StackPanel Orientation="Vertical">
+
+            <StackPanel Orientation="Vertical" ToolTipService.ToolTip="Current System Power Usage">
                 <TextBlock x:Uid="HomePowerUseTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
                 <TextBlock Style="{StaticResource DisplayTextBlockStyle}">
                         <Run Text="{x:Bind ViewModel.Power,Mode=OneWay, Converter={StaticResource PowerUsageStringConverter}}"/>
@@ -28,20 +28,25 @@
             
             <StackPanel Orientation="Vertical" Margin="0, 10, 10, 0">
 
-                <StackPanel Width="400" Height="110" Orientation="Vertical" CornerRadius="15" Padding="5" Margin="0, 0, 0, 25" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
-                    <TextBlock FontSize="25" Text="" Margin="10, 5">
+                <StackPanel ToolTipService.ToolTip="System's Power Usage This Week" Width="400" Height="110" Orientation="Vertical" CornerRadius="15" Padding="5" Margin="0, 0, 0, 25" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
+                    <TextBlock FontSize="25" Margin="10, 5">
                         <Run x:Uid="HomeThisWeek"/>
                     </TextBlock>
-                    <TextBlock FontSize="23" Text="" Margin="10, 5">
+                    <TextBlock FontSize="23" Margin="10, 5">
                         <Run x:Uid="CurrencySymbol"/>
                         <Run Text="{x:Bind ViewModel.CostThisWeek, Converter={StaticResource CostStringConverter}, Mode=OneWay}"/>
                     </TextBlock>
                 </StackPanel>
 
                 <StackPanel Width="400" Height="165" Orientation="Vertical" CornerRadius="15" Padding="5" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
-                    <TextBlock FontSize="25" Text="" Margin="10, 5">
-                        <Run x:Uid="BudgetProgressLabel"/>
-                    </TextBlock>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="25" Margin="10, 5">
+                            <Run x:Uid="BudgetProgressLabel"/>
+                        </TextBlock>
+
+                        <Image Source="ms-appx:///Assets/info_button.png" Height="25" Width="25" ToolTipService.ToolTip="The Budget Used card displays how much of your weekly allocated budget has been used this week"/>
+
+                    </StackPanel>
                     
                     <ProgressBar Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="0, 25" Width="350" MinHeight="10" Value="{x:Bind ViewModel.BudgetUsedPercent, Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.BudgetUsedPercent, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                     <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="23" Margin="0, 0, 0, 10">
@@ -56,7 +61,7 @@
         </StackPanel>
             
         <StackPanel Orientation="Vertical" HorizontalAlignment="Center">
-            <Button x:Uid="ViewCarbonEmissionsButton"  Margin="0, 80, 0, 10" Click="SwitchToCarbonEmissions" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+            <Button x:Uid="ViewCarbonEmissionsButton"  Margin="0, 80, 0, 10" Click="SwitchToCarbonEmissions" ToolTipService.ToolTip="Click to View System's Carbon Emissions" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
 
             <StackPanel Orientation="Vertical" Width="410" Height="300" Margin="0, 30, 0, 0" HorizontalAlignment="Center" CornerRadius="20" Padding="5" BorderThickness="1" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" Background="{ThemeResource ControlAltFillColorTertiaryBrush}">
                 
@@ -65,7 +70,7 @@
                 </TextBlock>
                 
                 <StackPanel Width="410" Height="230" Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Grid Margin="20, 0, 15, 15">
+                    <Grid Margin="20, 0, 15, 15" ToolTipService.ToolTip="Current CPU Power Usage">
                         <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.CpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.CpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
@@ -76,7 +81,7 @@
                         </StackPanel>
                     </Grid>
 
-                    <Grid Margin="0, 0, 0, 5">
+                    <Grid Margin="0, 0, 0, 5" ToolTipService.ToolTip="Current GPU Power Usage">
                         <ProgressRing Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Width="175" Height="175" Value="{x:Bind ViewModel.GpuUsage,Mode=OneWay}" IsIndeterminate="False" Foreground="{x:Bind ViewModel.GpuUsage, Converter={StaticResource PercentToColourConverter}, Mode=OneWay}"/>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
