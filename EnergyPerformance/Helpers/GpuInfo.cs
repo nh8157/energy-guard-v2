@@ -34,5 +34,6 @@ public class GpuInfo
     {
         ProcessesGpuUsage = new Dictionary<string, double>();
         GpuUsage = 0;
+        GpuPower = 0;
     }
 }
