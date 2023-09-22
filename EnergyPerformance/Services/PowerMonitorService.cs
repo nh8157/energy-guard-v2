@@ -38,10 +38,18 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     }
 
     // We want to also track the power usage of the CPU and GPU separately, so we can display them in the View.
-    public double CpuPower { get; private set; }
-    public double GpuPower { get; private set; }
+    public double CpuPower { 
+        get => _cpuInfo.CpuPower; 
+        private set => _cpuInfo.CpuPower = value; 
+    }
 
-    
+    public double GpuPower
+    {
+        get => _gpuInfo.GpuPower;
+        private set => _gpuInfo.GpuPower = value;
+    }
+
+
     /// <summary>
     /// Constructor for the PowerMonitorService class.
     /// </summary>

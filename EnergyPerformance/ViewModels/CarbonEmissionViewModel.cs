@@ -19,11 +19,15 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
 
     [ObservableProperty]
     private double budgetUsedPercent;
+    private double _carbonEmissions;
+    private double _carbonEmissionsCpu;
+    private double _carbonEmissionsGpu;
 
     private readonly EnergyUsageModel _model;
     private readonly ILocalSettingsService _settingsService;
     private readonly CpuInfo _cpuInfo;
     private readonly GpuInfo _gpuInfo;
+    private readonly CarbonIntensityInfo _carbonIntensityInfo;
 
     private readonly PowerInfo _powerInfo;
     private readonly IAppNotificationService _notificationService;
@@ -33,6 +37,9 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     public double CpuUsage => _cpuInfo.CpuUsage;
     public double GpuUsage => _gpuInfo.GpuUsage;
     public double Power => _powerInfo.Power;
+    public double CarbonEmissions => _carbonEmissions;
+    public double CarbonEmissionsCpu => _carbonEmissionsCpu;
+    public double CarbonEmissionsGpu => _carbonEmissionsGpu;
 
     /// <summary>
     /// Gets the cost for the current week from the model.
@@ -62,14 +69,20 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     /// Sets the hardware info containers, services and model.
     /// Attaches event handlers for the hardware info containers and services.
     /// </summary>
-    public CarbonEmissionViewModel(PowerInfo powerInfo, CpuInfo cpu, GpuInfo gpu
-    , ILocalSettingsService settingsService, IAppNotificationService notificationService, EnergyUsageModel model)
+    public CarbonEmissionViewModel(PowerInfo powerInfo, CpuInfo cpu, GpuInfo gpu, 
+        ILocalSettingsService settingsService, IAppNotificationService notificationService,
+        EnergyUsageModel model, CarbonIntensityInfo carbonIntensity)
     {
         // set hardware info containers
         _powerInfo = powerInfo;
         _cpuInfo = cpu;
         _gpuInfo = gpu;
-        
+        _carbonIntensityInfo = carbonIntensity;
+
+        _carbonEmissions = 0.0;
+        _carbonEmissionsCpu = 0.0;
+        _carbonEmissionsGpu = 0.0;
+
         // set services
         _settingsService = settingsService;
         _notificationService = notificationService;
@@ -130,7 +143,8 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     {
         if (e.PropertyName == nameof(_powerInfo.Power))
         {
-            OnPropertyChanged(nameof(Power));
+            _carbonEmissions = _powerInfo.Power * _carbonIntensityInfo.CarbonIntensity;
+            OnPropertyChanged(nameof(CarbonEmissions));
         }
         return;
     }
@@ -154,7 +168,8 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     {
         if (e.PropertyName == nameof(_cpuInfo.CpuUsage))
         {
-            OnPropertyChanged(nameof(CpuUsage));
+            _carbonEmissionsCpu = Math.Round(_cpuInfo.CpuPower * _carbonIntensityInfo.CarbonIntensity, 2);
+            OnPropertyChanged(nameof(CarbonEmissionsCpu));
         }
         return;
     }
@@ -166,7 +181,8 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     {
         if (e.PropertyName == nameof(_gpuInfo.GpuUsage))
         {
-            OnPropertyChanged(nameof(GpuUsage));
+            _carbonEmissionsGpu = Math.Round(_gpuInfo.GpuUsage * _carbonIntensityInfo.CarbonIntensity, 2);
+            OnPropertyChanged(nameof(CarbonEmissionsGpu));
         }
         return;
     }

@@ -16,6 +16,7 @@ public class CpuInfo
     public readonly Controller CpuController; // C++/CLI Controller class provided here to make CPUTrackerService more testable.
     public bool IsSupported { get; set; }
     private double _cpuUsage;
+    private double _cpuPower;
     public event PropertyChangedEventHandler? CpuUsageChanged;
 
     /// <summary>
@@ -32,7 +33,13 @@ public class CpuInfo
             CpuUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CpuUsage)));
         }
     }
-    
+
+    public double CpuPower
+    {
+        get => _cpuPower;
+        set => _cpuPower = value;
+    }
+
     /// <summary>
     /// The current CPU usage of each process running on the system.
     /// </summary>
@@ -44,6 +51,7 @@ public class CpuInfo
         ProcessesCpuUsage = new Dictionary<string, double>();
         IsSupported = CheckProcessorIsSupported();
         CpuUsage = 0;
+        CpuPower = 0;
     }
 
     /// <summary>

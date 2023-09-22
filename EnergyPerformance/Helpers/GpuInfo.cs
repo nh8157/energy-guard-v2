@@ -5,6 +5,7 @@ namespace EnergyPerformance.Helpers;
 public class GpuInfo
 {
     private double _gpuUsage;
+    private double _gpuPower;
 
     public event PropertyChangedEventHandler? GpuUsageChanged;
 
@@ -17,7 +18,13 @@ public class GpuInfo
             GpuUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpuUsage)));
         }
     }
-    
+
+    public double GpuPower
+    {
+        get => _gpuPower;
+        set => _gpuPower = value;
+    }
+
     /// <summary>
     /// The current CPU usage of each process running on the system.
     /// </summary>
