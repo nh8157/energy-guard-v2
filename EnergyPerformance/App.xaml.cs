@@ -26,6 +26,7 @@ namespace EnergyPerformance;
 public partial class App : Application
 {
     private static AppInstance? _instance;
+    private Process _elevatedProcess;
 
     // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
     // https://docs.microsoft.com/dotnet/core/extensions/generic-host
@@ -68,11 +69,13 @@ public partial class App : Application
         {
             Verb = "runas",
             UseShellExecute = true,
-            CreateNoWindow = true
+            CreateNoWindow = true,
+            WindowStyle = ProcessWindowStyle.Hidden
         };
+
         
         try {
-            Process.Start(startInfo);
+            this._elevatedProcess = Process.Start(startInfo)!;
         } catch (System.ComponentModel.Win32Exception ex) {
             if (ex.NativeErrorCode == 1223) // The operation was canceled by the user.
             {
@@ -136,7 +139,7 @@ public partial class App : Application
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
-            services.AddSingleton<LocationService>();
+            services.AddHostedService<LocationService>();
 
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
@@ -202,6 +205,7 @@ public partial class App : Application
         MainWindow.Closed += async (sender, args) =>
         {
             Debug.WriteLine("MainWindow.Closed");
+            _elevatedProcess.Kill();
             await Host.StopAsync();
         };
         UnhandledException += App_UnhandledException;
