@@ -78,20 +78,21 @@ public class PowerMonitorService : BackgroundService, IPowerMonitorService
     /// </summary>
     private async Task DoAsync()
     {
-        // Run the hardware update and power computation in a separate thread to improve performance
+        // Run the hardware update and power computation in a separate thread to improve performanc
+        double gpuPower = 0;
+        double cpuPower = 0;
         await Task.Run(() =>
         {
             // GPU power usage
-            var gpuPower = _monitorController.GetGpuPower();
-            GpuPower = gpuPower;
-
+            gpuPower = _monitorController.GetGpuPower();
+            
             // CPU power usage
-            var cpuPower = _monitorController.GetCpuPower();
-            CpuPower = cpuPower;
-
+            cpuPower = _monitorController.GetCpuPower();
         });
 
-        Power = CpuPower + GpuPower;
+        Power = cpuPower + gpuPower;
+        CpuPower = cpuPower;
+        GpuPower = gpuPower;
 
         var currentDateTime = DateTimeOffset.Now;
 

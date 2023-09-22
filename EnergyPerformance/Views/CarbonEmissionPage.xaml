@@ -19,10 +19,10 @@
         <StackPanel Orientation="Vertical">
   
             <StackPanel Orientation="Vertical">
-                <TextBlock x:Uid="CarbonEmissionTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
+                <TextBlock x:Uid="HomePowerUseTitle" Style="{StaticResource TitleLargeTextBlockStyle}"/>
                 <TextBlock Style="{StaticResource DisplayTextBlockStyle}">
-                        <Run Text="{x:Bind ViewModel.Power,Mode=OneWay, Converter={StaticResource PowerUsageStringConverter}}"/>
-                        <Run x:Uid="EmissionsSymbol"/>
+                    <Run Text="{x:Bind ViewModel.Power, Mode=OneWay, Converter={StaticResource PowerUsageStringConverter}}"/>
+                    <Run x:Uid="PowerUnit"/>
                 </TextBlock>
             </StackPanel>
  
@@ -47,7 +47,7 @@
                         <Image Height="176" Width="210" Source="ms-appx:///Assets/cloud-icon.png"></Image>
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock FontSize="30" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
-                            <Run Text="{x:Bind ViewModel.Power, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
+                            <Run Text="{x:Bind ViewModel.TotalIntensity, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
                             <Run x:Uid="EmissionsSymbol"/>
                             </TextBlock>
                             <TextBlock x:Uid="TotalCarbonEmissionLabel"  FontSize="20" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
@@ -72,7 +72,7 @@
                     <Image Height="155" Width="185" Source="ms-appx:///Assets/cloud-icon.png"></Image>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock FontSize="22" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
-                            <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
+                            <Run Text="{x:Bind ViewModel.CpuPower, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
                             <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
                         <TextBlock x:Uid="CPUCarbonEmissionLabel"  FontSize="17" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
@@ -82,7 +82,7 @@
                     <Image Height="155" Width="185" Source="ms-appx:///Assets/cloud-icon.png"></Image>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock FontSize="22" VerticalAlignment="Center"  HorizontalAlignment="Center" Style="{StaticResource TitleLargeTextBlockStyle}">
-                            <Run Text="{x:Bind ViewModel.CpuUsage, Mode=OneWay}" />
+                            <Run Text="{x:Bind ViewModel.GpuPower, Converter={StaticResource PowerUsageStringConverter}, Mode=OneWay}" />
                             <Run x:Uid="EmissionsSymbol"/>
                         </TextBlock>
                         <TextBlock x:Uid="GPUCarbonEmissionLabel"  FontSize="17" VerticalAlignment="Center"  HorizontalAlignment="Center"/>
