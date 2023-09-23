@@ -44,7 +44,7 @@
                             <Run x:Uid="BudgetProgressLabel"/>
                         </TextBlock>
 
-                        <Image Source="ms-appx:///Assets/info_button.png" Height="25" Width="25" ToolTipService.ToolTip="The Budget Used card displays how much of your weekly allocated budget has been used this week"/>
+                        <Image Source="ms-appx:///Assets/info_button.png" Height="25" Width="25" ToolTipService.ToolTip="The Budget Used card shows this week's usage of your allocated weekly budget"/>
 
                     </StackPanel>
                     
