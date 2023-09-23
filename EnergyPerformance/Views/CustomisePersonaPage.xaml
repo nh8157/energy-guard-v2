@@ -23,15 +23,16 @@
                         <StackPanel Orientation="Horizontal">
                             <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" SelectionChanged="UpdateSliderValue" Margin="0, 10, 0, 20" ToolTipService.ToolTip="Select a Persona from the Application's Persona List"/>
                             <Image Source="ms-appx:///Assets/info_button.png" VerticalAlignment="Center" Height="25" Width="25" Margin="10, 0, 0, 10"
-                                                                      ToolTipService.ToolTip="The Slider adjusts CPU performance for a given application: Left for Performance, Right for Efficiency" />
+                                ToolTipService.ToolTip="The Slider adjusts CPU performance for a given application: Left for Performance, Right for Efficiency" />
                         </StackPanel>
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical">
                         
-                        <Slider x:Name="PersonaSlider" Width="Auto" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"/>
+                        <Slider x:Name="PersonaSlider" Width="Auto" Maximum="3" Minimum="1" Value="2" StepFrequency="0.1" TickFrequency="1" TickPlacement="Outside"
+                                ToolTipService.ToolTip="The Slider adjusts CPU performance for a given application: Left for Performance, Right for Efficiency"/>
 
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                             <TextBlock FontSize="20" Margin="0, 0, 155, 0">
                                 <Run x:Uid="PerformanceLabel"/>
                             </TextBlock>
