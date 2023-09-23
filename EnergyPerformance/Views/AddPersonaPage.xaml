@@ -22,7 +22,8 @@
 
                         <StackPanel Orientation="Horizontal">
                             <TextBox x:Uid="AppSelection" x:Name="AppSelection" Height="40" Width="200" Margin="0, 10, 10, 20" IsReadOnly="True"/>
-                            <Button x:Uid="BrowseButton" Click="BrowseClicked" Width="150" Height="40" Margin="0, 10, 0, 20" ToolTipService.ToolTip="Select an Application from the File System"/>
+                            <Button x:Uid="BrowseButton" Click="BrowseClicked" Width="110" Height="40" Margin="0, 10, 0, 20" ToolTipService.ToolTip="Select an Application from the File System"/>
+                            <Image Source="ms-appx:///Assets/info_button.png" VerticalAlignment="Center" Height="25" Width="25" Margin="10, 0, 0, 10" ToolTipService.ToolTip="The Slider shown below can be used to adjust the performance of the CPU for a given application. Moving the slider head to the left results in improved efficiency but reduced performance, while moving the slider head to the right results in reduced efficiency but improved performance."/>
                         </StackPanel>
                         
                     </StackPanel>

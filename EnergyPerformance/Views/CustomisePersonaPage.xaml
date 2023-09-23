@@ -19,7 +19,11 @@
                         <TextBlock FontSize="20">
                             <Run x:Uid="CustomisePersonaLabel"/>
                         </TextBlock>
-                        <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" SelectionChanged="UpdateSliderValue" Margin="0, 10, 0, 20" ToolTipService.ToolTip="Select a Persona from the Application's Persona List"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <ComboBox x:Uid="AppSelection" x:Name="AppSelection" Height="44" Width="300" ItemsSource="{x:Bind ViewModel.ApplicationList, Mode=OneWay}" SelectionChanged="UpdateSliderValue" Margin="0, 10, 0, 20" ToolTipService.ToolTip="Select a Persona from the Application's Persona List"/>
+                            <Image Source="ms-appx:///Assets/info_button.png" VerticalAlignment="Center" Height="25" Width="25" Margin="10, 0, 0, 10" ToolTipService.ToolTip="The Slider shown below can be used to adjust the performance of the CPU for a given application. Moving the slider head to the left results in improved efficiency but reduced performance, while moving the slider head to the right results in reduced efficiency but improved performance."/>
+                        </StackPanel>
                     </StackPanel>
 
                     <StackPanel Orientation="Vertical">
