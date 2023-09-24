@@ -2,12 +2,10 @@
 
 namespace Core
 {
-    class Controller
+    class NativeController
     {
     public:
-        const char* m_Name;
-
-        Controller();
+        NativeController();
         void MoveAllAppsToEfficiencyCores();
         void MoveAllAppsToSomeEfficiencyCores();
         bool MoveAppToHybridCores(const wchar_t* target, int eCores, int pCores);

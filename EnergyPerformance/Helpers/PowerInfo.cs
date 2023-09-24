@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
+using Windows.System;
+
 
 namespace EnergyPerformance.Helpers;
 
@@ -14,7 +10,11 @@ namespace EnergyPerformance.Helpers;
 public class PowerInfo
 {
     private double _power;
+    private double _gpuPower;
+    private double _cpuPower;
     public event PropertyChangedEventHandler? PowerUsageChanged;
+    public event PropertyChangedEventHandler? GpuPowerUsageChanged;
+    public event PropertyChangedEventHandler? CpuPowerUsageChanged;
 
     /// <summary>
     /// The current power usage of the system.
@@ -30,10 +30,32 @@ public class PowerInfo
             PowerUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Power)));
         }
     }
+    
+    public virtual double GpuPower
+    {
+        get => _gpuPower;
+        set
+        {
+            _gpuPower = value;
+            GpuPowerUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(GpuPower)));
+        }
+    }
+
+    public virtual double CpuPower
+    {
+        get => _cpuPower;
+        set
+        {
+            _cpuPower = value;
+            CpuPowerUsageChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CpuPower)));
+        }
+    }
 
     public PowerInfo()
     {
         Power = 0;
+        GpuPower = 0;
+        CpuPower = 0;
     }
 
 }

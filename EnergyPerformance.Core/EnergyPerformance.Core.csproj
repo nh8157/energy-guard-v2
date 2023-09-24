@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
     <RootNamespace>EnergyPerformance.Core</RootNamespace>
-    <Platforms>AnyCPU;x64;x86</Platforms>
+    <Platforms>x86;x64;AnyCPU</Platforms>
     <Platforms>x86;x64;arm64;AnyCPU</Platforms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>

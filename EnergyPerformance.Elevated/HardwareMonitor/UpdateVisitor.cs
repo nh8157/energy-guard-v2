@@ -1,6 +1,6 @@
 ﻿using LibreHardwareMonitor.Hardware;
 
-namespace EnergyPerformance.Helpers;
+namespace EnergyPerformance.Elevated.HardwareMonitor;
 
 /// <summary>
 /// Visitor class used to update the hardware components of the system.

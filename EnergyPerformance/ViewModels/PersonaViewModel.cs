@@ -75,10 +75,11 @@ public partial class PersonaViewModel : ObservableRecipient
     public async void Delete(string _appName)
     {
         var index = applicationList.IndexOf(_appName);
-        applicationList.RemoveAt(index);
-        personasAndRatings.RemoveAt(index);
-
-       await _model.DeletePersona(_appName);
+        if (await _model.DeletePersona(_appName))
+        {
+            applicationList.RemoveAt(index);
+            personasAndRatings.RemoveAt(index);
+        }
     }
 
     public void Enable(string _appName)

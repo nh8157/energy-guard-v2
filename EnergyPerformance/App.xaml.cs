@@ -10,15 +10,11 @@ using EnergyPerformance.Services;
 using EnergyPerformance.ViewModels;
 using EnergyPerformance.Views;
 
-using Microsoft.Extensions.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.UI.Xaml;
 using Microsoft.Windows.AppLifecycle;
-using System.Windows;
 using Windows.UI.Notifications;
-using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Navigation;
 
 namespace EnergyPerformance;
 
@@ -30,6 +26,7 @@ namespace EnergyPerformance;
 public partial class App : Application
 {
     private static AppInstance? _instance;
+    private Process _elevatedProcess;
 
     // The .NET Generic Host provides dependency injection, configuration, logging, and other services.
     // https://docs.microsoft.com/dotnet/core/extensions/generic-host
@@ -66,6 +63,30 @@ public partial class App : Application
     /// </summary>
     public App()
     {
+        // Execute the affinity mask setter application as administrator
+        var pathToExe = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "EnergyPerformance.Elevated.exe");
+        var startInfo = new ProcessStartInfo(pathToExe)
+        {
+            Verb = "runas",
+            UseShellExecute = true,
+            CreateNoWindow = true,
+            WindowStyle = ProcessWindowStyle.Hidden
+        };
+
+        
+        try {
+            this._elevatedProcess = Process.Start(startInfo)!;
+        } catch (System.ComponentModel.Win32Exception ex) {
+            if (ex.NativeErrorCode == 1223) // The operation was canceled by the user.
+            {
+                Console.WriteLine("Elevation request was cancelled by the user.");
+            }
+            return;
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+            return;
+        }
+        
         InitializeComponent();
         Host = Microsoft.Extensions.Hosting.Host.
         CreateDefaultBuilder().
@@ -94,6 +115,15 @@ public partial class App : Application
 
             // Initializing HttpClientFactory
             services.AddHttpClient();
+            
+            // Initializing PipeClient
+            services.AddTransient(serviceProvider => new PipeClient("EnergyPerformancePipe"));
+            
+            // CPU Controller
+            services.AddSingleton<Controller>();
+            
+            // Monitor Controller
+            services.AddSingleton<MonitorController>();
 
             // --- Registering background services and their dependencies
 
@@ -109,7 +139,7 @@ public partial class App : Application
             services.AddHostedService<PowerMonitorService>();
 
             services.AddSingleton<LocationInfo>();
-            services.AddSingleton<LocationService>();
+            services.AddHostedService<LocationService>();
 
             services.AddSingleton<CarbonIntensityInfo>();
             services.AddHostedService<CarbonIntensityUpdateService>();
@@ -175,6 +205,7 @@ public partial class App : Application
         MainWindow.Closed += async (sender, args) =>
         {
             Debug.WriteLine("MainWindow.Closed");
+            _elevatedProcess.Kill();
             await Host.StopAsync();
         };
         UnhandledException += App_UnhandledException;

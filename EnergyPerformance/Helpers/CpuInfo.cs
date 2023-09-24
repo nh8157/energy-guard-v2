@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using CLI;
+using EnergyPerformance.Services;
 using EnergyPerformance.Models;
 //using EnergyPerformance.Temporary;
 
@@ -36,11 +36,11 @@ public class CpuInfo
     /// <summary>
     /// The current CPU usage of each process running on the system.
     /// </summary>
-    public virtual Dictionary<string, double> ProcessesCpuUsage { get; set; }
+    public Dictionary<string, double> ProcessesCpuUsage { get; set; }
 
-    public CpuInfo()
+    public CpuInfo(Controller controller)
     {
-        CpuController = new Controller();
+        CpuController = controller;
         ProcessesCpuUsage = new Dictionary<string, double>();
         IsSupported = CheckProcessorIsSupported();
         CpuUsage = 0;
@@ -68,7 +68,7 @@ public class CpuInfo
     public virtual void EnableCpuSetting(string path, (int, int) cpuSetting)
     {
         var filename = Path.GetFileName(path);
-        var res = CpuController.MoveAppToHybridCores(filename, cpuSetting.Item1, cpuSetting.Item2);
+        CpuController.MoveAppToHybridCores(filename, cpuSetting.Item1, cpuSetting.Item2);
     }
 
     public virtual void DisableCpuSetting(string path, (int, int) cpuSetting)

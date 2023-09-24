@@ -6,7 +6,6 @@ using EnergyPerformance.Contracts.Services;
 using EnergyPerformance.Helpers;
 using EnergyPerformance.Models;
 using EnergyPerformance.Services;
-using LibreHardwareMonitor.Hardware;
 using Microsoft.Extensions.Hosting;
 
 namespace EnergyPerformance.ViewModels;
@@ -27,12 +26,15 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
 
     private readonly PowerInfo _powerInfo;
     private readonly IAppNotificationService _notificationService;
+    private readonly CarbonIntensityInfo _carbonIntensityInfo;
 
     // must be a supported CPU and and auto control setting must be enabled in order to allow profile switching
     public bool AutoControl => _settingsService.AutoControlSetting && _cpuInfo.IsSupported;
-    public double CpuUsage => _cpuInfo.CpuUsage;
-    public double GpuUsage => _gpuInfo.GpuUsage;
+
+    public double CpuPower => _powerInfo.CpuPower * _carbonIntensityInfo.CarbonIntensity;
+    public double GpuPower => _powerInfo.GpuPower * _carbonIntensityInfo.CarbonIntensity;
     public double Power => _powerInfo.Power;
+    public double TotalIntensity => _powerInfo.Power * _carbonIntensityInfo.CarbonIntensity;
 
     /// <summary>
     /// Gets the cost for the current week from the model.
@@ -63,7 +65,7 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     /// Attaches event handlers for the hardware info containers and services.
     /// </summary>
     public CarbonEmissionViewModel(PowerInfo powerInfo, CpuInfo cpu, GpuInfo gpu
-    , ILocalSettingsService settingsService, IAppNotificationService notificationService, EnergyUsageModel model)
+    , ILocalSettingsService settingsService, IAppNotificationService notificationService, EnergyUsageModel model, CarbonIntensityInfo carbonIntensityInfo)
     {
         // set hardware info containers
         _powerInfo = powerInfo;
@@ -73,14 +75,15 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
         // set services
         _settingsService = settingsService;
         _notificationService = notificationService;
+        _carbonIntensityInfo = carbonIntensityInfo;
 
         // set model
         _model = model;
         
         // attach event handlers
         _powerInfo.PowerUsageChanged += Power_PropertyChanged;
-        _cpuInfo.CpuUsageChanged += CpuUsage_PropertyChanged;
-        _gpuInfo.GpuUsageChanged += GpuUsage_PropertyChanged;
+        _powerInfo.CpuPowerUsageChanged += CpuPower_PropertyChanged;
+        _powerInfo.GpuPowerUsageChanged += GpuPower_PropertyChanged;
         _settingsService.AutoControlEventHandler += AutoControl_PropertyChanged;
 
         // set percentage value for circular progress bar monitoring the current budget
@@ -131,6 +134,7 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
         if (e.PropertyName == nameof(_powerInfo.Power))
         {
             OnPropertyChanged(nameof(Power));
+            OnPropertyChanged(nameof(TotalIntensity));
         }
         return;
     }
@@ -150,11 +154,11 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     /// <summary>
     /// Updates the CPU usage property when the CPU usage changes.
     /// </summary>
-    private void CpuUsage_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void CpuPower_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(_cpuInfo.CpuUsage))
+        if (e.PropertyName == nameof(_powerInfo.CpuPower))
         {
-            OnPropertyChanged(nameof(CpuUsage));
+            OnPropertyChanged(nameof(CpuPower));
         }
         return;
     }
@@ -162,11 +166,11 @@ public partial class CarbonEmissionViewModel : ObservableRecipient
     /// <summary>
     /// Updates the CPU usage property when the CPU usage changes.
     /// </summary>
-    private void GpuUsage_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    private void GpuPower_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(_gpuInfo.GpuUsage))
+        if (e.PropertyName == nameof(_powerInfo.GpuPower))
         {
-            OnPropertyChanged(nameof(GpuUsage));
+            OnPropertyChanged(nameof(GpuPower));
         }
         return;
     }
