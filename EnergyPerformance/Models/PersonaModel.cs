@@ -71,11 +71,11 @@ public class PersonaModel
         {
             // Add watchers for an existing persona
             _processMonitorService.AddWatcher(persona.Path);
+            Debug.WriteLine($"Registered watcher for {persona.Path}");
 
             var processName = GetProcessName(persona.Path);
             if (CheckProcessStatus(processName))
             {
-                App.GetService<DebugModel>().AddMessage($"{processName} is running");
                 var process = GetProcess(processName);
                 // when there is any running instance of the process
                 _processTrackerInfo.AddProcess(process);
@@ -84,7 +84,6 @@ public class PersonaModel
             else
             {
                 // when no instance of the process is running
-                App.GetService<DebugModel>().AddMessage($"{processName} is not running");
                 _processMonitorService.StartCreationWatcher(persona.Path);
             }
 
@@ -102,6 +101,8 @@ public class PersonaModel
         var executablePath = _processMonitorService.CreatedProcess;
 
         var processName = GetProcessName(executablePath);
+
+        Debug.WriteLine($"{processName} launched");
 
         // Add the process to the tracker service
         if (CheckProcessStatus(processName) && !IsEnabled)

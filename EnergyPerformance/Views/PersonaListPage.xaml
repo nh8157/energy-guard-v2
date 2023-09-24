@@ -45,13 +45,13 @@
                             </Grid.ColumnDefinitions>
 
                             <TextBlock Grid.Column="0" VerticalAlignment="Center" Text="{x:Bind AppName, Mode=OneWay}"/>
-                            <Image Grid.Column="1" Height="33" Width="100" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Left"/>
+                            <Image Grid.Column="1" Height="33" Width="100" Source="{Binding Path=EnergyRating, UpdateSourceTrigger=PropertyChanged}" ToolTipService.ToolTip="Current Energy Rating for this Persona" HorizontalAlignment="Left"/>
 
 
                             <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                                <AppBarButton Icon="Play"  Height="45" Width="40"  Click="PlayButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
-                                <AppBarButton Icon="Pause"  Height="45" Width="40" Click="PauseButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
-                                <AppBarButton Icon="Delete"  Height="45" Width="40"  Click="DeleteButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}"/>
+                                <AppBarButton Icon="Play"  Height="45" Width="40"  Click="PlayButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}" ToolTipService.ToolTip="Click to Enable this Persona"/>
+                                <AppBarButton Icon="Pause"  Height="45" Width="40" Click="PauseButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}" ToolTipService.ToolTip="Click to Disable this Persona"/>
+                                <AppBarButton Icon="Delete"  Height="45" Width="40"  Click="DeleteButtonClicked" Tag="{x:Bind AppName, Mode=OneWay}" ToolTipService.ToolTip="Click to Delete this Persona"/>
                             </StackPanel>
 
                         </Grid>
@@ -60,7 +60,7 @@
             </ListView>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button x:Uid="AddPersonaButton"  FontSize="15" Width="150" Height="40" Click="NavigateToAddPage" HorizontalAlignment="Center" Margin="30, 50, 20, 0"/>
+                <Button x:Uid="AddPersonaButton"  FontSize="15" Width="150" Height="40" Click="NavigateToAddPage" HorizontalAlignment="Center" Margin="30, 50, 20, 0" ToolTipService.ToolTip="Click to Add a Persona"/>
             </StackPanel>
 
         </StackPanel>

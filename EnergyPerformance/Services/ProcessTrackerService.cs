@@ -36,16 +36,27 @@ public class ProcessTrackerService : BackgroundService
             {
                 foreach (var (process, counter) in _processTrackerInfo.ProcessCpuCounters)
                 {
-                    _cpuInfo.ProcessesCpuUsage[process.ProcessName] =
-                        Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
-                    // App.GetService<DebugModel>().AddMessage($"Cpu usage of {process} is {cpuInfo.ProcessesCpuUsage[process.ProcessName]}");
+                    try
+                    {
+                        _cpuInfo.ProcessesCpuUsage[process.ProcessName] =
+                            Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
+                    } catch (InvalidOperationException)
+                    {
+                        _processTrackerInfo.ProcessCpuCounters.Remove(process);
+                    }
                 }
 
                 foreach (var (process, counter) in _processTrackerInfo.ProcessGpuCounters)
                 {
-                    _gpuInfo.ProcessesGpuUsage[process.ProcessName] =
-                        Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
-                    // App.GetService<DebugModel>().AddMessage($"Gpu usage of {process} is {gpuInfo.ProcessesGpuUsage[process.ProcessName]}");
+                    try
+                    {
+                        _gpuInfo.ProcessesGpuUsage[process.ProcessName] =
+                            Math.Round(Math.Min(counter.NextValue(), 100.0), 2);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        _processTrackerInfo.ProcessGpuCounters.Remove(process);
+                    }
                 }
             });
         } catch (Exception e)

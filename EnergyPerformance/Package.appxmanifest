@@ -12,12 +12,12 @@
 
   <Identity
     Name="DAB50940-BBDA-47AE-B460-2523C14D3E0F"
-    Publisher="CN=siamn"
-    Version="1.0.3.0" />
+    Publisher="CN=EnergyGuard"
+    Version="2.0.0.1" />
 
   <Properties>
     <DisplayName>EnergyGuard</DisplayName>
-    <PublisherDisplayName>siamn</PublisherDisplayName>
+    <PublisherDisplayName>Steven Larry Ball, Lombardo Paredes Calles, Liyu Chen, Jules Rodrigues, Chukun Wang, Xibo Wang</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
