@@ -355,7 +355,7 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
     <value>Budget Used</value>
   </data>
   <data name="CarbonEmissionCard.Text" xml:space="preserve">
-    <value>Total Carbon Emissions</value>
+    <value>Live Carbon Emissions</value>
   </data>
   <data name="BudgetProgressBarLabel.Text" xml:space="preserve">
     <value>of Budget Used</value>
@@ -364,6 +364,6 @@ To gain access to energy-saving features, an i5 or above, 12th or 13th gen proce
     <value>This Week</value>
   </data>
   <data name="EmissionsLabel.Text" xml:space="preserve">
-    <value>Emissions</value>
+    <value>Individual Emissions</value>
   </data>
 </root>
