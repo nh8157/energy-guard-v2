@@ -224,11 +224,15 @@ public class PersonaModel
     /// Removes the Persona from the volatile and persistent memory
     /// </summary>
     /// <param name="personaName">The name of the Persona</param>
-    public async Task DeletePersona(string personaName)
+    public async Task<bool> DeletePersona(string personaName)
     {
+        if (IsEnabled && PersonaEnabled?.Path == personaName)
+            return false;
+
         _processMonitorService.RemoveWatcher(personaName);
         var res = _allPersonas.RemoveAll(persona => persona.Path.Equals(personaName, StringComparison.OrdinalIgnoreCase)) > 0;
         await _personaFileService.SaveFileAsync();
+        return true;
     }
 
     /// <summary>
